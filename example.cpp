@@ -1,31 +1,51 @@
 #include <iostream>
+#include <cmath>
 #include <openbabel/obconversion.h>
 #include <openbabel/mol.h>
+#include <openbabel/data.h>
 
 using namespace std;
 using namespace OpenBabel;
 
-/*
+
 double volumeOverlap (OBMol &moleculeA, OBMol &moleculeB) {
+
+    double totalVolumeOverlap = 0;
+
+    const double constP = 2.0 * M_SQRT2;
+    const double A = 4.0 * M_PI * constP / 3.0;
+    const double B = -M_PI * pow(0.75 * constP * M_1_PI, 2.0/3.0);
+
+
     for (OBAtomIterator iterA = moleculeA.BeginAtoms(); iterA != moleculeA.EndAtoms(); iterA++) {
         double *coordsOfAtomI = (*iterA)->GetCoordinate();
+        double vdwRA = etab.GetVdwRad((*iterA)->GetAtomicNum());
 
         for (OBAtomIterator iterB = moleculeB.BeginAtoms(); iterB != moleculeB.EndAtoms(); iterB++) {
-            double *coordsOfAtomJ = (*iter)->GetCoordinate();
+            double *coordsOfAtomJ = (*iterB)->GetCoordinate();
+            double vdwRB = etab.GetVdwRad((*iterB)->GetAtomicNum());
 
-            4/3 pi P ( R1^2 R2^2  / (R1^2+R2^2) )^(3/2)    exp(    -pi (3P/4pi)^(2/3)   (ri - rj)^2 /(R1^2+R2^2)    )
+            
+            double sqvA = vdwRA * vdwRA;
+            double sqvB = vdwRB * vdwRB;
+            double C = sqvA + sqvB;
+
+            double distanceSquared = pow(coordsOfAtomJ[0]-coordsOfAtomI[0], 2) + pow(coordsOfAtomJ[1]-coordsOfAtomI[1], 2) + pow(coordsOfAtomJ[2]-coordsOfAtomI[2], 2);
+
+
+            totalVolumeOverlap += A * pow(sqvA * sqvB  / C, 1.5) * exp(B * distanceSquared / C );
 
 
         }
     }
 }
-*/
+
 
 
 
 int main (int argc, char **argv) {
-    if(argc<2) {
-        cout << "Usage: ProgrameName InputFileName\n";
+    if(argc < 3) {
+        cout << "Usage: ProgrameName InputFileName InputFileName2\n";
         return 1;
     }
 
@@ -34,9 +54,14 @@ int main (int argc, char **argv) {
     OBConversion obconversion;
     obconversion.SetInFormat("sdf");
 
-    OBMol mol;
+    OBMol mol2;
+    obconversion.ReadFile(&mol2, argv[2]);
 
+    OBMol mol;
     bool notatend = obconversion.ReadFile(&mol, argv[1]);
+
+    cout << "VOL OVERLAP = " << volumeOverlap (mol, mol2) << endl;
+
     while (notatend) {
         std::cout << "Molecular Weight: " << mol.GetMolWt() << std::endl;
         for (OBAtomIterator iter = mol.BeginAtoms(); iter != mol.EndAtoms(); iter++) {
@@ -45,6 +70,7 @@ int main (int argc, char **argv) {
         mol.Clear();
         notatend = obconversion.Read(&mol);
     }
+
 
  
     return 0;
