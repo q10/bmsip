@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <Accelerate/Accelerate.h>
 #include <openbabel/obconversion.h>
 #include <openbabel/mol.h>
 #include <openbabel/data.h>
@@ -9,7 +10,6 @@ using namespace OpenBabel;
 
 
 double volumeOverlap (OBMol &moleculeA, OBMol &moleculeB) {
-
     double totalVolumeOverlap = 0;
 
     const double constP = 2.0 * M_SQRT2;
@@ -24,7 +24,6 @@ double volumeOverlap (OBMol &moleculeA, OBMol &moleculeB) {
         for (OBAtomIterator iterB = moleculeB.BeginAtoms(); iterB != moleculeB.EndAtoms(); iterB++) {
             double *coordsOfAtomJ = (*iterB)->GetCoordinate();
             double vdwRB = etab.GetVdwRad((*iterB)->GetAtomicNum());
-
             
             double sqvA = vdwRA * vdwRA;
             double sqvB = vdwRB * vdwRB;
@@ -34,11 +33,33 @@ double volumeOverlap (OBMol &moleculeA, OBMol &moleculeB) {
 
 
             totalVolumeOverlap += A * pow(sqvA * sqvB  / C, 1.5) * exp(B * distanceSquared / C );
-
-
         }
     }
+    return totalVolumeOverlap;
 }
+
+
+void generateCoordsMatrixFromMolecule(vector<double> &matrix, OBMol &molecule) {
+    // generates column-order matrix of coordinates
+    matrix.clear();
+    for (OBAtomIterator iter = molecule.BeginAtoms(); iter != molecule.EndAtoms(); iter++) {
+        double *coordsOfAtomI = (*iter)->GetCoordinate();
+        matrix.push_back(coordsOfAtomI[0]); matrix.push_back(coordsOfAtomI[1]); matrix.push_back(coordsOfAtomI[2]);
+    }
+}
+
+void translate3DMatrixCoordinates(vector<double> &matrix, double x, double y, double z) {
+    for (unsigned int i=0; i < matrix.size(); i+=3) { matrix[i] += x; matrix[i+1] += y; matrix[i+2] += z; }
+}
+
+void rotate3DMatrixCoordinates(vector<double> *matrix, vector<double> &rotationMatrix) {
+    // both matrices must be of column-order
+    vector<double> *resultMatrix = new vector<double>(matrix->size());
+    cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, 3, matrix->size()/3, 3, 1, &rotationMatrix[0], 3, &(*matrix)[0], 3, 1, &(*resultMatrix)[0], 3);
+    delete matrix; matrix = resultMatrix;
+}
+
+
 
 
 
@@ -70,9 +91,7 @@ int main (int argc, char **argv) {
         mol.Clear();
         notatend = obconversion.Read(&mol);
     }
-
-
- 
+    
     return 0;
 }
 
