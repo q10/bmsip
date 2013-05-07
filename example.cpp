@@ -74,16 +74,15 @@ void getMoleculeCenterCoords(vector<double> &centerCoords, OBMol &molecule) {
     for (unsigned int i=0; i < centerCoords.size(); i++) centerCoords[i] /= molecule.GetMolWt();
 }
 
-void translate3DMatrixCoordinates(vector<double> &matrix, double x, double y, double z) {
+inline void translate3DMatrixCoordinates(vector<double> &matrix, double x, double y, double z) {
     for (unsigned int i=0; i < matrix.size(); i+=3) { matrix[i] += x; matrix[i+1] += y; matrix[i+2] += z; }
 }
 
-void rotate3DMatrixCoordinates(vector<double> *matrix, vector<double> &rotationMatrix) {
+void rotate3DMatrixCoordinates(vector<double> &matrix, vector<double> &rotationMatrix) {
     // both matrices must be of column-order
-    if (not matrix) { cerr << "ERROR: NO MATRIX INITIALIZED IN POINTER; EXITING" << endl; abort(); }
-    vector<double> *resultMatrix = new vector<double>(matrix->size());
-    cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, 3, matrix->size()/3, 3, 1, &rotationMatrix[0], 3, &(*matrix)[0], 3, 0, &(*resultMatrix)[0], 3);
-    delete matrix; matrix = resultMatrix;
+    vector<double> resultMatrix(matrix.size(), 0);
+    cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, 3, matrix.size()/3, 3, 1, &rotationMatrix[0], 3, &matrix[0], 3, 0, &resultMatrix[0], 3);
+    matrix = resultMatrix;
 }
 
 void generateCovarMatrixFromMolecule(vector<double> &matrix, OBMol &molecule) {
@@ -93,7 +92,7 @@ void generateCovarMatrixFromMolecule(vector<double> &matrix, OBMol &molecule) {
 
     double cXX = 0, cYY = 0, cZZ = 0, cXY = 0, cXZ = 0, cYZ = 0;
     for (unsigned int i=0; i < 3 * molecule.NumAtoms(); i+=3) {
-        double atomWeight = molecule.GetAtom(i/3)->GetAtomicMass();
+        double atomWeight = molecule.GetAtom(i/3 + 1)->GetAtomicMass(); // getAtoms is 1-based instead of 0-based
         cXX += pow(moleculeCoords[i] - uX, 2) * atomWeight;
         cYY += pow(moleculeCoords[i+1] - uY, 2) * atomWeight;
         cZZ += pow(moleculeCoords[i+2] - uZ, 2) * atomWeight;
@@ -101,8 +100,8 @@ void generateCovarMatrixFromMolecule(vector<double> &matrix, OBMol &molecule) {
         cXZ += (moleculeCoords[i] - uX) * (moleculeCoords[i+2] - uZ) * atomWeight;
         cYZ += (moleculeCoords[i+1] - uY) * (moleculeCoords[i+2] - uZ) * atomWeight;
     }
-    
-    matrix.resize(9);
+
+    matrix.clear(); matrix.resize(9);
     matrix[0] = cXX; 
     matrix[1] = matrix[3] = cXY; 
     matrix[2] = matrix[6] = cXZ; 
@@ -113,7 +112,128 @@ void generateCovarMatrixFromMolecule(vector<double> &matrix, OBMol &molecule) {
     for (unsigned int i=0; i < matrix.size(); i++) matrix[i] /= molecule.GetMolWt();
 }
 
+void generateOptimalRotationMatrix(vector<double> &rotMatrix, unsigned int optCode, const vector<double> &U, const vector<double> &V) {
+    if (U.size() != 9 or V.size() != 9 or optCode > 3) { cerr << "ERROR: SIZE OF U OR V IS INCORRECT, OR OPTCODE IS WRONG; EXITING" << endl; abort(); }
+    rotMatrix.clear(); rotMatrix.resize(9);
 
+    if (optCode == 0) { 
+        cblas_dgemm(CblasColMajor, CblasNoTrans, CblasTrans, 3, 3, 3, 1, &V[0], 3, &U[0], 3, 0, &rotMatrix[0], 3);
+    } else {
+        vector<double> tmpU(U);
+        if (optCode == 3) {
+            for (int i=0; i<6; i++) tmpU[i] = -tmpU[i];
+        } else if (optCode == 2) {
+            for (int i=0; i<3; i++) tmpU[i] = -tmpU[i];
+            for (int i=6; i<tmpU.size(); i++) tmpU[i] = -tmpU[i];
+        } else if (optCode == 1) {
+            for (int i=3; i<tmpU.size(); i++) tmpU[i] = -tmpU[i];
+        }  
+        cblas_dgemm(CblasColMajor, CblasNoTrans, CblasTrans, 3, 3, 3, 1, &V[0], 3, &tmpU[0], 3, 0, &rotMatrix[0], 3);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+void sampleTest(OBMol &molecule) {
+    cout << "BESGIN TEST" << endl;
+    vector<double> abc;
+    generateCovarMatrixFromMolecule(abc, molecule);
+    for (int i=0; i<abc.size(); i+=3) { cout << "{" << abc[i] << "," << abc[i+1] << "," << abc[i+2] << "},"; } cout << endl;
+    vector<double> eigenvectors, eigenvalues;
+    generateEigenMatrix(eigenvectors, eigenvalues, abc);
+
+    for (int i=0; i<eigenvalues.size(); i++) cout << eigenvalues[i] << " ";
+        cout << endl;
+    for (int i=0; i<eigenvectors.size(); i++) cout << eigenvectors[i] << " ";
+        cout << endl;
+    cout << "END TEST" << endl << endl;
+}
+
+
+void testEigen() {
+    double xyz[] = {7, 9, 2, 9, 1, 6, 2, 6, 10}; 
+    vector<double> sample(xyz, &xyz[9]);
+    for (int i=0; i<sample.size(); i++) cout << sample[i] << " ";
+        cout << endl;
+
+    vector<double> eigenvectors, eigenvalues;
+    generateEigenMatrix(eigenvectors, eigenvalues, sample);
+    for (int i=0; i<eigenvalues.size(); i++) cout << eigenvalues[i] << " ";
+        cout << endl;
+    for (int i=0; i<eigenvectors.size(); i++) cout << eigenvectors[i] << " ";
+        cout << endl << endl << endl << endl;
+}
+
+void testGenRot() {
+    double a[] = {1, 2, 3, 2, 4, 5, 3, 5, 6}; 
+    vector<double> vA(a, &a[9]);
+    double b[] = {7, 9, 2, 2, 1, 0, 2, 6, 10}; 
+    vector<double> vB(b, &b[9]);
+    vector<double> c;
+    generateOptimalRotationMatrix(c, 3, vA, vB);
+    cout << endl << endl;
+    for (int i=0; i<vA.size(); i++) cout << vA[i] << " ";
+        cout << endl;
+    for (int i=0; i<vB.size(); i++) cout << vB[i] << " ";
+        cout << endl;
+    for (int i=0; i<c.size(); i++) cout << c[i] << " ";
+        cout << endl;
+}
+
+void testRot() {
+    cout << "ROTATE TEST" << endl;
+    double a[] = {1, 2, 3, 2, 4, 5, 3, 5, 6}; 
+    vector<double> vA(a, &a[9]);
+    double b[] = {7, 9, 2, 2, 1, 0, 2, 6, 10}; 
+    vector<double> vB(b, &b[9]);
+    vector<double> c;
+    for (int i=0; i<vA.size(); i++) cout << vA[i] << " ";
+        cout << endl;
+    for (int i=0; i<vB.size(); i++) cout << vB[i] << " ";
+        cout << endl;
+    rotate3DMatrixCoordinates(vA, vB);
+    for (int i=0; i<vA.size(); i++) cout << vA[i] << " ";
+        cout << endl;
+    for (int i=0; i<vB.size(); i++) cout << vB[i] << " ";
+        cout << endl;
+    cout << "ROTATE TEST" << endl;
+}
+
+
+void testAll(OBMol &molA, OBMol &molB) {
+    vector<double> coordA, coordB, comA, comB, covA, covB, eVectA, eVectB, eValA, eValB, R0, Rx, Ry, Rz;
+    generateCoordsMatrixFromMolecule(coordA, molA);
+    generateCoordsMatrixFromMolecule(coordB, molB);
+
+    getMoleculeCenterCoords(comA, molA);
+    getMoleculeCenterCoords(comB, molB);
+
+    generateCovarMatrixFromMolecule(covA, molA);
+    generateCovarMatrixFromMolecule(covB, molB);
+
+    generateEigenMatrix(eVectA, eValA, covA);
+    generateEigenMatrix(eVectB, eValB, covB);
+
+    generateOptimalRotationMatrix(R0, 0, eVectA, eVectB);
+    generateOptimalRotationMatrix(Rx, 1, eVectA, eVectB);
+    generateOptimalRotationMatrix(Ry, 2, eVectA, eVectB);
+    generateOptimalRotationMatrix(Rz, 3, eVectA, eVectB);
+
+
+    // the transformation itself, R(p - p0) + q0
+    translate3DMatrixCoordinates(coordA, -comA[0], -comA[1], -comA[2]);
+    rotate3DMatrixCoordinates(coordA, R0);
+    translate3DMatrixCoordinates(coordA, comB[0], comB[1], comB[2]);
+
+
+}
 
 
 int main (int argc, char **argv) {
@@ -122,18 +242,6 @@ int main (int argc, char **argv) {
         return 1;
     }
 
-
-    double xyz[] = {1, 2, 3, 2, 4, 5, 3, 5, 6}; 
-    vector<double> sample(xyz, &xyz[9]);
-    for (int i=0; i<sample.size(); i++) cout << sample[i] << " ";
-        cout << endl << endl << endl << endl;
-
-    vector<double> eigenvectors, eigenvalues;
-    generateEigenMatrix(eigenvectors, eigenvalues, sample);
-    for (int i=0; i<eigenvalues.size(); i++) cout << eigenvalues[i] << " ";
-        cout << endl << endl << endl << endl;
-    for (int i=0; i<eigenvectors.size(); i++) cout << eigenvectors[i] << " ";
-        cout << endl << endl << endl << endl;
 
 
     OBConversion obconversion;
@@ -147,6 +255,11 @@ int main (int argc, char **argv) {
 
     cout << "VOL OVERLAP = " << volumeOverlap (mol, mol2) << endl;
 
+
+    sampleTest(mol);
+    testAll(mol, mol2);
+
+
     while (notatend) {
         std::cout << "Molecular Weight: " << mol.GetMolWt() << std::endl;
         for (OBAtomIterator iter = mol.BeginAtoms(); iter != mol.EndAtoms(); iter++) {
@@ -156,6 +269,9 @@ int main (int argc, char **argv) {
         notatend = obconversion.Read(&mol);
     }
     
+    testRot();
+    //testEigen();
+
     return 0;
 }
 
