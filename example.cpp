@@ -52,7 +52,8 @@ void generateCoordsMatrixFromMolecule(vector<double> &matrix, OBMol &molecule) {
 }
 
 void saveCoordsMatrixToMolecule(OBMol &molecule, vector<double> &matrix) {
-    //if (matrix.size()/3 != )
+    if (matrix.size() != molecule.NumAtoms() * 3) { cerr << "ERROR: INCORRECT MATCHING OF NUMBER OF COORDINATES; EXITING" << endl; abort(); }
+    molecule.SetCoordinates(&matrix[0]);
 }
 
 
@@ -229,9 +230,16 @@ void testAll(OBMol &molA, OBMol &molB) {
 
     // the transformation itself, R(p - p0) + q0
     translate3DMatrixCoordinates(coordA, -comA[0], -comA[1], -comA[2]);
-    rotate3DMatrixCoordinates(coordA, R0);
+    rotate3DMatrixCoordinates(coordA, Rx);
     translate3DMatrixCoordinates(coordA, comB[0], comB[1], comB[2]);
 
+    saveCoordsMatrixToMolecule(molA, coordA);
+    OBConversion obconversion;
+    obconversion.SetOutFormat("sdf");
+
+
+    obconversion.WriteFile (&molA, "newA.sdf");
+    cout << "OOOOKKKKKKK" << endl;
 
 }
 
