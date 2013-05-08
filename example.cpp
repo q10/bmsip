@@ -10,42 +10,29 @@
 #else
     #include <cblas.h>
     #include <clapack.h>
+    #include <f2c.h>
+    #include <blaswrap.h>
 #endif
 
 using namespace std;
 using namespace OpenBabel;
 
-
-double volumeOverlap (OBMol &moleculeA, OBMol &moleculeB) {
-    double totalVolumeOverlap = 0;
-
-    const double constP = 2.0 * M_SQRT2;
-    const double A = 4.0 * M_PI * constP / 3.0;
-    const double B = -M_PI * pow(0.75 * constP * M_1_PI, 2.0/3.0);
-
-
-    for (OBAtomIterator iterA = moleculeA.BeginAtoms(); iterA != moleculeA.EndAtoms(); iterA++) {
-        double *coordsOfAtomI = (*iterA)->GetCoordinate();
-        double vdwRA = etab.GetVdwRad((*iterA)->GetAtomicNum());
-
-        for (OBAtomIterator iterB = moleculeB.BeginAtoms(); iterB != moleculeB.EndAtoms(); iterB++) {
-            double *coordsOfAtomJ = (*iterB)->GetCoordinate();
-            double vdwRB = etab.GetVdwRad((*iterB)->GetAtomicNum());
-            
-            double sqvA = vdwRA * vdwRA;
-            double sqvB = vdwRB * vdwRB;
-            double C = sqvA + sqvB;
-
-            double distanceSquared = pow(coordsOfAtomJ[0]-coordsOfAtomI[0], 2) + pow(coordsOfAtomJ[1]-coordsOfAtomI[1], 2) + pow(coordsOfAtomJ[2]-coordsOfAtomI[2], 2);
-
-
-            totalVolumeOverlap += A * pow(sqvA * sqvB  / C, 1.5) * exp(B * distanceSquared / C );
+void printMatrix(vector<double> &matrix, unsigned int rows, unsigned int columns, bool columnMajorOrder = true) {
+    if (matrix.size() != rows * columns) { cerr << "ERROR: INCORRECT MATCHING OF ROWS AND COLUMNS WITH ACTUAL VECTOR SIZE; EXITING" << endl; abort(); }
+    if (columnMajorOrder) {
+        for (unsigned int i=0; i < rows; i++) {
+            for (unsigned int j=i; j < matrix.size(); j+=rows)
+                cout << matrix[j] << " ";                
+            cout << endl;
+        }
+    } else {
+        for (unsigned int i=0; i < matrix.size(); i+=columns) {
+            for (unsigned int j=0; j < columns; j++)
+                cout << matrix[i + j] << " ";
+            cout << endl;
         }
     }
-    return totalVolumeOverlap;
 }
-
-
 
 void generateCoordsMatrixFromMolecule(vector<double> &matrix, OBMol &molecule) {     // generates column-order matrix of coordinates
     matrix.clear(); matrix.insert(matrix.end(), molecule.GetCoordinates(), &molecule.GetCoordinates()[3*molecule.NumAtoms()]);
@@ -56,6 +43,48 @@ void saveCoordsMatrixToMolecule(OBMol &molecule, vector<double> &matrix) {
     molecule.SetCoordinates(&matrix[0]);
 }
 
+void generateAtomicNumbersListFromMolecule(vector<double> &numList, OBMol &molecule) {
+    numList.clear();
+    for (OBAtomIterator iter = molecule.BeginAtoms(); iter != molecule.EndAtoms(); iter++)
+        numList.push_back((*iter)->GetAtomicNum());
+}
+
+
+double volumeOverlap(vector<double> &coordsMoleculeA, vector<double> &coordsMoleculeB, vector<double> &atomicNumbersA, vector<double> &atomicNumbersB) {
+    if (coordsMoleculeA.size() != atomicNumbersA.size() * 3 or coordsMoleculeB.size() != atomicNumbersB.size() * 3) { cerr << "ERROR: INCORRECT MATCHING OF NUMBER OF COORDINATES AND ATOMIC NUMBERS; EXITING" << endl; abort(); }
+
+    double totalVolumeOverlap = 0;
+    const double constP = 2.0 * M_SQRT2;
+    const double A = 4.0 * M_PI * constP / 3.0;
+    const double B = -M_PI * pow(0.75 * constP * M_1_PI, 2.0/3.0);
+
+    for (unsigned int i=0; i < coordsMoleculeA.size(); i+=3) {
+        double vdwRA = etab.GetVdwRad(atomicNumbersA[i]);
+
+        for (unsigned int j=0; j < coordsMoleculeB.size(); j+=3) {
+            double vdwRB = etab.GetVdwRad(atomicNumbersB[j]);
+            
+            double sqvA = vdwRA * vdwRA;
+            double sqvB = vdwRB * vdwRB;
+            double C = sqvA + sqvB;
+
+            double distanceSquared = pow(coordsMoleculeB[j]-coordsMoleculeA[i], 2) + pow(coordsMoleculeB[j+1]-coordsMoleculeA[i+1], 2) + pow(coordsMoleculeB[j+2]-coordsMoleculeA[i+2], 2);
+
+            totalVolumeOverlap += A * pow(sqvA * sqvB  / C, 1.5) * exp(B * distanceSquared / C );
+        }
+    }
+    return totalVolumeOverlap;
+}
+
+
+double volumeOverlap (OBMol &moleculeA, OBMol &moleculeB) {
+    vector<double> coordsA, coordsB, atomNumsA, atomNumsB;
+    generateCoordsMatrixFromMolecule(coordsA, moleculeA);
+    generateCoordsMatrixFromMolecule(coordsB, moleculeB);
+    generateAtomicNumbersListFromMolecule(atomNumsA, moleculeA);
+    generateAtomicNumbersListFromMolecule(atomNumsB, moleculeB);
+    return volumeOverlap(coordsA, coordsB, atomNumsA, atomNumsB); 
+}
 
 void generateEigenMatrix(vector<double> &eigenvectors, vector<double> &eigenvalues, const vector<double> &matrix) {
     // http://www.netlib.org/lapack/explore-html/d2/d8a/group__double_s_yeigen.html#gaeed8a131adf56eaa2a9e5b1e0cce5718  |  http://www.ualberta.ca/~kbeach/lapack.html
@@ -135,6 +164,45 @@ void generateOptimalRotationMatrix(vector<double> &rotMatrix, unsigned int optCo
 
 
 
+void findBestInitialOrientation(OBMol &moleculeA, OBMol &moleculeB) {
+    vector<double> coordA, coordB, atomNumsA, atomNumsB, comA, comB, covA, covB, eVectA, eVectB, eValA, eValB, R0, Rx, Ry, Rz;
+    map<int, string> RTable; RTable[0] = "R0"; RTable[1] = "Rx"; RTable[2] = "Ry"; RTable[3] = "Rz";
+
+    generateCoordsMatrixFromMolecule(coordA, moleculeA);
+    generateCoordsMatrixFromMolecule(coordB, moleculeB);
+
+    generateAtomicNumbersListFromMolecule(atomNumsA, moleculeA);
+    generateAtomicNumbersListFromMolecule(atomNumsB, moleculeB);
+
+    getMoleculeCenterCoords(comA, moleculeA);
+    getMoleculeCenterCoords(comB, moleculeB);
+
+    generateCovarMatrixFromMolecule(covA, moleculeA);
+    generateCovarMatrixFromMolecule(covB, moleculeB);
+
+    generateEigenMatrix(eVectA, eValA, covA);
+    generateEigenMatrix(eVectB, eValB, covB);
+
+    generateOptimalRotationMatrix(R0, 0, eVectA, eVectB);
+    generateOptimalRotationMatrix(Rx, 1, eVectA, eVectB);
+    generateOptimalRotationMatrix(Ry, 2, eVectA, eVectB);
+    generateOptimalRotationMatrix(Rz, 3, eVectA, eVectB);
+
+
+    // the transformation itself, R(p - p0) + q0
+    translate3DMatrixCoordinates(coordA, -comA[0], -comA[1], -comA[2]);
+    rotate3DMatrixCoordinates(coordA, Rx);
+    translate3DMatrixCoordinates(coordA, comB[0], comB[1], comB[2]);
+
+    saveCoordsMatrixToMolecule(moleculeA, coordA);
+    OBConversion obconversion;
+    obconversion.SetOutFormat("sdf");
+
+
+    obconversion.WriteFile (&moleculeA, "newA.sdf");
+    cout << "OOOOKKKKKKK" << endl;
+
+}
 
 
 
@@ -204,44 +272,13 @@ void testRot() {
         cout << endl;
     for (int i=0; i<vB.size(); i++) cout << vB[i] << " ";
         cout << endl;
+    vB.push_back(199);
+    cout << endl;
+    printMatrix(vB, 5, 2);
     cout << "ROTATE TEST" << endl;
 }
 
 
-void testAll(OBMol &molA, OBMol &molB) {
-    vector<double> coordA, coordB, comA, comB, covA, covB, eVectA, eVectB, eValA, eValB, R0, Rx, Ry, Rz;
-    generateCoordsMatrixFromMolecule(coordA, molA);
-    generateCoordsMatrixFromMolecule(coordB, molB);
-
-    getMoleculeCenterCoords(comA, molA);
-    getMoleculeCenterCoords(comB, molB);
-
-    generateCovarMatrixFromMolecule(covA, molA);
-    generateCovarMatrixFromMolecule(covB, molB);
-
-    generateEigenMatrix(eVectA, eValA, covA);
-    generateEigenMatrix(eVectB, eValB, covB);
-
-    generateOptimalRotationMatrix(R0, 0, eVectA, eVectB);
-    generateOptimalRotationMatrix(Rx, 1, eVectA, eVectB);
-    generateOptimalRotationMatrix(Ry, 2, eVectA, eVectB);
-    generateOptimalRotationMatrix(Rz, 3, eVectA, eVectB);
-
-
-    // the transformation itself, R(p - p0) + q0
-    translate3DMatrixCoordinates(coordA, -comA[0], -comA[1], -comA[2]);
-    rotate3DMatrixCoordinates(coordA, Rx);
-    translate3DMatrixCoordinates(coordA, comB[0], comB[1], comB[2]);
-
-    saveCoordsMatrixToMolecule(molA, coordA);
-    OBConversion obconversion;
-    obconversion.SetOutFormat("sdf");
-
-
-    obconversion.WriteFile (&molA, "newA.sdf");
-    cout << "OOOOKKKKKKK" << endl;
-
-}
 
 
 int main (int argc, char **argv) {
@@ -265,7 +302,7 @@ int main (int argc, char **argv) {
 
 
     sampleTest(mol);
-    testAll(mol, mol2);
+    findBestInitialOrientation(mol, mol2);
 
 
     while (notatend) {
@@ -282,6 +319,42 @@ int main (int argc, char **argv) {
 
     return 0;
 }
+
+/*
+
+// older implementation of volumeOverlap
+
+double volumeOverlap (OBMol &moleculeA, OBMol &moleculeB) {
+    double totalVolumeOverlap = 0;
+
+    const double constP = 2.0 * M_SQRT2;
+    const double A = 4.0 * M_PI * constP / 3.0;
+    const double B = -M_PI * pow(0.75 * constP * M_1_PI, 2.0/3.0);
+
+
+    for (OBAtomIterator iterA = moleculeA.BeginAtoms(); iterA != moleculeA.EndAtoms(); iterA++) {
+        double *coordsOfAtomI = (*iterA)->GetCoordinate();
+        double vdwRA = etab.GetVdwRad((*iterA)->GetAtomicNum());
+
+        for (OBAtomIterator iterB = moleculeB.BeginAtoms(); iterB != moleculeB.EndAtoms(); iterB++) {
+            double *coordsOfAtomJ = (*iterB)->GetCoordinate();
+            double vdwRB = etab.GetVdwRad((*iterB)->GetAtomicNum());
+            
+            double sqvA = vdwRA * vdwRA;
+            double sqvB = vdwRB * vdwRB;
+            double C = sqvA + sqvB;
+
+            double distanceSquared = pow(coordsOfAtomJ[0]-coordsOfAtomI[0], 2) + pow(coordsOfAtomJ[1]-coordsOfAtomI[1], 2) + pow(coordsOfAtomJ[2]-coordsOfAtomI[2], 2);
+
+
+            totalVolumeOverlap += A * pow(sqvA * sqvB  / C, 1.5) * exp(B * distanceSquared / C );
+        }
+    }
+    return totalVolumeOverlap;
+}
+*/
+
+
 
 /*
    ifstream ifs(argv[1]);
