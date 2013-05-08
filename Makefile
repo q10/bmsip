@@ -17,7 +17,7 @@ endif
 all: example
 
 example: example.o
-	$(CXX) $(LDFLAGS) example.o -o example
+	$(CXX) -o example *.o $(LDFLAGS) 
 
 example.o: example.cpp
 	$(CXX) $(CFLAGS) example.cpp
