@@ -1,5 +1,4 @@
 #include <iostream>
-#include <limits>
 #include <cmath>
 #include <openbabel/obconversion.h>
 #include <openbabel/mol.h>
@@ -7,11 +6,13 @@
 
 #ifdef __APPLE__
     #include <Accelerate/Accelerate.h>
+    #define FORTRANINT int
 #else
-    #include <cblas.h>
-    #include <clapack.h>
     #include <f2c.h>
     #include <blaswrap.h>
+    #include <cblas.h>
+    #include <clapack.h>
+    #define FORTRANINT long int
 #endif
 
 using namespace std;
@@ -88,10 +89,10 @@ double volumeOverlap (OBMol &moleculeA, OBMol &moleculeB) {
 
 void generateEigenMatrix(vector<double> &eigenvectors, vector<double> &eigenvalues, const vector<double> &matrix) {
     // http://www.netlib.org/lapack/explore-html/d2/d8a/group__double_s_yeigen.html#gaeed8a131adf56eaa2a9e5b1e0cce5718  |  http://www.ualberta.ca/~kbeach/lapack.html
-    int matrixOrder = 3;
+    FORTRANINT matrixOrder = 3;
     eigenvalues.clear(); eigenvalues.resize(3, 0);
     eigenvectors.clear(); eigenvectors = matrix;
-    int lwork = 102, info; vector<double> work(lwork); // LAPACK parameters; work[0] will show the optimum value for lwork when call completes
+    FORTRANINT lwork = 102, info; vector<double> work(lwork); // LAPACK parameters; work[0] will show the optimum value for lwork when call completes
     if (dsyev_("V", "L", &matrixOrder, &eigenvectors[0], &matrixOrder, &eigenvalues[0], &work[0], &lwork, &info)) { cerr << "ERROR: NO MATRIX INITIALIZED IN POINTER; EXITING" << endl; abort(); }
 }
 
