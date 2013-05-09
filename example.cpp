@@ -228,7 +228,10 @@ void findBestInitialOrientation(OBMol &moleculeA, OBMol &moleculeB) {
     cout << "\nThe best initial orientation matrix is: " << RTable[bestRcode] << ", which produces a volume overlap of " << bestVolumeOverlap << endl;
     printMatrix(bestR, 3, 3);
     cout << "\nRESULTING A:" << endl; printMatrix(bestA, bestA.size() / 3, 3, false); 
-    cout << "\nEND INITIAL ORIENTATION SEARCH\n\n";
+    cout << "\nEND INITIAL ORIENTATION SEARCH.  SAVING COORDINATES TO MOLECULE A...\n\n";
+    saveCoordsMatrixToMolecule(moleculeA, bestA);
+
+
 /*
     generateOptimalRotationMatrix(Rx, 1, eVectA, eVectB);
     generateOptimalRotationMatrix(Ry, 2, eVectA, eVectB);
@@ -245,11 +248,16 @@ void findBestInitialOrientation(OBMol &moleculeA, OBMol &moleculeB) {
     obconversion.SetOutFormat("sdf");
 
 
-    obconversion.WriteFile (&moleculeA, "newA.sdf");
+    obconversion.WriteFile(&moleculeA, "newA.sdf");
     cout << "OOOOKKKKKKK" << endl;
 */
 }
 
+void writeMoleculeToFile(const string &fileName, const string &format, OBMol &molecule) {
+    OBConversion obconversion;
+    obconversion.SetOutFormat(format.c_str());
+    obconversion.WriteFile(&molecule, fileName.c_str());
+}
 
 
 
@@ -322,8 +330,8 @@ void testRot() {
 }
 
 int main (int argc, char **argv) {
-    if(argc < 3) {
-        cout << "Usage: ProgrameName InputFileName InputFileName2\n";
+    if(argc < 4) {
+        cout << "Usage: ProgrameName InputFileName InputFileName2 OutputFileName\n";
         return 1;
     }
 
@@ -334,6 +342,8 @@ int main (int argc, char **argv) {
     cout << "VOL OVERLAP = " << volumeOverlap(molecules[0], molecules[1]) << endl;
 
     findBestInitialOrientation(molecules[0], molecules[1]);
+    cout << "WRITING MOLECULE A TO FILE '" << argv[3] << "' (WILL OVERWRITE EXISTING FILE IF ANY)...\n";
+    writeMoleculeToFile(argv[3], "sdf", molecules[0]);
 
 
     //sampleTest(mol);
