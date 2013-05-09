@@ -35,6 +35,23 @@ void printMatrix(vector<double> &matrix, unsigned int rows, unsigned int columns
     }
 }
 
+void printMoleculeCoords(OBMol &molecule) {
+    for (OBAtomIterator iter = molecule.BeginAtoms(); iter != molecule.EndAtoms(); iter++) cout << (*iter)->GetVector() << endl;
+}
+
+unsigned int importMoleculesFromFile(vector<OBMol> &moleculesList, const string &fileName, const string &format) { // does not clear list, only appends new molecules to it
+    OBConversion obconversion;
+    obconversion.SetInFormat(format.c_str());
+
+    unsigned int numMoleculesInFile = 0;
+    OBMol mol; bool notAtEnd = obconversion.ReadFile(&mol, fileName.c_str());
+    while (notAtEnd) {
+        numMoleculesInFile++;
+        moleculesList.push_back(mol);
+        mol.Clear(); notAtEnd = obconversion.Read(&mol);
+    }
+}
+
 void generateCoordsMatrixFromMolecule(vector<double> &matrix, OBMol &molecule) {     // generates column-order matrix of coordinates
     matrix.clear(); matrix.insert(matrix.end(), molecule.GetCoordinates(), &molecule.GetCoordinates()[3*molecule.NumAtoms()]);
 }
@@ -93,7 +110,8 @@ void generateEigenMatrix(vector<double> &eigenvectors, vector<double> &eigenvalu
     eigenvalues.clear(); eigenvalues.resize(3, 0);
     eigenvectors.clear(); eigenvectors = matrix;
     FORTRANINT lwork = 102, info; vector<double> work(lwork); // LAPACK parameters; work[0] will show the optimum value for lwork when call completes
-    if (dsyev_("V", "L", &matrixOrder, &eigenvectors[0], &matrixOrder, &eigenvalues[0], &work[0], &lwork, &info)) { cerr << "ERROR: NO MATRIX INITIALIZED IN POINTER; EXITING" << endl; abort(); }
+    int lapackErrCode = dsyev_("V", "L", &matrixOrder, &eigenvectors[0], &matrixOrder, &eigenvalues[0], &work[0], &lwork, &info);
+    if (lapackErrCode) { cerr << "WARNING: LAPACK DSYEV() RETURNED NON-ZERO ERROR CODE " << lapackErrCode << endl; }
 }
 
 void getMoleculeCenterCoords(vector<double> &centerCoords, OBMol &molecule) {
@@ -168,12 +186,14 @@ void generateOptimalRotationMatrix(vector<double> &rotMatrix, unsigned int optCo
 void findBestInitialOrientation(OBMol &moleculeA, OBMol &moleculeB) {
     cout << endl << "BEGIN INITIAL ORIENTATION SEARCH" << endl
         << "Searching for the best initial orientation matrix..." << endl;
-    vector<double> coordA, coordB, comA, comB, covA, covB, eVectA, eVectB, eValA, eValB, tempR, bestR;
+    vector<double> coordA, coordB, comA, comB, covA, covB, eVectA, eVectB, eValA, eValB, tempR, bestR, bestA;
     vector<int> atomicNumsA, atomicNumsB;
     map<int, string> RTable; RTable[0] = "R0"; RTable[1] = "Rx"; RTable[2] = "Ry"; RTable[3] = "Rz";
 
     generateCoordsMatrixFromMolecule(coordA, moleculeA);
     generateCoordsMatrixFromMolecule(coordB, moleculeB);
+    cout << "\nORIGINAL COORDS OF MOLECULE A:" << endl; printMoleculeCoords(moleculeA);
+    cout << "\nORIGINAL COORDS OF MOLECULE B:" << endl; printMoleculeCoords(moleculeB);
 
     generateAtomicNumbersListFromMolecule(atomicNumsA, moleculeA);
     generateAtomicNumbersListFromMolecule(atomicNumsB, moleculeB);
@@ -201,12 +221,14 @@ void findBestInitialOrientation(OBMol &moleculeA, OBMol &moleculeB) {
             bestRcode = i;
             bestVolumeOverlap = curVolOverlap;
             bestR = tempR;
+            bestA = tempA;
         }
     }
 
-    cout << "The best initial orientation matrix is: " << RTable[bestRcode] << ", which produced a volume overlap of " << bestVolumeOverlap << endl;
+    cout << "\nThe best initial orientation matrix is: " << RTable[bestRcode] << ", which produces a volume overlap of " << bestVolumeOverlap << endl;
     printMatrix(bestR, 3, 3);
-    cout << "END INITIAL ORIENTATION SEARCH" << endl << endl;
+    cout << "\nRESULTING A:" << endl; printMatrix(bestA, bestA.size() / 3, 3, false); 
+    cout << "\nEND INITIAL ORIENTATION SEARCH\n\n";
 /*
     generateOptimalRotationMatrix(Rx, 1, eVectA, eVectB);
     generateOptimalRotationMatrix(Ry, 2, eVectA, eVectB);
@@ -232,8 +254,6 @@ void findBestInitialOrientation(OBMol &moleculeA, OBMol &moleculeB) {
 
 
 
-
-
 void sampleTest(OBMol &molecule) {
     cout << "BESGIN TEST" << endl;
     vector<double> abc;
@@ -248,7 +268,6 @@ void sampleTest(OBMol &molecule) {
         cout << endl;
     cout << "END TEST" << endl << endl;
 }
-
 
 void testEigen() {
     double xyz[] = {7, 9, 2, 9, 1, 6, 2, 6, 10}; 
@@ -302,102 +321,24 @@ void testRot() {
     cout << "END ROTATE TEST" << endl;
 }
 
-
-
-
 int main (int argc, char **argv) {
     if(argc < 3) {
         cout << "Usage: ProgrameName InputFileName InputFileName2\n";
         return 1;
     }
 
+    vector<OBMol> molecules;
+    importMoleculesFromFile(molecules, argv[1], "sdf");
+    importMoleculesFromFile(molecules, argv[2], "sdf");
+
+    cout << "VOL OVERLAP = " << volumeOverlap(molecules[0], molecules[1]) << endl;
+
+    findBestInitialOrientation(molecules[0], molecules[1]);
 
 
-    OBConversion obconversion;
-    obconversion.SetInFormat("sdf");
-
-    OBMol mol2;
-    obconversion.ReadFile(&mol2, argv[2]);
-
-    OBMol mol;
-    bool notatend = obconversion.ReadFile(&mol, argv[1]);
-
-    cout << "VOL OVERLAP = " << volumeOverlap (mol, mol2) << endl;
-
-
-    sampleTest(mol);
-    findBestInitialOrientation(mol, mol2);
-
-
-    while (notatend) {
-        std::cout << "Molecular Weight: " << mol.GetMolWt() << std::endl;
-        for (OBAtomIterator iter = mol.BeginAtoms(); iter != mol.EndAtoms(); iter++) {
-            cout << (*iter)->GetVector() << ", " << (*iter)->GetCoordinate()[0] << endl;
-        }
-        mol.Clear();
-        notatend = obconversion.Read(&mol);
-    }
-    
-    testRot();
+    //sampleTest(mol);
+    //testRot();
     //testEigen();
 
     return 0;
 }
-
-/*
-
-// older implementation of volumeOverlap
-
-double volumeOverlap (OBMol &moleculeA, OBMol &moleculeB) {
-    double totalVolumeOverlap = 0;
-
-    const double constP = 2.0 * M_SQRT2;
-    const double A = 4.0 * M_PI * constP / 3.0;
-    const double B = -M_PI * pow(0.75 * constP * M_1_PI, 2.0/3.0);
-
-
-    for (OBAtomIterator iterA = moleculeA.BeginAtoms(); iterA != moleculeA.EndAtoms(); iterA++) {
-        double *coordsOfAtomI = (*iterA)->GetCoordinate();
-        double vdwRA = etab.GetVdwRad((*iterA)->GetAtomicNum());
-
-        for (OBAtomIterator iterB = moleculeB.BeginAtoms(); iterB != moleculeB.EndAtoms(); iterB++) {
-            double *coordsOfAtomJ = (*iterB)->GetCoordinate();
-            double vdwRB = etab.GetVdwRad((*iterB)->GetAtomicNum());
-            
-            double sqvA = vdwRA * vdwRA;
-            double sqvB = vdwRB * vdwRB;
-            double C = sqvA + sqvB;
-
-            double distanceSquared = pow(coordsOfAtomJ[0]-coordsOfAtomI[0], 2) + pow(coordsOfAtomJ[1]-coordsOfAtomI[1], 2) + pow(coordsOfAtomJ[2]-coordsOfAtomI[2], 2);
-
-
-            totalVolumeOverlap += A * pow(sqvA * sqvB  / C, 1.5) * exp(B * distanceSquared / C );
-        }
-    }
-    return totalVolumeOverlap;
-}
-*/
-
-
-
-/*
-   ifstream ifs(argv[1]);
-    if(!ifs) {
-        cout << "Cannot open input file\n";
-        return 1;
-    }
-
-    ofstream ofs(argv[2]);
-    if(!ofs) {
-        cout << "Cannot open output file\n";
-        return 1;
-    }
-    OpenBabel::OBConversion conv(&ifs, &ofs);
-    if(!conv.SetInAndOutFormats("CML","MOL")) {
-        cout << "Formats not available\n";
-        return 1;
-    }
-    int n = conv.Convert();
-    cout << n << " molecules converted\n";
-
-*/
