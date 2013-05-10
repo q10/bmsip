@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <openbabel/obconversion.h>
+#include <openbabel/conformersearch.h>
 #include <openbabel/mol.h>
 #include <openbabel/data.h>
 
@@ -51,6 +52,21 @@ unsigned int importMoleculesFromFile(vector<OBMol> &moleculesList, const string 
         mol.Clear(); notAtEnd = obconversion.Read(&mol);
     }
 }
+
+void writeMoleculeToFile(const string &fileName, const string &format, OBMol &molecule, bool rewriteFile=false) {
+    ios_base::openmode fileMode = rewriteFile ? ios::out : (ios::out|ios::app);
+    std::ofstream ofs(fileName.c_str(), fileMode);
+    OBConversion obconversion; obconversion.SetOutFormat(format.c_str());
+    obconversion.Write(&molecule, &ofs);  // obconversion.WriteFile(&molecule, fileName.c_str());
+}
+
+void writeAllMoleculeConformersToFile(const string &fileName, const string &format, OBMol &molecule) {
+    for (int i = molecule.NumConformers()-1; i >= 0; i--) { // DO NOT USE UNSIGNED INT i!!!
+        molecule.SetConformer(i);
+        writeMoleculeToFile(fileName, format, molecule);
+    }
+}
+
 
 void generateCoordsMatrixFromMolecule(vector<double> &matrix, OBMol &molecule) {     // generates column-order matrix of coordinates
     matrix.clear(); matrix.insert(matrix.end(), molecule.GetCoordinates(), &molecule.GetCoordinates()[3*molecule.NumAtoms()]);
@@ -253,11 +269,42 @@ void findBestInitialOrientation(OBMol &moleculeA, OBMol &moleculeB) {
 */
 }
 
-void writeMoleculeToFile(const string &fileName, const string &format, OBMol &molecule) {
-    OBConversion obconversion;
-    obconversion.SetOutFormat(format.c_str());
-    obconversion.WriteFile(&molecule, fileName.c_str());
+
+void generateConformers(OBMol &molecule) {
+    OBConformerSearch cs;
+    cs.Setup(molecule); // numConformers 30 // numChildren 5 // mutability 5 // convergence 25
+    //cs.SetScore(new OBEnergyConformerScore);
+    cs.Search();
+
+/*
+    cout << "Setting up conformer searching..." << endl
+            << "   conformers:  30" << endl
+            << "   children:    5" << endl
+            << "   mutability:  5" << endl
+            << "   convergence: 25" << endl;
+
+    // Print the rotor keys
+    RotorKeys keys = cs.GetRotorKeys();
+    for (RotorKeys::iterator key = keys.begin(); key != keys.end(); ++key) {
+        for (unsigned int i = 1; i < key->size(); ++i) cout << key->at(i) << " ";
+        cout << endl;
+    }
+*/
+    // Get the conformers
+    cout << "NUM CONFORMERS: " << molecule.NumConformers() << endl;
+    cs.GetConformers(molecule);
+    cout << "NUM CONFORMERS: " << molecule.NumConformers() << endl << endl;
+    printMoleculeCoords(molecule); cout << endl << endl;
+    molecule.SetConformer(0);
+    printMoleculeCoords(molecule); cout << endl << endl;
+    molecule.SetConformer(11);
+    printMoleculeCoords(molecule);
+       
 }
+
+
+
+
 
 
 
@@ -341,9 +388,12 @@ int main (int argc, char **argv) {
 
     cout << "VOL OVERLAP = " << volumeOverlap(molecules[0], molecules[1]) << endl;
 
-    findBestInitialOrientation(molecules[0], molecules[1]);
-    cout << "WRITING MOLECULE A TO FILE '" << argv[3] << "' (WILL OVERWRITE EXISTING FILE IF ANY)...\n";
-    writeMoleculeToFile(argv[3], "sdf", molecules[0]);
+    //findBestInitialOrientation(molecules[0], molecules[1]);
+    //cout << "WRITING MOLECULE A TO FILE '" << argv[3] << "' (WILL OVERWRITE EXISTING FILE IF ANY)...\n";
+    //writeMoleculeToFile(argv[3], "sdf", molecules[0]);
+
+    generateConformers(molecules[1]);
+    writeAllMoleculeConformersToFile(argv[3], "sdf", molecules[1]);
 
 
     //sampleTest(mol);
