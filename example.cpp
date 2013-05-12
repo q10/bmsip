@@ -67,7 +67,6 @@ void writeAllMoleculeConformersToFile(const string &fileName, const string &form
     }
 }
 
-
 void generateCoordsMatrixFromMolecule(vector<double> &matrix, OBMol &molecule) {     // generates column-order matrix of coordinates
     matrix.clear(); matrix.insert(matrix.end(), molecule.GetCoordinates(), &molecule.GetCoordinates()[3*molecule.NumAtoms()]);
 }
@@ -83,8 +82,7 @@ void generateAtomicNumbersListFromMolecule(vector<int> &numList, OBMol &molecule
         numList.push_back((*iter)->GetAtomicNum());
 }
 
-
-double volumeOverlap(vector<double> &coordsMoleculeA, vector<double> &coordsMoleculeB, vector<int> &atomicNumbersA, vector<int> &atomicNumbersB) {
+double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double> &coordsMoleculeB, const vector<int> &atomicNumbersA, const vector<int> &atomicNumbersB) {
     if (coordsMoleculeA.size() != atomicNumbersA.size() * 3 or coordsMoleculeB.size() != atomicNumbersB.size() * 3) { cerr << "ERROR: INCORRECT MATCHING OF NUMBER OF COORDINATES AND ATOMIC NUMBERS; EXITING" << endl; abort(); }
 
     double totalVolumeOverlap = 0;
@@ -108,7 +106,6 @@ double volumeOverlap(vector<double> &coordsMoleculeA, vector<double> &coordsMole
     }
     return totalVolumeOverlap;
 }
-
 
 double volumeOverlap (OBMol &moleculeA, OBMol &moleculeB) {
     vector<double> coordsA, coordsB;
