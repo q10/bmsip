@@ -101,7 +101,7 @@ double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double>
             double C = sqvA + sqvB;
 
             double distanceSquared = pow(coordsMoleculeB[j]-coordsMoleculeA[i], 2) + pow(coordsMoleculeB[j+1]-coordsMoleculeA[i+1], 2) + pow(coordsMoleculeB[j+2]-coordsMoleculeA[i+2], 2);
-            totalVolumeOverlap += A * pow(sqvA * sqvB  / C, 1.5) * exp(B * distanceSquared / C );
+            totalVolumeOverlap += A * pow(sqvA * sqvB  / C, 1.5) * exp(B * distanceSquared / C);
         }
     }
     return totalVolumeOverlap;
@@ -301,7 +301,7 @@ void generateConformers(OBMol &molecule) {
 
 
 
-
+#include "SteepestDescent.cpp"
 
 
 
@@ -386,11 +386,16 @@ int main (int argc, char **argv) {
     cout << "VOL OVERLAP = " << volumeOverlap(molecules[0], molecules[1]) << endl;
 
     //findBestInitialOrientation(molecules[0], molecules[1]);
+    generateConformers(molecules[1]);
+    molecules[1].SetConformer(10);
+    runSteepestDescent(molecules[0], molecules[1], 1, 10.0 * M_PI / 180.0);
     //cout << "WRITING MOLECULE A TO FILE '" << argv[3] << "' (WILL OVERWRITE EXISTING FILE IF ANY)...\n";
     //writeMoleculeToFile(argv[3], "sdf", molecules[0]);
 
-    generateConformers(molecules[1]);
-    writeAllMoleculeConformersToFile(argv[3], "sdf", molecules[1]);
+    //generateConformers(molecules[1]);
+    //writeAllMoleculeConformersToFile(argv[3], "sdf", molecules[1]);
+
+
 
 
     //sampleTest(mol);
