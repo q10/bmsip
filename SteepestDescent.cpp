@@ -73,16 +73,13 @@ void calculateForceAndTorqueVectors(vector<double> &force, vector<double> &torqu
 	}
 }
 
-
-
-
 void runSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, double betaRadians) {
     cout << endl << "BEGIN STEEPEST DESCENT SEARCH" << endl
 		<< "alpha = " << alpha << endl << "beta = " << betaRadians << endl << "Initializing data..." << endl;
 
 	vector<double> coordsMoleculeA, coordsMoleculeB, centerOfMassA, force, torque, delT, delR, tempA, bestAInThisStep;
 	vector<int> atomicNumsA, atomicNumsB;
-	double currentStepH, bestVolumeOverlapSoFar = -1;
+	double currentStepH = 1, bestVolumeOverlapSoFar = -1;
 
     generateCoordsMatrixFromMolecule(coordsMoleculeA, moleculeA);
     generateCoordsMatrixFromMolecule(coordsMoleculeB, moleculeB);
@@ -90,8 +87,8 @@ void runSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, double
     generateAtomicNumbersListFromMolecule(atomicNumsB, moleculeB);
     getMoleculeCenterCoords(centerOfMassA, moleculeA);
 
-    do {
-    	cout << "stepping...";
+    while (currentStepH > 0) {
+    	cout << "stepping... ";
 		double bestHInThisStep = 0;
 		bestAInThisStep = coordsMoleculeA;
 
@@ -105,9 +102,9 @@ void runSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, double
 
 			// rotate and translate
 			tempA = coordsMoleculeA;
-		    translate3DMatrixCoordinates(tempA, -centerOfMassA[0], -centerOfMassA[1], -centerOfMassA[2]);
-		    rotate3DMatrixCoordinates(tempA, delR);
-		    translate3DMatrixCoordinates(tempA, delT[0], delT[1], delT[2]);
+			translate3DMatrixCoordinates(tempA, -centerOfMassA[0], -centerOfMassA[1], -centerOfMassA[2]);
+			rotate3DMatrixCoordinates(tempA, delR);
+			translate3DMatrixCoordinates(tempA, delT[0], delT[1], delT[2]);
 
 		    double currentVolOverlap = volumeOverlap(tempA, coordsMoleculeB, atomicNumsA, atomicNumsB);
 		    if (currentVolOverlap > bestVolumeOverlapSoFar) { // check overlap goodness
@@ -117,8 +114,8 @@ void runSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, double
 		    }
 		}
 		coordsMoleculeA = bestAInThisStep; currentStepH = bestHInThisStep;
-		cout << "best h in this step is " << bestHInThisStep << endl;
-	} while (currentStepH > 0);
+		cout << "Best h in this step is " << bestHInThisStep << endl;
+	}
 
     cout << "\nThe convergent solution coordinates of A produces a volume overlap of " << bestVolumeOverlapSoFar << endl;
     cout << "\nRESULTING A:" << endl; printMatrix(coordsMoleculeA, coordsMoleculeA.size() / 3, 3, false);

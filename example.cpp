@@ -385,14 +385,14 @@ int main (int argc, char **argv) {
 
     cout << "VOL OVERLAP = " << volumeOverlap(molecules[0], molecules[1]) << endl;
 
-    //findBestInitialOrientation(molecules[0], molecules[1]);
     //generateConformers(molecules[1]);
     //molecules[1].SetConformer(10);
 
 
+    findBestInitialOrientation(molecules[0], molecules[1]);
     runSteepestDescent(molecules[0], molecules[1], 0.5, 10.0 * M_PI / 180.0);
-    //cout << "WRITING MOLECULE A TO FILE '" << argv[3] << "' (WILL OVERWRITE EXISTING FILE IF ANY)...\n";
-    //writeMoleculeToFile(argv[3], "sdf", molecules[0]);
+    cout << "WRITING MOLECULE A TO FILE '" << argv[3] << "' (WILL OVERWRITE EXISTING FILE IF ANY)...\n";
+    writeMoleculeToFile(argv[3], "sdf", molecules[0]);
 
     //generateConformers(molecules[1]);
     //writeAllMoleculeConformersToFile(argv[3], "sdf", molecules[1]);
