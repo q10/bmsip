@@ -270,7 +270,8 @@ int main (int argc, char **argv) {
     importMoleculesFromFile(molecules, argv[1]);
     importMoleculesFromFile(molecules, argv[2]);
 
-    cout << "VOL OVERLAP = " << volumeOverlap(molecules[0], molecules[1]) << endl;
+    cout << "NUM CONFORMERS: " << molecules[0].NumConformers() << endl;
+    cout << "NUM ATOMS: " << molecules[0].NumAtoms() << endl;
 
     //generateConformers(molecules[1]);
     //molecules[1].SetConformer(10);
@@ -278,10 +279,15 @@ int main (int argc, char **argv) {
 
     //findBestPCAOrientation(molecules[0], molecules[1]);
     //runSteepestDescent(molecules[0], molecules[1], 0.5, 10.0 * M_PI / 180.0);
+
+
+
     
-    PCAPlusSteepestDescent(molecules[0], molecules[1], 0.5, 10.0 * M_PI / 180.0);
-    writeMoleculeToFile(argv[3], molecules[0], true);
-    writeMoleculeToFile(argv[3], molecules[1]);
+    //PCAPlusSteepestDescent(molecules[0], molecules[1], 0.5, 10.0 * M_PI / 180.0);
+    //writeMoleculeToFile(argv[3], molecules[0], true);
+    //writeMoleculeToFile(argv[3], molecules[1]);
+
+
 
     //generateConformers(molecules[1]);
     //writeAllMoleculeConformersToFile(argv[3], molecules[1]);
