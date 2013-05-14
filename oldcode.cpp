@@ -1,3 +1,151 @@
+void steepestDescentEngine(OBMol &moleculeA, OBMol &moleculeB, double alpha, double betaRadians) {
+    cout << endl << "BEGIN STEEPEST DESCENT SEARCH" << endl
+        << "alpha = " << alpha << endl << "beta = " << betaRadians << endl << "Initializing data..." << endl;
+
+    vector<double> coordsMoleculeA, coordsMoleculeB, centerOfMassA, force, torque, delT, delR, tempA, bestAInThisStep;
+    vector<int> atomicNumsA, atomicNumsB;
+
+    generateCoordsMatrixFromMolecule(coordsMoleculeA, moleculeA);
+    generateCoordsMatrixFromMolecule(coordsMoleculeB, moleculeB);
+    generateAtomicNumbersListFromMolecule(atomicNumsA, moleculeA);
+    generateAtomicNumbersListFromMolecule(atomicNumsB, moleculeB);
+    getMoleculeCenterCoords(centerOfMassA, moleculeA);
+
+    double currentStepH = 1, bestVolumeOverlapSoFar = volumeOverlap(coordsMoleculeA, coordsMoleculeB, atomicNumsA, atomicNumsB);
+
+    while (currentStepH > 0) {
+        cout << "stepping... ";
+        double bestHInThisStep = 0;
+        bestAInThisStep = coordsMoleculeA;
+
+        // calculate force and torque, and normalize them
+        calculateForceAndTorqueVectors(force, torque, coordsMoleculeA, coordsMoleculeB, atomicNumsA, atomicNumsB, centerOfMassA);
+        normalizeVector(force); normalizeVector(torque);
+
+        for (double h=0; h < 1.0; h += 0.01) {
+            generateSteepestDescentTranslationalVector(delT, force, h, alpha); // generate deviation translational vector
+            generateSteepestDescentRotationMatrix(delR, torque, h, betaRadians); // generate deviation rotational matrix
+
+            // rotate and translate
+            tempA = coordsMoleculeA;
+            translate3DMatrixCoordinates(tempA, -centerOfMassA[0], -centerOfMassA[1], -centerOfMassA[2]);
+            rotate3DMatrixCoordinates(tempA, delR);
+            translate3DMatrixCoordinates(tempA, centerOfMassA[0] + delT[0], centerOfMassA[1] + delT[1], centerOfMassA[2] + delT[2]); // move coordinates back FROM center of rotation and add the translational displacement
+
+            double currentVolOverlap = volumeOverlap(tempA, coordsMoleculeB, atomicNumsA, atomicNumsB);
+            if (currentVolOverlap > bestVolumeOverlapSoFar) { // check overlap goodness
+                bestHInThisStep = h;
+                bestVolumeOverlapSoFar = currentVolOverlap;
+                bestAInThisStep = tempA;
+            }
+        }
+        coordsMoleculeA = bestAInThisStep; currentStepH = bestHInThisStep;
+        cout << "Best h in this step is " << bestHInThisStep << " and volume overlap is at " << bestVolumeOverlapSoFar << endl;
+    }
+
+    cout << "\nThe convergent solution coordinates of A produces a volume overlap of " << bestVolumeOverlapSoFar << endl;
+    cout << "\nRESULTING A:" << endl; printMatrix(coordsMoleculeA, coordsMoleculeA.size() / 3, 3, false);
+
+    cout << "\nEND STEEOEST DESCENT SEARCH.  SAVING COORDINATES TO MOLECULE A...\n\n";
+    saveCoordsMatrixToMolecule(moleculeA, coordsMoleculeA);
+}
+
+
+
+void sampleTest(OBMol &molecule) {
+    cout << "BESGIN TEST" << endl;
+    vector<double> abc;
+    generateCovarMatrixFromMolecule(abc, molecule);
+    for (int i=0; i<abc.size(); i+=3) { cout << "{" << abc[i] << "," << abc[i+1] << "," << abc[i+2] << "},"; } cout << endl;
+    vector<double> eigenvectors, eigenvalues;
+    generateEigenMatrix(eigenvectors, eigenvalues, abc);
+
+    for (int i=0; i<eigenvalues.size(); i++) cout << eigenvalues[i] << " ";
+        cout << endl;
+    for (int i=0; i<eigenvectors.size(); i++) cout << eigenvectors[i] << " ";
+        cout << endl;
+    cout << "END TEST" << endl << endl;
+}
+
+void testEigen() {
+    double xyz[] = {7, 9, 2, 9, 1, 6, 2, 6, 10}; 
+    vector<double> sample(xyz, &xyz[9]);
+    for (int i=0; i<sample.size(); i++) cout << sample[i] << " ";
+        cout << endl;
+
+    vector<double> eigenvectors, eigenvalues;
+    generateEigenMatrix(eigenvectors, eigenvalues, sample);
+    for (int i=0; i<eigenvalues.size(); i++) cout << eigenvalues[i] << " ";
+        cout << endl;
+    for (int i=0; i<eigenvectors.size(); i++) cout << eigenvectors[i] << " ";
+        cout << endl << endl << endl << endl;
+}
+
+void testGenRot() {
+    double a[] = {1, 2, 3, 2, 4, 5, 3, 5, 6}; 
+    vector<double> vA(a, &a[9]);
+    double b[] = {7, 9, 2, 2, 1, 0, 2, 6, 10}; 
+    vector<double> vB(b, &b[9]);
+    vector<double> c;
+    generatePCARotationMatrix(c, 3, vA, vB);
+    cout << endl << endl;
+    for (int i=0; i<vA.size(); i++) cout << vA[i] << " ";
+        cout << endl;
+    for (int i=0; i<vB.size(); i++) cout << vB[i] << " ";
+        cout << endl;
+    for (int i=0; i<c.size(); i++) cout << c[i] << " ";
+        cout << endl;
+}
+
+void testRot() {
+    cout << "BEGIN ROTATE TEST" << endl;
+    double a[] = {1, 2, 3, 2, 4, 5, 3, 5, 6}; 
+    vector<double> vA(a, &a[9]);
+    double b[] = {7, 9, 2, 2, 1, 0, 2, 6, 10}; 
+    vector<double> vB(b, &b[9]);
+    vector<double> c;
+    for (int i=0; i<vA.size(); i++) cout << vA[i] << " ";
+        cout << endl;
+    for (int i=0; i<vB.size(); i++) cout << vB[i] << " ";
+        cout << endl;
+    /*rotate3DMatrixCoordinates(vA, vB);
+    for (int i=0; i<vA.size(); i++) cout << vA[i] << " ";
+        cout << endl;
+    for (int i=0; i<vB.size(); i++) cout << vB[i] << " ";
+        cout << endl;
+    vB.push_back(199);
+    cout << endl;
+    printMatrix(vB, 5, 2);
+    */
+    vector<double> C; vA.resize(3); vB.resize(3);
+    generateMatrixWFromNormalizedVectorW(C, vB);
+    for (int i=0; i<C.size(); i++) cout << C[i] << " ";
+        cout << endl;
+    cout << "END ROTATE TEST" << endl;
+}
+
+
+/*
+    generatePCARotationMatrix(Rx, 1, eVectA, eVectB);
+    generatePCARotationMatrix(Ry, 2, eVectA, eVectB);
+    generatePCARotationMatrix(Rz, 3, eVectA, eVectB);
+
+
+    // the transformation itself, R(p - p0) + q0
+    translate3DMatrixCoordinates(coordA, -comA[0], -comA[1], -comA[2]);
+    rotate3DMatrixCoordinates(coordA, Rx);
+    translate3DMatrixCoordinates(coordA, comB[0], comB[1], comB[2]);
+
+    saveCoordsMatrixToMolecule(moleculeA, coordA);
+    OBConversion obconversion;
+    obconversion.SetOutFormat("sdf");
+
+
+    obconversion.WriteFile(&moleculeA, "newA.sdf");
+    cout << "OOOOKKKKKKK" << endl;
+*/
+
+
 /*
 
 // older implementation of volumeOverlap

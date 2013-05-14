@@ -19,84 +19,7 @@
 using namespace std;
 using namespace OpenBabel;
 
-void extractFileExtension(string &format, const string &fileName) {
-    size_t npos = fileName.find_last_of(".");
-    if(npos != std::string::npos) format = fileName.substr(npos+1);    
-}
-
-void printMatrix(vector<double> &matrix, unsigned int rows, unsigned int columns, bool columnMajorOrder = true) {
-    if (matrix.size() != rows * columns) { cerr << "ERROR: INCORRECT MATCHING OF ROWS AND COLUMNS WITH ACTUAL VECTOR SIZE; EXITING" << endl; abort(); }
-    if (columnMajorOrder) {
-        for (unsigned int i=0; i < rows; i++) {
-            for (unsigned int j=i; j < matrix.size(); j+=rows)
-                cout << matrix[j] << " ";                
-            cout << endl;
-        }
-    } else {
-        for (unsigned int i=0; i < matrix.size(); i+=columns) {
-            for (unsigned int j=0; j < columns; j++)
-                cout << matrix[i + j] << " ";
-            cout << endl;
-        }
-    }
-}
-
-void printMoleculeCoords(OBMol &molecule) {
-    for (OBAtomIterator iter = molecule.BeginAtoms(); iter != molecule.EndAtoms(); iter++) cout << (*iter)->GetVector() << endl;
-}
-
-unsigned int importMoleculesFromFile(vector<OBMol> &moleculesList, const string &fileName) { // does not clear list, only appends new molecules to it
-    string format; extractFileExtension(format, fileName);
-    OBConversion obconversion;
-    if (not obconversion.SetInFormat(format.c_str())) { cerr << "ERROR: OpenBabel does not recognize the following format: '" << format << "'; exiting" << endl; abort(); }
-
-    unsigned int numMoleculesInFile = 0;
-    OBMol mol; bool notAtEnd = obconversion.ReadFile(&mol, fileName.c_str());
-    while (notAtEnd) {
-        numMoleculesInFile++;
-        moleculesList.push_back(mol);
-        mol.Clear(); notAtEnd = obconversion.Read(&mol);
-    }
-}
-
-void writeMoleculeToFile(const string &fileName, OBMol &molecule, bool rewriteFile=false) {
-    string format; extractFileExtension(format, fileName);
-
-    ios_base::openmode fileMode = rewriteFile ? ios::out : (ios::out|ios::app);
-    std::ofstream ofs(fileName.c_str(), fileMode);
-    
-    OBConversion obconversion;
-    if (not obconversion.SetOutFormat(format.c_str())) { 
-        cerr << "WARNING: OpenBabel does not recognize the following format: '" << format << "'; will write to SDF format" << endl;
-        obconversion.SetOutFormat("sdf");
-    }
-    cout << "WRITING MOLECULE TO FILE '" << fileName << "'";
-    if (rewriteFile) cout << " (WILL OVERWRITE EXISTING FILE IF ANY)...\n";
-    else cout << "...\n";
-    obconversion.Write(&molecule, &ofs);  // obconversion.WriteFile(&molecule, fileName.c_str());
-}
-
-void writeAllMoleculeConformersToFile(const string &fileName, OBMol &molecule, bool rewriteFile=false) {
-    for (int i = molecule.NumConformers()-1; i >= 0; i--) { // DO NOT USE UNSIGNED INT i!!!
-        molecule.SetConformer(i);
-        writeMoleculeToFile(fileName, molecule, rewriteFile);
-    }
-}
-
-void generateCoordsMatrixFromMolecule(vector<double> &matrix, OBMol &molecule) {     // generates column-order matrix of coordinates
-    matrix.clear(); matrix.insert(matrix.end(), molecule.GetCoordinates(), &molecule.GetCoordinates()[3*molecule.NumAtoms()]);
-}
-
-void saveCoordsMatrixToMolecule(OBMol &molecule, vector<double> &matrix) {
-    if (matrix.size() != molecule.NumAtoms() * 3) { cerr << "ERROR: INCORRECT MATCHING OF NUMBER OF COORDINATES; EXITING" << endl; abort(); }
-    molecule.SetCoordinates(&matrix[0]);
-}
-
-void generateAtomicNumbersListFromMolecule(vector<int> &numList, OBMol &molecule) {
-    numList.clear();
-    for (OBAtomIterator iter = molecule.BeginAtoms(); iter != molecule.EndAtoms(); iter++)
-        numList.push_back((*iter)->GetAtomicNum());
-}
+#include "Utils.cpp"
 
 double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double> &coordsMoleculeB, const vector<int> &atomicNumbersA, const vector<int> &atomicNumbersB) {
     if (coordsMoleculeA.size() != atomicNumbersA.size() * 3 or coordsMoleculeB.size() != atomicNumbersB.size() * 3) { cerr << "ERROR: INCORRECT MATCHING OF NUMBER OF COORDINATES AND ATOMIC NUMBERS; EXITING" << endl; abort(); }
@@ -143,33 +66,6 @@ void generateEigenMatrix(vector<double> &eigenvectors, vector<double> &eigenvalu
     if (lapackErrCode) { cerr << "WARNING: LAPACK DSYEV() RETURNED NON-ZERO ERROR CODE " << lapackErrCode << endl; }
 }
 
-void getMoleculeCenterCoords(vector<double> &centerCoords, OBMol &molecule) {
-    centerCoords.clear(); centerCoords.resize(3, 0);
-    for (OBAtomIterator iter = molecule.BeginAtoms(); iter != molecule.EndAtoms(); iter++) {
-        double *tmpCoords = (*iter)->GetCoordinate(); double tmpMass = (*iter)->GetAtomicMass();  
-        centerCoords[0] += tmpMass*tmpCoords[0]; centerCoords[1] += tmpMass*tmpCoords[1]; centerCoords[2] += tmpMass*tmpCoords[2];
-    }
-    for (unsigned int i=0; i < centerCoords.size(); i++) centerCoords[i] /= molecule.GetMolWt();
-}
-
-void printMoleculeCenterCoords(OBMol &molecule) {
-    vector<double> centerCoords; getMoleculeCenterCoords(centerCoords, molecule);
-    cout << "CENTER COORDS: ";
-    for (unsigned int i=0; i < centerCoords.size(); i++) { cout << centerCoords[i] << " "; }
-    cout << endl;
-}
-
-inline void translate3DMatrixCoordinates(vector<double> &matrix, double x, double y, double z) {
-    for (unsigned int i=0; i < matrix.size(); i+=3) { matrix[i] += x; matrix[i+1] += y; matrix[i+2] += z; }
-}
-
-void rotate3DMatrixCoordinates(vector<double> &matrix, vector<double> &rotationMatrix) {
-    // both matrices must be of column-order
-    vector<double> resultMatrix(matrix.size(), 0);
-    cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, 3, matrix.size()/3, 3, 1, &rotationMatrix[0], 3, &matrix[0], 3, 0, &resultMatrix[0], 3);
-    matrix = resultMatrix;
-}
-
 void generateCovarMatrixFromMolecule(vector<double> &matrix, OBMol &molecule) {
     double uX = 0, uY = 0, uZ = 0, *moleculeCoords = molecule.GetCoordinates();
     for (unsigned int i=0; i < 3 * molecule.NumAtoms(); i+=3) { uX += moleculeCoords[i]; uY += moleculeCoords[i+1]; uZ += moleculeCoords[i+2]; }
@@ -197,7 +93,7 @@ void generateCovarMatrixFromMolecule(vector<double> &matrix, OBMol &molecule) {
     for (unsigned int i=0; i < matrix.size(); i++) matrix[i] /= molecule.GetMolWt();
 }
 
-void generateOptimalRotationMatrix(vector<double> &rotMatrix, unsigned int optCode, const vector<double> &U, const vector<double> &V) {
+void generatePCARotationMatrix(vector<double> &rotMatrix, unsigned int optCode, const vector<double> &U, const vector<double> &V) {
     if (U.size() != 9 or V.size() != 9 or optCode > 3) { cerr << "ERROR: SIZE OF U OR V IS INCORRECT, OR OPTCODE IS WRONG; EXITING" << endl; abort(); }
     rotMatrix.clear(); rotMatrix.resize(9);
 
@@ -217,17 +113,7 @@ void generateOptimalRotationMatrix(vector<double> &rotMatrix, unsigned int optCo
     }
 }
 
-void writeTemporaryMoleculeCoordsToFile(const string &fileName, OBMol &molecule, vector<double> &tempCoords, bool rewriteFile=false) {
-    vector<double> oldCoords;
-    generateCoordsMatrixFromMolecule(oldCoords, molecule);
-    saveCoordsMatrixToMolecule(molecule, tempCoords);
-    writeMoleculeToFile(fileName, molecule, rewriteFile);
-    saveCoordsMatrixToMolecule(molecule, oldCoords);
-}
-
-
-
-void findBestInitialOrientation(OBMol &moleculeA, OBMol &moleculeB) {
+void findBestPCAOrientation(OBMol &moleculeA, OBMol &moleculeB) {
     cout << endl << "BEGIN INITIAL ORIENTATION SEARCH" << endl
         << "Searching for the best initial orientation matrix..." << endl;
     vector<double> coordA, coordB, comA, comB, covA, covB, eVectA, eVectB, eValA, eValB, tempR, bestR, bestA;
@@ -253,19 +139,19 @@ void findBestInitialOrientation(OBMol &moleculeA, OBMol &moleculeB) {
 
     double bestVolumeOverlap=0; int bestRcode=0;
     for (int i=0; i<4; i++) {
-        generateOptimalRotationMatrix(tempR, i, eVectA, eVectB);
-        vector<double> tempA = coordA;
+        generatePCARotationMatrix(tempR, i, eVectA, eVectB);
+        vector<double> currentPCACoordA = coordA;
 
-        translate3DMatrixCoordinates(tempA, -comA[0], -comA[1], -comA[2]);
-        rotate3DMatrixCoordinates(tempA, tempR);
-        translate3DMatrixCoordinates(tempA, comB[0], comB[1], comB[2]);
+        translate3DMatrixCoordinates(currentPCACoordA, -comA[0], -comA[1], -comA[2]);
+        rotate3DMatrixCoordinates(currentPCACoordA, tempR);
+        translate3DMatrixCoordinates(currentPCACoordA, comB[0], comB[1], comB[2]);
 
-        double curVolOverlap = volumeOverlap(tempA, coordB, atomicNumsA, atomicNumsB);
+        double curVolOverlap = volumeOverlap(currentPCACoordA, coordB, atomicNumsA, atomicNumsB);
         if (curVolOverlap > bestVolumeOverlap) {
             bestRcode = i;
             bestVolumeOverlap = curVolOverlap;
             bestR = tempR;
-            bestA = tempA;
+            bestA = currentPCACoordA;
         }
     }
 
@@ -275,26 +161,68 @@ void findBestInitialOrientation(OBMol &moleculeA, OBMol &moleculeB) {
     cout << "\nEND INITIAL ORIENTATION SEARCH.  SAVING COORDINATES TO MOLECULE A...\n\n";
     saveCoordsMatrixToMolecule(moleculeA, bestA);    
 
-/*
-    generateOptimalRotationMatrix(Rx, 1, eVectA, eVectB);
-    generateOptimalRotationMatrix(Ry, 2, eVectA, eVectB);
-    generateOptimalRotationMatrix(Rz, 3, eVectA, eVectB);
-
-
-    // the transformation itself, R(p - p0) + q0
-    translate3DMatrixCoordinates(coordA, -comA[0], -comA[1], -comA[2]);
-    rotate3DMatrixCoordinates(coordA, Rx);
-    translate3DMatrixCoordinates(coordA, comB[0], comB[1], comB[2]);
-
-    saveCoordsMatrixToMolecule(moleculeA, coordA);
-    OBConversion obconversion;
-    obconversion.SetOutFormat("sdf");
-
-
-    obconversion.WriteFile(&moleculeA, "newA.sdf");
-    cout << "OOOOKKKKKKK" << endl;
-*/
 }
+
+
+
+
+
+
+#include "SteepestDescent.cpp"
+
+
+
+void PCAPlusSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, double betaRadians) {
+    cout << endl << "BEGIN ORIENTATION SEARCH" << endl;
+    vector<double> coordA, coordB, comA, comB, covA, covB, eVectA, eVectB, eValA, eValB, tempR, bestR, bestA;
+    vector<int> atomicNumsA, atomicNumsB;
+    map<int, string> RTable; RTable[0] = "R0"; RTable[1] = "Rx"; RTable[2] = "Ry"; RTable[3] = "Rz";
+
+
+    generateCoordsMatrixFromMolecule(coordA, moleculeA); cout << "\nORIGINAL COORDS OF MOLECULE A:" << endl; printMoleculeCoords(moleculeA);
+    generateCoordsMatrixFromMolecule(coordB, moleculeB); cout << "\nORIGINAL COORDS OF MOLECULE B:" << endl; printMoleculeCoords(moleculeB);
+    generateAtomicNumbersListFromMolecule(atomicNumsA, moleculeA);
+    generateAtomicNumbersListFromMolecule(atomicNumsB, moleculeB);
+    getMoleculeCenterCoords(comA, moleculeA);
+    getMoleculeCenterCoords(comB, moleculeB);
+    
+    generateCovarMatrixFromMolecule(covA, moleculeA);
+    generateCovarMatrixFromMolecule(covB, moleculeB);
+    generateEigenMatrix(eVectA, eValA, covA);
+    generateEigenMatrix(eVectB, eValB, covB);
+
+    double bestVolumeOverlap=0; int bestRcode=0;
+    for (int i=0; i<4; i++) {
+        generatePCARotationMatrix(tempR, i, eVectA, eVectB);
+        vector<double> currentPCACoordA = coordA, currentSDCoordA;
+
+        translate3DMatrixCoordinates(currentPCACoordA, -comA[0], -comA[1], -comA[2]);
+        rotate3DMatrixCoordinates(currentPCACoordA, tempR);
+        translate3DMatrixCoordinates(currentPCACoordA, comB[0], comB[1], comB[2]);
+
+        cout << endl << "BEGIN STEEPEST DESCENT SEARCH..." << endl;
+        double curVolOverlap = steepestDescentEngine(currentSDCoordA, currentPCACoordA, coordB, atomicNumsA, atomicNumsB, comA, alpha, betaRadians);
+        
+        cout << "END STEEOEST DESCENT SEARCH.\nThe convergent solution starting with position PCA0 produces a volume overlap of " << curVolOverlap << endl;
+        if (curVolOverlap > bestVolumeOverlap) {
+            bestRcode = i;
+            bestVolumeOverlap = curVolOverlap;
+            bestR = tempR;
+            bestA = currentSDCoordA;
+        }
+    }
+
+    cout << "\nThe best initial orientation matrix is: " << RTable[bestRcode] << ", which, after running Steepest Descent, produces a volume overlap of " << bestVolumeOverlap << endl;
+    cout << "PCA matrix " << RTable[bestRcode] << ":" << endl; printMatrix(bestR, 3, 3);
+    cout << "\nResulting A after Steepest Descent:" << endl; printMatrix(bestA, bestA.size() / 3, 3, false);
+    cout << "\nEND ORIENTATION SEARCH.  SAVING COORDINATES TO MOLECULE A...\n\n";
+    saveCoordsMatrixToMolecule(moleculeA, bestA);
+}
+
+
+
+
+
 
 
 void generateConformers(OBMol &molecule) {
@@ -331,82 +259,6 @@ void generateConformers(OBMol &molecule) {
 
 
 
-#include "SteepestDescent.cpp"
-
-
-
-
-void sampleTest(OBMol &molecule) {
-    cout << "BESGIN TEST" << endl;
-    vector<double> abc;
-    generateCovarMatrixFromMolecule(abc, molecule);
-    for (int i=0; i<abc.size(); i+=3) { cout << "{" << abc[i] << "," << abc[i+1] << "," << abc[i+2] << "},"; } cout << endl;
-    vector<double> eigenvectors, eigenvalues;
-    generateEigenMatrix(eigenvectors, eigenvalues, abc);
-
-    for (int i=0; i<eigenvalues.size(); i++) cout << eigenvalues[i] << " ";
-        cout << endl;
-    for (int i=0; i<eigenvectors.size(); i++) cout << eigenvectors[i] << " ";
-        cout << endl;
-    cout << "END TEST" << endl << endl;
-}
-
-void testEigen() {
-    double xyz[] = {7, 9, 2, 9, 1, 6, 2, 6, 10}; 
-    vector<double> sample(xyz, &xyz[9]);
-    for (int i=0; i<sample.size(); i++) cout << sample[i] << " ";
-        cout << endl;
-
-    vector<double> eigenvectors, eigenvalues;
-    generateEigenMatrix(eigenvectors, eigenvalues, sample);
-    for (int i=0; i<eigenvalues.size(); i++) cout << eigenvalues[i] << " ";
-        cout << endl;
-    for (int i=0; i<eigenvectors.size(); i++) cout << eigenvectors[i] << " ";
-        cout << endl << endl << endl << endl;
-}
-
-void testGenRot() {
-    double a[] = {1, 2, 3, 2, 4, 5, 3, 5, 6}; 
-    vector<double> vA(a, &a[9]);
-    double b[] = {7, 9, 2, 2, 1, 0, 2, 6, 10}; 
-    vector<double> vB(b, &b[9]);
-    vector<double> c;
-    generateOptimalRotationMatrix(c, 3, vA, vB);
-    cout << endl << endl;
-    for (int i=0; i<vA.size(); i++) cout << vA[i] << " ";
-        cout << endl;
-    for (int i=0; i<vB.size(); i++) cout << vB[i] << " ";
-        cout << endl;
-    for (int i=0; i<c.size(); i++) cout << c[i] << " ";
-        cout << endl;
-}
-
-void testRot() {
-    cout << "BEGIN ROTATE TEST" << endl;
-    double a[] = {1, 2, 3, 2, 4, 5, 3, 5, 6}; 
-    vector<double> vA(a, &a[9]);
-    double b[] = {7, 9, 2, 2, 1, 0, 2, 6, 10}; 
-    vector<double> vB(b, &b[9]);
-    vector<double> c;
-    for (int i=0; i<vA.size(); i++) cout << vA[i] << " ";
-        cout << endl;
-    for (int i=0; i<vB.size(); i++) cout << vB[i] << " ";
-        cout << endl;
-    /*rotate3DMatrixCoordinates(vA, vB);
-    for (int i=0; i<vA.size(); i++) cout << vA[i] << " ";
-        cout << endl;
-    for (int i=0; i<vB.size(); i++) cout << vB[i] << " ";
-        cout << endl;
-    vB.push_back(199);
-    cout << endl;
-    printMatrix(vB, 5, 2);
-    */
-    vector<double> C; vA.resize(3); vB.resize(3);
-    generateMatrixWFromNormalizedVectorW(C, vB);
-    for (int i=0; i<C.size(); i++) cout << C[i] << " ";
-        cout << endl;
-    cout << "END ROTATE TEST" << endl;
-}
 
 int main (int argc, char **argv) {
     if(argc < 4) {
@@ -424,9 +276,11 @@ int main (int argc, char **argv) {
     //molecules[1].SetConformer(10);
 
 
-    findBestInitialOrientation(molecules[0], molecules[1]);
-    runSteepestDescent(molecules[0], molecules[1], 0.5, 10.0 * M_PI / 180.0);
-    writeMoleculeToFile(argv[3], molecules[0]);
+    //findBestPCAOrientation(molecules[0], molecules[1]);
+    //runSteepestDescent(molecules[0], molecules[1], 0.5, 10.0 * M_PI / 180.0);
+    
+    PCAPlusSteepestDescent(molecules[0], molecules[1], 0.5, 10.0 * M_PI / 180.0);
+    writeMoleculeToFile(argv[3], molecules[0], true);
     writeMoleculeToFile(argv[3], molecules[1]);
 
     //generateConformers(molecules[1]);
@@ -436,7 +290,7 @@ int main (int argc, char **argv) {
 
 
     //sampleTest(mol);
-    testRot();
+    //testRot();
     //testEigen();
 
     return 0;
