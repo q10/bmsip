@@ -19,6 +19,11 @@
 using namespace std;
 using namespace OpenBabel;
 
+void extractFileExtension(string &format, const string &fileName) {
+    size_t npos = fileName.find_last_of(".");
+    if(npos != std::string::npos) format = fileName.substr(npos+1);    
+}
+
 void printMatrix(vector<double> &matrix, unsigned int rows, unsigned int columns, bool columnMajorOrder = true) {
     if (matrix.size() != rows * columns) { cerr << "ERROR: INCORRECT MATCHING OF ROWS AND COLUMNS WITH ACTUAL VECTOR SIZE; EXITING" << endl; abort(); }
     if (columnMajorOrder) {
@@ -40,9 +45,10 @@ void printMoleculeCoords(OBMol &molecule) {
     for (OBAtomIterator iter = molecule.BeginAtoms(); iter != molecule.EndAtoms(); iter++) cout << (*iter)->GetVector() << endl;
 }
 
-unsigned int importMoleculesFromFile(vector<OBMol> &moleculesList, const string &fileName, const string &format) { // does not clear list, only appends new molecules to it
+unsigned int importMoleculesFromFile(vector<OBMol> &moleculesList, const string &fileName) { // does not clear list, only appends new molecules to it
+    string format; extractFileExtension(format, fileName);
     OBConversion obconversion;
-    obconversion.SetInFormat(format.c_str());
+    if (not obconversion.SetInFormat(format.c_str())) { cerr << "ERROR: OpenBabel does not recognize the following format: '" << format << "'; exiting" << endl; abort(); }
 
     unsigned int numMoleculesInFile = 0;
     OBMol mol; bool notAtEnd = obconversion.ReadFile(&mol, fileName.c_str());
@@ -53,17 +59,27 @@ unsigned int importMoleculesFromFile(vector<OBMol> &moleculesList, const string 
     }
 }
 
-void writeMoleculeToFile(const string &fileName, const string &format, OBMol &molecule, bool rewriteFile=false) {
+void writeMoleculeToFile(const string &fileName, OBMol &molecule, bool rewriteFile=false) {
+    string format; extractFileExtension(format, fileName);
+
     ios_base::openmode fileMode = rewriteFile ? ios::out : (ios::out|ios::app);
     std::ofstream ofs(fileName.c_str(), fileMode);
-    OBConversion obconversion; obconversion.SetOutFormat(format.c_str());
+    
+    OBConversion obconversion;
+    if (not obconversion.SetOutFormat(format.c_str())) { 
+        cerr << "WARNING: OpenBabel does not recognize the following format: '" << format << "'; will write to SDF format" << endl;
+        obconversion.SetOutFormat("sdf");
+    }
+    cout << "WRITING MOLECULE TO FILE '" << fileName << "'";
+    if (rewriteFile) cout << " (WILL OVERWRITE EXISTING FILE IF ANY)...\n";
+    else cout << "...\n";
     obconversion.Write(&molecule, &ofs);  // obconversion.WriteFile(&molecule, fileName.c_str());
 }
 
-void writeAllMoleculeConformersToFile(const string &fileName, const string &format, OBMol &molecule) {
+void writeAllMoleculeConformersToFile(const string &fileName, OBMol &molecule) {
     for (int i = molecule.NumConformers()-1; i >= 0; i--) { // DO NOT USE UNSIGNED INT i!!!
         molecule.SetConformer(i);
-        writeMoleculeToFile(fileName, format, molecule);
+        writeMoleculeToFile(fileName, molecule);
     }
 }
 
@@ -380,8 +396,8 @@ int main (int argc, char **argv) {
     }
 
     vector<OBMol> molecules;
-    importMoleculesFromFile(molecules, argv[1], "sdf");
-    importMoleculesFromFile(molecules, argv[2], "sdf");
+    importMoleculesFromFile(molecules, argv[1]);
+    importMoleculesFromFile(molecules, argv[2]);
 
     cout << "VOL OVERLAP = " << volumeOverlap(molecules[0], molecules[1]) << endl;
 
@@ -391,11 +407,10 @@ int main (int argc, char **argv) {
 
     findBestInitialOrientation(molecules[0], molecules[1]);
     runSteepestDescent(molecules[0], molecules[1], 0.5, 10.0 * M_PI / 180.0);
-    cout << "WRITING MOLECULE A TO FILE '" << argv[3] << "' (WILL OVERWRITE EXISTING FILE IF ANY)...\n";
-    writeMoleculeToFile(argv[3], "sdf", molecules[0]);
+    writeMoleculeToFile(argv[3], molecules[0]);
 
     //generateConformers(molecules[1]);
-    //writeAllMoleculeConformersToFile(argv[3], "sdf", molecules[1]);
+    writeAllMoleculeConformersToFile(argv[3], molecules[1]);
 
 
 
