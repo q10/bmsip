@@ -378,7 +378,7 @@ void testRot() {
         cout << endl;
     for (int i=0; i<vB.size(); i++) cout << vB[i] << " ";
         cout << endl;
-    rotate3DMatrixCoordinates(vA, vB);
+    /*rotate3DMatrixCoordinates(vA, vB);
     for (int i=0; i<vA.size(); i++) cout << vA[i] << " ";
         cout << endl;
     for (int i=0; i<vB.size(); i++) cout << vB[i] << " ";
@@ -386,6 +386,11 @@ void testRot() {
     vB.push_back(199);
     cout << endl;
     printMatrix(vB, 5, 2);
+    */
+    vector<double> C; vA.resize(3); vB.resize(3);
+    generateMatrixWFromNormalizedVectorW(C, vB);
+    for (int i=0; i<C.size(); i++) cout << C[i] << " ";
+        cout << endl;
     cout << "END ROTATE TEST" << endl;
 }
 
@@ -408,15 +413,16 @@ int main (int argc, char **argv) {
     findBestInitialOrientation(molecules[0], molecules[1]);
     runSteepestDescent(molecules[0], molecules[1], 0.5, 10.0 * M_PI / 180.0);
     writeMoleculeToFile(argv[3], molecules[0]);
+    writeMoleculeToFile(argv[3], molecules[1]);
 
     //generateConformers(molecules[1]);
-    writeAllMoleculeConformersToFile(argv[3], molecules[1]);
+    //writeAllMoleculeConformersToFile(argv[3], molecules[1]);
 
 
 
 
     //sampleTest(mol);
-    //testRot();
+    testRot();
     //testEigen();
 
     return 0;

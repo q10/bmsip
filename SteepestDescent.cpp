@@ -32,16 +32,18 @@ void generateSteepestDescentRotationMatrix(vector<double> &matR, const vector<do
 	double tsin = sin(theta), tcos = 1 - cos(theta);
 	matR.clear(); matR.resize(9, 0); matR[0] = matR[4] = matR[8] = 1;
 	vector<double> matW;
+
 	generateMatrixWFromNormalizedVectorW(matW, normalizedVectorT);
 
 	for (unsigned int i=0; i < matR.size(); i++) matR[i] += tsin * matW[i];
 	cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, 3, 3, 3, tcos, &matW[0], 3, &matW[0], 3, 1, &matR[0], 3);
+
 }
 
 void calculateForceAndTorqueVectors(vector<double> &force, vector<double> &torque, vector<double> &coordsMoleculeA, vector<double> &coordsMoleculeB, const vector<int> &atomicNumbersA, const vector<int> &atomicNumbersB, const vector<double> &centerOfMassA) {
 	if (coordsMoleculeA.size() != atomicNumbersA.size() * 3 or coordsMoleculeB.size() != atomicNumbersB.size() * 3) { cerr << "ERROR: INCORRECT MATCHING OF NUMBER OF COORDINATES AND ATOMIC NUMBERS; EXITING" << endl; abort(); }
 	force.clear(); force.resize(3, 0); torque.clear(); torque.resize(3, 0);
-	vector<double> delSdelP(3), differenceVector(3), cProduct(3), PmP(3);
+	vector<double> differenceVector(3), cProduct(3), PmP(3);
 
     const double constP = 2.0 * M_SQRT2;
     const double A = 4.0 * M_PI * constP / 3.0;
@@ -49,7 +51,7 @@ void calculateForceAndTorqueVectors(vector<double> &force, vector<double> &torqu
 
 
 	for (unsigned int i=0; i < coordsMoleculeA.size(); i+=3) {
-		for (unsigned int k=0; k<3; k++) delSdelP[k] = 0; // clear the partial derivative sum
+		vector<double> delSdelPI(3, 0); // clear the partial derivative sum
         double vdwRA = etab.GetVdwRad(atomicNumbersA[i / 3]); // atomic number vectir is 3x shorter than 3d coordinates vector
 
 		for (unsigned int j=0; j < coordsMoleculeB.size(); j+=3) {
@@ -62,13 +64,13 @@ void calculateForceAndTorqueVectors(vector<double> &force, vector<double> &torqu
 			for (unsigned int k=0; k<3; k++) differenceVector[k] = coordsMoleculeA[i+k] - coordsMoleculeB[j+k];
             double distanceSquared = pow( cblas_dnrm2(differenceVector.size(), &differenceVector[0], 1), 2 );
 			double expPmQ2 = 2 * D * A * pow(sqvA * sqvB  / C, 1.5) * exp( D * distanceSquared ); // the partial derivative evaluated
-			for (unsigned int k=0; k<3; k++) delSdelP[k] += expPmQ2 * differenceVector[k];
+			for (unsigned int k=0; k<3; k++) delSdelPI[k] += expPmQ2 * differenceVector[k];
 		}
 		
-		for (unsigned int k=0; k<3; k++) force[k] += delSdelP[k]; // add to force
+		for (unsigned int k=0; k<3; k++) force[k] += delSdelPI[k]; // add to force
 		
 		for (unsigned int k=0; k<3; k++) PmP[k] = coordsMoleculeA[i+k] - centerOfMassA[k];
-		crossProduct(cProduct, PmP, delSdelP);
+		crossProduct(cProduct, PmP, delSdelPI);
 		for (unsigned int k=0; k<3; k++) torque[k] += cProduct[k]; // add to torque
 	}
 }
@@ -79,13 +81,14 @@ void runSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, double
 
 	vector<double> coordsMoleculeA, coordsMoleculeB, centerOfMassA, force, torque, delT, delR, tempA, bestAInThisStep;
 	vector<int> atomicNumsA, atomicNumsB;
-	double currentStepH = 1, bestVolumeOverlapSoFar = -1;
 
     generateCoordsMatrixFromMolecule(coordsMoleculeA, moleculeA);
     generateCoordsMatrixFromMolecule(coordsMoleculeB, moleculeB);
     generateAtomicNumbersListFromMolecule(atomicNumsA, moleculeA);
     generateAtomicNumbersListFromMolecule(atomicNumsB, moleculeB);
     getMoleculeCenterCoords(centerOfMassA, moleculeA);
+
+	double currentStepH = 1, bestVolumeOverlapSoFar = volumeOverlap(coordsMoleculeA, coordsMoleculeB, atomicNumsA, atomicNumsB);
 
     while (currentStepH > 0) {
     	cout << "stepping... ";
@@ -112,6 +115,7 @@ void runSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, double
 		    	bestVolumeOverlapSoFar = currentVolOverlap;
 		    	bestAInThisStep = tempA;
 		    }
+		    cout << currentVolOverlap << endl;
 		}
 		coordsMoleculeA = bestAInThisStep; currentStepH = bestHInThisStep;
 		cout << "Best h in this step is " << bestHInThisStep << endl;
