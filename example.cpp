@@ -222,7 +222,6 @@ void writeTemporaryMoleculeCoordsToFile(const string &fileName, OBMol &molecule,
     generateCoordsMatrixFromMolecule(oldCoords, molecule);
     saveCoordsMatrixToMolecule(molecule, tempCoords);
     writeMoleculeToFile(fileName, molecule, rewriteFile);
-    //printMoleculeCenterCoords(molecule);
     saveCoordsMatrixToMolecule(molecule, oldCoords);
 }
 
