@@ -99,6 +99,7 @@ void runSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, double
 		calculateForceAndTorqueVectors(force, torque, coordsMoleculeA, coordsMoleculeB, atomicNumsA, atomicNumsB, centerOfMassA);
 		normalizeVector(force); normalizeVector(torque);
 
+
 		for (double h=0; h < 1.0; h += 0.01) {
 			generateSteepestDescentTranslationalVector(delT, force, h, alpha); // generate deviation translational vector
 			generateSteepestDescentRotationMatrix(delR, torque, h, betaRadians); // generate deviation rotational matrix
@@ -107,7 +108,7 @@ void runSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, double
 			tempA = coordsMoleculeA;
 			translate3DMatrixCoordinates(tempA, -centerOfMassA[0], -centerOfMassA[1], -centerOfMassA[2]);
 			rotate3DMatrixCoordinates(tempA, delR);
-			translate3DMatrixCoordinates(tempA, delT[0], delT[1], delT[2]);
+			translate3DMatrixCoordinates(tempA, centerOfMassA[0] + delT[0], centerOfMassA[1] + delT[1], centerOfMassA[2] + delT[2]); // move coordinates back FROM center of rotation and add the translational displacement
 
 		    double currentVolOverlap = volumeOverlap(tempA, coordsMoleculeB, atomicNumsA, atomicNumsB);
 		    if (currentVolOverlap > bestVolumeOverlapSoFar) { // check overlap goodness
@@ -115,10 +116,9 @@ void runSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, double
 		    	bestVolumeOverlapSoFar = currentVolOverlap;
 		    	bestAInThisStep = tempA;
 		    }
-		    cout << currentVolOverlap << endl;
 		}
 		coordsMoleculeA = bestAInThisStep; currentStepH = bestHInThisStep;
-		cout << "Best h in this step is " << bestHInThisStep << endl;
+		cout << "Best h in this step is " << bestHInThisStep << " and volume overlap is at " << bestVolumeOverlapSoFar << endl;
 	}
 
     cout << "\nThe convergent solution coordinates of A produces a volume overlap of " << bestVolumeOverlapSoFar << endl;

@@ -76,10 +76,10 @@ void writeMoleculeToFile(const string &fileName, OBMol &molecule, bool rewriteFi
     obconversion.Write(&molecule, &ofs);  // obconversion.WriteFile(&molecule, fileName.c_str());
 }
 
-void writeAllMoleculeConformersToFile(const string &fileName, OBMol &molecule) {
+void writeAllMoleculeConformersToFile(const string &fileName, OBMol &molecule, bool rewriteFile=false) {
     for (int i = molecule.NumConformers()-1; i >= 0; i--) { // DO NOT USE UNSIGNED INT i!!!
         molecule.SetConformer(i);
-        writeMoleculeToFile(fileName, molecule);
+        writeMoleculeToFile(fileName, molecule, rewriteFile);
     }
 }
 
@@ -152,6 +152,13 @@ void getMoleculeCenterCoords(vector<double> &centerCoords, OBMol &molecule) {
     for (unsigned int i=0; i < centerCoords.size(); i++) centerCoords[i] /= molecule.GetMolWt();
 }
 
+void printMoleculeCenterCoords(OBMol &molecule) {
+    vector<double> centerCoords; getMoleculeCenterCoords(centerCoords, molecule);
+    cout << "CENTER COORDS: ";
+    for (unsigned int i=0; i < centerCoords.size(); i++) { cout << centerCoords[i] << " "; }
+    cout << endl;
+}
+
 inline void translate3DMatrixCoordinates(vector<double> &matrix, double x, double y, double z) {
     for (unsigned int i=0; i < matrix.size(); i+=3) { matrix[i] += x; matrix[i+1] += y; matrix[i+2] += z; }
 }
@@ -210,6 +217,15 @@ void generateOptimalRotationMatrix(vector<double> &rotMatrix, unsigned int optCo
     }
 }
 
+void writeTemporaryMoleculeCoordsToFile(const string &fileName, OBMol &molecule, vector<double> &tempCoords, bool rewriteFile=false) {
+    vector<double> oldCoords;
+    generateCoordsMatrixFromMolecule(oldCoords, molecule);
+    saveCoordsMatrixToMolecule(molecule, tempCoords);
+    writeMoleculeToFile(fileName, molecule, rewriteFile);
+    //printMoleculeCenterCoords(molecule);
+    saveCoordsMatrixToMolecule(molecule, oldCoords);
+}
+
 
 
 void findBestInitialOrientation(OBMol &moleculeA, OBMol &moleculeB) {
@@ -256,10 +272,9 @@ void findBestInitialOrientation(OBMol &moleculeA, OBMol &moleculeB) {
 
     cout << "\nThe best initial orientation matrix is: " << RTable[bestRcode] << ", which produces a volume overlap of " << bestVolumeOverlap << endl;
     printMatrix(bestR, 3, 3);
-    cout << "\nRESULTING A:" << endl; printMatrix(bestA, bestA.size() / 3, 3, false); 
+    cout << "\nRESULTING A:" << endl; printMatrix(bestA, bestA.size() / 3, 3, false);
     cout << "\nEND INITIAL ORIENTATION SEARCH.  SAVING COORDINATES TO MOLECULE A...\n\n";
-    saveCoordsMatrixToMolecule(moleculeA, bestA);
-
+    saveCoordsMatrixToMolecule(moleculeA, bestA);    
 
 /*
     generateOptimalRotationMatrix(Rx, 1, eVectA, eVectB);
