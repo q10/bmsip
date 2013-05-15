@@ -267,9 +267,10 @@ int main (int argc, char **argv) {
     }
 
     vector<OBMol> molecules;
-    importMoleculesFromFile(molecules, argv[1]);
+    importMoleculeConformersFromFile(molecules, argv[1]);
     importMoleculesFromFile(molecules, argv[2]);
 
+    cout << "VEC SIZE: " << molecules.size() << endl;
     cout << "NUM CONFORMERS: " << molecules[0].NumConformers() << endl;
     cout << "NUM ATOMS: " << molecules[0].NumAtoms() << endl;
 
@@ -290,7 +291,7 @@ int main (int argc, char **argv) {
 
 
     //generateConformers(molecules[1]);
-    //writeAllMoleculeConformersToFile(argv[3], molecules[1]);
+    //writeMoleculeConformersToFile(argv[3], molecules[1]);
 
 
 

@@ -32,6 +32,7 @@ unsigned int importMoleculesFromFile(vector<OBMol> &moleculesList, const string 
         moleculesList.push_back(mol);
         mol.Clear(); notAtEnd = obconversion.Read(&mol);
     }
+    return numMoleculesInFile;
 }
 
 void writeMoleculeToFile(const string &fileName, OBMol &molecule, bool rewriteFile=false) {
@@ -51,7 +52,18 @@ void writeMoleculeToFile(const string &fileName, OBMol &molecule, bool rewriteFi
     obconversion.Write(&molecule, &ofs);  // obconversion.WriteFile(&molecule, fileName.c_str());
 }
 
-void writeAllMoleculeConformersToFile(const string &fileName, OBMol &molecule, bool rewriteFile=false) {
+// currently takes the first molecule in file, and if sequential molecules have different formulas, simply disposes of it
+void importMoleculeConformersFromFile(vector<OBMol> &moleculesList, const string &fileName) {
+    vector<OBMol> tempList;
+    importMoleculesFromFile(tempList, fileName);
+    OBMol *tempMoleculeBuild = new OBMol(tempList[0]);
+    for (unsigned int i=1; i < tempList.size(); i++) {
+        if (tempMoleculeBuild->GetFormula().compare( tempList[i].GetFormula() ) == 0) tempMoleculeBuild->AddConformer(tempList[i].GetCoordinates());
+    }
+    moleculesList.push_back(*tempMoleculeBuild);
+}
+
+void writeMoleculeConformersToFile(const string &fileName, OBMol &molecule, bool rewriteFile=false) {
     for (int i = molecule.NumConformers()-1; i >= 0; i--) { // DO NOT USE UNSIGNED INT i!!!
         molecule.SetConformer(i);
         writeMoleculeToFile(fileName, molecule, rewriteFile);
