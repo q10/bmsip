@@ -124,3 +124,11 @@ void rotate3DMatrixCoordinates(vector<double> &matrix, vector<double> &rotationM
     matrix = resultMatrix;
 }
 
+void removeNonBondedAtomsInMolecule(OBMol &molecule) {
+    cout << "Deleting unbonded atoms... "; int numDeleted = 0;
+    for (OBAtomIterator iter = molecule.BeginAtoms(); iter != molecule.EndAtoms(); iter++) {
+        OBAtom *currentAtom = *iter;
+        if ((not currentAtom->HasSingleBond()) and (not currentAtom->HasNonSingleBond()) and molecule.DeleteAtom(currentAtom)) numDeleted++;
+    }
+    cout << "deleted " << numDeleted << " unbonded atoms." << endl;
+}

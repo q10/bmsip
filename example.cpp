@@ -236,6 +236,7 @@ int main (int argc, char **argv) {
 
     vector<OBMol> molecules;
     importMoleculesFromFile(molecules, argv[1]);
+    removeNonBondedAtomsInMolecule(molecules[0]);
     generateConformers(molecules[0]);
     writeMoleculeConformersToFile(argv[2], molecules[0], true);
 
