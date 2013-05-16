@@ -220,7 +220,7 @@ void PCAPlusSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, do
 }
 
 
-void generateConformers(OBMol &molecule, int numConformers=100, int numChildren=10, int mutability=5, int convergence=30) {
+void generateConformers(OBMol &molecule, int numConformers=50, int numChildren=10, int mutability=5, int convergence=30) {
     OBConformerSearch cs;
     cs.Setup(molecule, numConformers, numChildren, mutability, convergence); // numConformers 30 // numChildren 5 // mutability 5 // convergence 25
     cs.SetScore(new OBEnergyConformerScore);
