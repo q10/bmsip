@@ -224,3 +224,13 @@ double volumeOverlap (OBMol &moleculeA, OBMol &moleculeB) {
     cout << n << " molecules converted\n";
 
 */
+
+
+/*
+    // Print the rotor keys
+    RotorKeys keys = cs.GetRotorKeys();
+    for (RotorKeys::iterator key = keys.begin(); key != keys.end(); ++key) {
+        for (unsigned int i = 1; i < key->size(); ++i) cout << key->at(i) << " ";
+        cout << endl;
+    }
+*/

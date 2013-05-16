@@ -220,81 +220,40 @@ void PCAPlusSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, do
 }
 
 
-
-
-
-
-
-void generateConformers(OBMol &molecule) {
+void generateConformers(OBMol &molecule, int numConformers=100, int numChildren=10, int mutability=5, int convergence=30) {
     OBConformerSearch cs;
-    cs.Setup(molecule); // numConformers 30 // numChildren 5 // mutability 5 // convergence 25
-    //cs.SetScore(new OBEnergyConformerScore);
-    cs.Search();
-
-/*
-    cout << "Setting up conformer searching..." << endl
-            << "   conformers:  30" << endl
-            << "   children:    5" << endl
-            << "   mutability:  5" << endl
-            << "   convergence: 25" << endl;
-
-    // Print the rotor keys
-    RotorKeys keys = cs.GetRotorKeys();
-    for (RotorKeys::iterator key = keys.begin(); key != keys.end(); ++key) {
-        for (unsigned int i = 1; i < key->size(); ++i) cout << key->at(i) << " ";
-        cout << endl;
-    }
-*/
-    // Get the conformers
-    cout << "NUM CONFORMERS: " << molecule.NumConformers() << endl;
-    cs.GetConformers(molecule);
-    cout << "NUM CONFORMERS: " << molecule.NumConformers() << endl << endl;
-    printMoleculeCoords(molecule); cout << endl << endl;
-    molecule.SetConformer(0);
-    printMoleculeCoords(molecule); cout << endl << endl;
-    molecule.SetConformer(11);
-    printMoleculeCoords(molecule);
-       
+    cs.Setup(molecule, numConformers, numChildren, mutability, convergence); // numConformers 30 // numChildren 5 // mutability 5 // convergence 25
+    cs.SetScore(new OBEnergyConformerScore);
+    cs.Search(); cs.GetConformers(molecule);
 }
 
 
-
-
 int main (int argc, char **argv) {
-    if(argc < 4) {
-        cout << "Usage: ProgrameName InputFileName InputFileName2 OutputFileName\n";
+    if(argc < 3) {
+        cout << "Usage: ProgrameName InputFileName OutputFileName\n";
         return 1;
     }
 
     vector<OBMol> molecules;
-    importMoleculeConformersFromFile(molecules, argv[1]);
-    importMoleculesFromFile(molecules, argv[2]);
+    importMoleculesFromFile(molecules, argv[1]);
+    generateConformers(molecules[0]);
+    writeMoleculeConformersToFile(argv[2], molecules[0], true);
 
-    cout << "VEC SIZE: " << molecules.size() << endl;
+
+/*    cout << "VEC SIZE: " << molecules.size() << endl;
     cout << "NUM CONFORMERS: " << molecules[0].NumConformers() << endl;
     cout << "NUM ATOMS: " << molecules[0].NumAtoms() << endl;
-
+*/
     //generateConformers(molecules[1]);
     //molecules[1].SetConformer(10);
 
 
     //findBestPCAOrientation(molecules[0], molecules[1]);
     //runSteepestDescent(molecules[0], molecules[1], 0.5, 10.0 * M_PI / 180.0);
-
-
-
     
     //PCAPlusSteepestDescent(molecules[0], molecules[1], 0.5, 10.0 * M_PI / 180.0);
     //writeMoleculeToFile(argv[3], molecules[0], true);
     //writeMoleculeToFile(argv[3], molecules[1]);
-
-
-
-    //generateConformers(molecules[1]);
-    //writeMoleculeConformersToFile(argv[3], molecules[1]);
-
-
-
 
     //sampleTest(mol);
     //testRot();

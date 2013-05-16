@@ -67,6 +67,7 @@ void writeMoleculeConformersToFile(const string &fileName, OBMol &molecule, bool
     for (int i = molecule.NumConformers()-1; i >= 0; i--) { // DO NOT USE UNSIGNED INT i!!!
         molecule.SetConformer(i);
         writeMoleculeToFile(fileName, molecule, rewriteFile);
+        rewriteFile = false; // if rewriteFile flag is on, keep it on only for the first conformer's write
     }
 }
 
