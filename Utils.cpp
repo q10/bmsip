@@ -63,6 +63,28 @@ void importMoleculeConformersFromFile(vector<OBMol> &moleculesList, const string
     moleculesList.push_back(*tempMoleculeBuild);
 }
 
+/*
+void tempImportMoleculesFromFile(vector<OBMol> &moleculesList, const string &fileName) {
+    string format; extractFileExtension(format, fileName);
+    OBConversion obconversion;
+    if (not obconversion.SetInFormat(format.c_str())) { cerr << "ERROR: OpenBabel does not recognize the following format: '" << format << "'; exiting" << endl; abort(); }
+
+    vector<OBBase*> tempList;
+    OBMol mol; bool notAtEnd = obconversion.ReadFile(&mol, fileName.c_str());
+    while (notAtEnd) {
+        tempList.push_back(&mol);
+        notAtEnd = obconversion.Read(&mol);
+    }
+    OBOp::LoadAllPlugins();
+    OBOp* pOp = OBOp::FindType("readconformers");
+    if(not pOp)
+        pOp->ProcessVec(tempList);
+    cout << tempList.size() << endl;
+}
+
+pConv->AddOption("writeconformers",OBConversion::GENOPTIONS);
+*/
+
 void writeMoleculeConformersToFile(const string &fileName, OBMol &molecule, bool rewriteFile=false) {
     for (int i = molecule.NumConformers()-1; i >= 0; i--) { // DO NOT USE UNSIGNED INT i!!!
         molecule.SetConformer(i);
@@ -128,7 +150,9 @@ void removeNonBondedAtomsInMolecule(OBMol &molecule) {
     cout << "Deleting unbonded atoms... "; int numDeleted = 0;
     for (OBAtomIterator iter = molecule.BeginAtoms(); iter != molecule.EndAtoms(); iter++) {
         OBAtom *currentAtom = *iter;
-        if ((not currentAtom->HasSingleBond()) and (not currentAtom->HasNonSingleBond()) and molecule.DeleteAtom(currentAtom)) numDeleted++;
+        if ((not currentAtom->HasSingleBond()) and (not currentAtom->HasNonSingleBond()) and molecule.DeleteAtom(currentAtom)) {
+            numDeleted++; iter--;
+        }
     }
     cout << "deleted " << numDeleted << " unbonded atoms." << endl;
 }

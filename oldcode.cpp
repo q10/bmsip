@@ -234,3 +234,7 @@ double volumeOverlap (OBMol &moleculeA, OBMol &moleculeB) {
         cout << endl;
     }
 */
+
+    //sampleTest(mol);
+    //testRot();
+    //testEigen();

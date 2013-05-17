@@ -2,6 +2,7 @@
 #include <cmath>
 #include <openbabel/obconversion.h>
 #include <openbabel/conformersearch.h>
+#include <openbabel/op.h>
 #include <openbabel/mol.h>
 #include <openbabel/data.h>
 
@@ -227,12 +228,8 @@ void generateConformers(OBMol &molecule, int numConformers=50, int numChildren=1
     cs.Search(); cs.GetConformers(molecule);
 }
 
-
 int main (int argc, char **argv) {
-    if(argc < 3) {
-        cout << "Usage: ProgrameName InputFileName OutputFileName\n";
-        return 1;
-    }
+    if(argc < 3) { cout << "Usage: ProgrameName InputFileName OutputFileName\n"; return 1; }
 
     vector<OBMol> molecules;
     importMoleculesFromFile(molecules, argv[1]);
@@ -240,25 +237,16 @@ int main (int argc, char **argv) {
     generateConformers(molecules[0]);
     writeMoleculeConformersToFile(argv[2], molecules[0], true);
 
-
 /*    cout << "VEC SIZE: " << molecules.size() << endl;
     cout << "NUM CONFORMERS: " << molecules[0].NumConformers() << endl;
     cout << "NUM ATOMS: " << molecules[0].NumAtoms() << endl;
 */
-    //generateConformers(molecules[1]);
     //molecules[1].SetConformer(10);
 
 
     //findBestPCAOrientation(molecules[0], molecules[1]);
     //runSteepestDescent(molecules[0], molecules[1], 0.5, 10.0 * M_PI / 180.0);
-    
     //PCAPlusSteepestDescent(molecules[0], molecules[1], 0.5, 10.0 * M_PI / 180.0);
-    //writeMoleculeToFile(argv[3], molecules[0], true);
-    //writeMoleculeToFile(argv[3], molecules[1]);
-
-    //sampleTest(mol);
-    //testRot();
-    //testEigen();
 
     return 0;
 }
