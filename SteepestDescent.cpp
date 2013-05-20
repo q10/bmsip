@@ -40,23 +40,23 @@ void generateSteepestDescentRotationMatrix(vector<double> &matR, const vector<do
 
 }
 
-void calculateForceAndTorqueVectors(vector<double> &force, vector<double> &torque, vector<double> &coordsMoleculeA, vector<double> &coordsMoleculeB, const vector<int> &atomicNumbersA, const vector<int> &atomicNumbersB, const vector<double> &centerOfMassA) {
-	if (coordsMoleculeA.size() != atomicNumbersA.size() * 3 or coordsMoleculeB.size() != atomicNumbersB.size() * 3) { cerr << "ERROR: INCORRECT MATCHING OF NUMBER OF COORDINATES AND ATOMIC NUMBERS; EXITING" << endl; abort(); }
+void calculateForceAndTorqueVectors(vector<double> &force, vector<double> &torque, vector<double> &coordsMoleculeA, vector<double> &coordsMoleculeB, const vector<double> &VDWsA, const vector<double> &VDWsB, const vector<double> &centerOfMassA) {
+	if (coordsMoleculeA.size() != VDWsA.size() * 3 or coordsMoleculeB.size() != VDWsB.size() * 3) { cerr << "ERROR: INCORRECT MATCHING OF NUMBER OF COORDINATES AND ATOMIC NUMBERS; EXITING" << endl; abort(); }
 	force.clear(); force.resize(3, 0); torque.clear(); torque.resize(3, 0);
 	vector<double> differenceVector(3), cProduct(3), PmP(3);
 
-    const double constP = 2.0 * M_SQRT2;
-    const double A = 4.0 * M_PI * constP / 3.0;
-    const double B = -M_PI * pow(0.75 * constP * M_1_PI, 2.0/3.0);
+    static const double constP = 2.0 * M_SQRT2;
+    static const double A = 4.0 * M_PI * constP / 3.0;
+    static const double B = -M_PI * pow(0.75 * constP * M_1_PI, 2.0/3.0);
 
 
 	for (unsigned int i=0; i < coordsMoleculeA.size(); i+=3) {
 		vector<double> delSdelPI(3, 0); // clear the partial derivative sum
-        double vdwRA = etab.GetVdwRad(atomicNumbersA[i / 3]); // atomic number vectir is 3x shorter than 3d coordinates vector
+        double vdwRA = VDWsA[i / 3]; // atomic number vectir is 3x shorter than 3d coordinates vector
+        double sqvA = vdwRA * vdwRA;
 
 		for (unsigned int j=0; j < coordsMoleculeB.size(); j+=3) {
-            double vdwRB = etab.GetVdwRad(atomicNumbersB[j / 3]);
-            double sqvA = vdwRA * vdwRA;
+            double vdwRB = VDWsB[j / 3];
             double sqvB = vdwRB * vdwRB;
             double C = sqvA + sqvB;
             double D = B / C;
@@ -75,18 +75,18 @@ void calculateForceAndTorqueVectors(vector<double> &force, vector<double> &torqu
 	}
 }
 
-double steepestDescentEngine(vector<double> &finalCoordsA, vector<double> &coordsMoleculeA, vector<double> &coordsMoleculeB, vector<int> &atomicNumsA, vector<int> &atomicNumsB, vector<double> &centerOfMassA, double alpha, double betaRadians) {
+double steepestDescentEngine(vector<double> &finalCoordsA, vector<double> &coordsMoleculeA, vector<double> &coordsMoleculeB, vector<double> &VDWsA, vector<double> &VDWsB, vector<double> &centerOfMassA, double alpha, double betaRadians, bool verbose=false) {
 	finalCoordsA = coordsMoleculeA;
 	vector<double> bestAInThisStep, force, torque, delT, delR, tempA;
-	double currentStepH = 1, bestVolumeOverlapSoFar = volumeOverlap(finalCoordsA, coordsMoleculeB, atomicNumsA, atomicNumsB);
+	double currentStepH = 1, bestVolumeOverlapSoFar = volumeOverlap(finalCoordsA, coordsMoleculeB, VDWsA, VDWsB);
 
     while (currentStepH > 0) {
-    	cout << "stepping... ";
+    	if (verbose) cout << "stepping... ";
 		double bestHInThisStep = 0;
 		bestAInThisStep = finalCoordsA;
 
 		// calculate force and torque, and normalize them
-		calculateForceAndTorqueVectors(force, torque, finalCoordsA, coordsMoleculeB, atomicNumsA, atomicNumsB, centerOfMassA);
+		calculateForceAndTorqueVectors(force, torque, finalCoordsA, coordsMoleculeB, VDWsA, VDWsB, centerOfMassA);
 		normalizeVector(force); normalizeVector(torque);
 
 		for (double h=0; h < 1.0; h += 0.01) {
@@ -99,7 +99,7 @@ double steepestDescentEngine(vector<double> &finalCoordsA, vector<double> &coord
 			rotate3DMatrixCoordinates(tempA, delR);
 			translate3DMatrixCoordinates(tempA, centerOfMassA[0] + delT[0], centerOfMassA[1] + delT[1], centerOfMassA[2] + delT[2]); // move coordinates back FROM center of rotation and add the translational displacement
 
-		    double currentVolOverlap = volumeOverlap(tempA, coordsMoleculeB, atomicNumsA, atomicNumsB);
+		    double currentVolOverlap = volumeOverlap(tempA, coordsMoleculeB, VDWsA, VDWsB);
 		    if (currentVolOverlap > bestVolumeOverlapSoFar) { // check overlap goodness
 		    	bestHInThisStep = h;
 		    	bestVolumeOverlapSoFar = currentVolOverlap;
@@ -107,30 +107,30 @@ double steepestDescentEngine(vector<double> &finalCoordsA, vector<double> &coord
 		    }
 		}
 		finalCoordsA = bestAInThisStep; currentStepH = bestHInThisStep;
-		cout << "Best h in this step is " << bestHInThisStep << " and volume overlap is at " << bestVolumeOverlapSoFar << endl;
+		if (verbose) cout << "Best h in this step is " << bestHInThisStep << " and volume overlap is at " << bestVolumeOverlapSoFar << endl;
 	}
 	return bestVolumeOverlapSoFar;
 }
 
 
 
-void runSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, double betaRadians) {
-    cout << endl << "BEGIN STEEPEST DESCENT SEARCH" << endl
-		<< "alpha = " << alpha << endl << "beta = " << betaRadians << endl << "Initializing data..." << endl;
+void runSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, double betaRadians, bool verbose) {
+    if (verbose) cout << endl << "BEGIN STEEPEST DESCENT SEARCH" << endl << "alpha = " << alpha << endl << "beta = " << betaRadians << endl << "Initializing data..." << endl;
 
-	vector<double> coordsMoleculeA, coordsMoleculeB, centerOfMassA, finalCoordsA;
-	vector<int> atomicNumsA, atomicNumsB;
+	vector<double> coordsMoleculeA, coordsMoleculeB, centerOfMassA, finalCoordsA, VDWsA, VDWsB;
 
     generateCoordsMatrixFromMolecule(coordsMoleculeA, moleculeA);
     generateCoordsMatrixFromMolecule(coordsMoleculeB, moleculeB);
-    generateAtomicNumbersListFromMolecule(atomicNumsA, moleculeA);
-    generateAtomicNumbersListFromMolecule(atomicNumsB, moleculeB);
+    generateVDWRadiusListFromMolecule(VDWsA, moleculeA);
+    generateVDWRadiusListFromMolecule(VDWsB, moleculeB);
     getMoleculeCenterCoords(centerOfMassA, moleculeA);
 
-    double bestVolumeOverlap = steepestDescentEngine(finalCoordsA, coordsMoleculeA, coordsMoleculeB, atomicNumsA, atomicNumsB, centerOfMassA, alpha, betaRadians);
+    double bestVolumeOverlap = steepestDescentEngine(finalCoordsA, coordsMoleculeA, coordsMoleculeB, VDWsA, VDWsB, centerOfMassA, alpha, betaRadians, verbose);
 
-    cout << "\nThe convergent solution coordinates of A produces a volume overlap of " << bestVolumeOverlap << endl;
-    cout << "\nRESULTING A:" << endl; printMatrix(finalCoordsA, finalCoordsA.size() / 3, 3, false);
-    cout << "\nEND STEEOEST DESCENT SEARCH.  SAVING COORDINATES TO MOLECULE A...\n\n";
+    if (verbose) {
+	    cout << "\nThe convergent solution coordinates of A produces a volume overlap of " << bestVolumeOverlap << endl;
+	    cout << "\nRESULTING A:" << endl; printMatrix(finalCoordsA, finalCoordsA.size() / 3, 3, false);
+	    cout << "\nEND STEEOEST DESCENT SEARCH.  SAVING COORDINATES TO MOLECULE A...\n\n";
+	}
 	saveCoordsMatrixToMolecule(moleculeA, finalCoordsA);
 }

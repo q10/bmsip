@@ -63,27 +63,31 @@ void importMoleculeConformersFromFile(vector<OBMol> &moleculesList, const string
     moleculesList.push_back(*tempMoleculeBuild);
 }
 
-/*
+
 void tempImportMoleculesFromFile(vector<OBMol> &moleculesList, const string &fileName) {
     string format; extractFileExtension(format, fileName);
     OBConversion obconversion;
     if (not obconversion.SetInFormat(format.c_str())) { cerr << "ERROR: OpenBabel does not recognize the following format: '" << format << "'; exiting" << endl; abort(); }
 
-    vector<OBBase*> tempList;
     OBMol mol; bool notAtEnd = obconversion.ReadFile(&mol, fileName.c_str());
+    vector<OBBase*> tempList;
     while (notAtEnd) {
-        tempList.push_back(&mol);
-        notAtEnd = obconversion.Read(&mol);
+        tempList.push_back(new OBMol(mol));
+        mol.Clear(); notAtEnd = obconversion.Read(&mol);
     }
-    OBOp::LoadAllPlugins();
-    OBOp* pOp = OBOp::FindType("readconformers");
-    if(not pOp)
-        pOp->ProcessVec(tempList);
-    cout << tempList.size() << endl;
-}
 
-pConv->AddOption("writeconformers",OBConversion::GENOPTIONS);
-*/
+    //for (int i=0; i<tempPtr.size(); i++) cout << dynamic_cast<OBMol*>(tempPtr[i])->NumConformers() << endl;
+
+    cout << tempList.size() << endl;
+
+    OBOp* pOp = OBOp::FindType("readconformer");
+    if(pOp)
+        pOp->ProcessVec(tempList);
+
+
+    cout << tempList.size() << endl;
+    for (int i=0; i<tempList.size(); i++) cout << dynamic_cast<OBMol*>(tempList[i])->GetFormula() << endl;
+}
 
 void writeMoleculeConformersToFile(const string &fileName, OBMol &molecule, bool rewriteFile=false) {
     for (int i = molecule.NumConformers()-1; i >= 0; i--) { // DO NOT USE UNSIGNED INT i!!!
@@ -99,6 +103,15 @@ void printMoleculeCoords(OBMol &molecule) {
 
 void generateCoordsMatrixFromMolecule(vector<double> &matrix, OBMol &molecule) {     // generates column-order matrix of coordinates
     matrix.clear(); matrix.insert(matrix.end(), molecule.GetCoordinates(), &molecule.GetCoordinates()[3*molecule.NumAtoms()]);
+}
+
+void generateCoordsMatrixFromMoleculeConformers(vector< vector<double> > &matrixes, OBMol &molecule) {     // generates column-order matrix of coordinates
+    matrixes.resize( molecule.NumConformers() );
+    for (unsigned int i=0; i < molecule.NumConformers(); i++) {
+        molecule.SetConformer(i);
+        generateCoordsMatrixFromMolecule(matrixes[i], molecule);
+    }
+    molecule.SetConformer(0);
 }
 
 void saveCoordsMatrixToMolecule(OBMol &molecule, vector<double> &matrix) {
@@ -120,6 +133,12 @@ void generateAtomicNumbersListFromMolecule(vector<int> &numList, OBMol &molecule
         numList.push_back((*iter)->GetAtomicNum());
 }
 
+void generateVDWRadiusListFromMolecule(vector<double> &VDWList, OBMol &molecule) {
+    VDWList.clear();
+    for (OBAtomIterator iter = molecule.BeginAtoms(); iter != molecule.EndAtoms(); iter++)
+        VDWList.push_back( etab.GetVdwRad((*iter)->GetAtomicNum()) );
+}
+
 void getMoleculeCenterCoords(vector<double> &centerCoords, OBMol &molecule) {
     centerCoords.clear(); centerCoords.resize(3, 0);
     for (OBAtomIterator iter = molecule.BeginAtoms(); iter != molecule.EndAtoms(); iter++) {
@@ -127,6 +146,15 @@ void getMoleculeCenterCoords(vector<double> &centerCoords, OBMol &molecule) {
         centerCoords[0] += tmpMass*tmpCoords[0]; centerCoords[1] += tmpMass*tmpCoords[1]; centerCoords[2] += tmpMass*tmpCoords[2];
     }
     for (unsigned int i=0; i < centerCoords.size(); i++) centerCoords[i] /= molecule.GetMolWt();
+}
+
+void getMoleculeConformerCenterCoords(vector< vector<double> > &centerCoords, OBMol &molecule) {
+    centerCoords.resize( molecule.NumConformers() );
+    for (unsigned int i=0; i < molecule.NumConformers(); i++) {
+        molecule.SetConformer(i);
+        getMoleculeCenterCoords(centerCoords[i], molecule);
+    }
+    molecule.SetConformer(0);
 }
 
 void printMoleculeCenterCoords(OBMol &molecule) {

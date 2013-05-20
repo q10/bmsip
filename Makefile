@@ -8,7 +8,7 @@ SONAME=-soname
 ifeq ($(shell uname -s), Darwin)
     SONAME=-install_name
     LDFLAGS += -L/opt/local/lib/ -lclapack
-    CFLAGS += -I/opt/local/include/openbabel-2.0/
+    CFLAGS += -I/opt/local/include/openbabel-2.0/ -ffast-math -lm
 else
 	LDFLAGS += -llapack
 endif
