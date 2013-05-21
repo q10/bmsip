@@ -139,6 +139,12 @@ void generateVDWRadiusListFromMolecule(vector<double> &VDWList, OBMol &molecule)
         VDWList.push_back( etab.GetVdwRad((*iter)->GetAtomicNum()) );
 }
 
+void generateAtomicMassesListFromMolecule(vector<double> &massList, OBMol &molecule) {
+    massList.clear();
+    for (OBAtomIterator iter = molecule.BeginAtoms(); iter != molecule.EndAtoms(); iter++)
+        massList.push_back( (*iter)->GetAtomicMass() );
+}
+
 void getMoleculeCenterCoords(vector<double> &centerCoords, OBMol &molecule) {
     centerCoords.clear(); centerCoords.resize(3, 0);
     for (OBAtomIterator iter = molecule.BeginAtoms(); iter != molecule.EndAtoms(); iter++) {

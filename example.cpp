@@ -35,8 +35,7 @@ double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double>
         double sqvA = vdwRA * vdwRA;
 
         for (unsigned int j=0; j < coordsMoleculeB.size(); j+=3) {
-            double vdwRB = VDWsB[j / 3];
-            
+            double vdwRB = VDWsB[j / 3];            
             double sqvB = vdwRB * vdwRB;
             double C = sqvA + sqvB;
 
@@ -159,7 +158,6 @@ void findBestPCAOrientation(OBMol &moleculeA, OBMol &moleculeB) {
     cout << "\nRESULTING A:" << endl; printMatrix(bestA, bestA.size() / 3, 3, false);
     cout << "\nEND INITIAL ORIENTATION SEARCH.  SAVING COORDINATES TO MOLECULE A...\n\n";
     saveCoordsMatrixToMolecule(moleculeA, bestA);    
-
 }
 
 
@@ -234,8 +232,7 @@ void generateConformers(OBMol &molecule, int numConformers=50, int numChildren=1
 
 
 void PCAEngine(vector<double> &finalCoordsA, vector<double> &coordsMoleculeA, vector<double> &coordsMoleculeB, vector<double> &eVectA, vector<double> &eVectB, vector<double> &comA, vector<double> &comB, vector<double> &VDWsA, vector<double> &VDWsB) {
-    vector<double> tempR;
-    double bestVolumeOverlap = 0, currentVolumeOverlap;
+    vector<double> tempR; double bestVolumeOverlap = 0;
 
     for (unsigned int k=0; k < 4; k++) {
         generatePCARotationMatrix(tempR, k, eVectA, eVectB);
@@ -245,7 +242,7 @@ void PCAEngine(vector<double> &finalCoordsA, vector<double> &coordsMoleculeA, ve
         rotate3DMatrixCoordinates(currentPCACoordA, tempR);
         translate3DMatrixCoordinates(currentPCACoordA, comB[0], comB[1], comB[2]);
 
-        currentVolumeOverlap = volumeOverlap(currentPCACoordA, coordsMoleculeB, VDWsA, VDWsB);
+        double currentVolumeOverlap = volumeOverlap(currentPCACoordA, coordsMoleculeB, VDWsA, VDWsB);
         if (currentVolumeOverlap > bestVolumeOverlap) {
             finalCoordsA = currentPCACoordA;
             bestVolumeOverlap = currentVolumeOverlap;
@@ -253,57 +250,86 @@ void PCAEngine(vector<double> &finalCoordsA, vector<double> &coordsMoleculeA, ve
     }
 }
 
+
+void PCACovarianceMatrix(vector<double> &matrix, vector<double> &moleculeCoords, vector<double> &atomicMasses, double molecularWeight) {
+    unsigned int numAtoms = moleculeCoords.size() / 3;
+    double uX = 0, uY = 0, uZ = 0;
+    for (unsigned int i=0; i < 3 * numAtoms; i+=3) { uX += moleculeCoords[i]; uY += moleculeCoords[i+1]; uZ += moleculeCoords[i+2]; }
+    uX /= numAtoms; uY /= numAtoms; uZ /= numAtoms;
+
+    double cXX = 0, cYY = 0, cZZ = 0, cXY = 0, cXZ = 0, cYZ = 0;
+    for (unsigned int i=0; i < 3 * numAtoms; i+=3) {
+        double atomWeight = atomicMasses[i / 3]; // getAtoms is 1-based instead of 0-based
+        cXX += pow(moleculeCoords[i] - uX, 2) * atomWeight;
+        cYY += pow(moleculeCoords[i+1] - uY, 2) * atomWeight;
+        cZZ += pow(moleculeCoords[i+2] - uZ, 2) * atomWeight;
+        cXY += (moleculeCoords[i] - uX) * (moleculeCoords[i+1] - uY) * atomWeight;
+        cXZ += (moleculeCoords[i] - uX) * (moleculeCoords[i+2] - uZ) * atomWeight;
+        cYZ += (moleculeCoords[i+1] - uY) * (moleculeCoords[i+2] - uZ) * atomWeight;
+    }
+
+    matrix.clear(); matrix.resize(9);
+    matrix[0] = cXX; 
+    matrix[1] = matrix[3] = cXY; 
+    matrix[2] = matrix[6] = cXZ; 
+    matrix[4] = cYY;
+    matrix[5] = matrix[7] = cYZ;  
+    matrix[8] = cZZ;
+
+    for (unsigned int i=0; i < matrix.size(); i++) matrix[i] /= molecularWeight;
+}
+
+void getPCAEigenMatrix(vector<double> &eVects, vector<double> &moleculeCoords, vector<double> &atomicMasses, double molecularWeight) {
+    vector<double> covA, eValA;
+    PCACovarianceMatrix(covA, moleculeCoords, atomicMasses, molecularWeight);
+    generateEigenMatrix(eVects, eValA, covA);
+}
+
 void runComparisons(int argc, char **argv) {
     if(argc < 4) { cout << "Usage: ConformerSet1 ConformerSet2 OutputFileName\n"; abort(); }
     vector<OBMol> molecules;
     importMoleculeConformersFromFile(molecules, argv[1]);
     importMoleculeConformersFromFile(molecules, argv[2]);
+    cout << "Finished importing molecules\n";
 
+    vector< vector<double> > coordAs, coordBs, comAs, comBs, eVectAs, eVectBs;
+    vector<double> VDWsA, VDWsB, massesA, massesB, currentPCACoordA, currentSDCoordA, bestCoordsA;
 
-    vector< vector<double> > coordAs, coordBs, comAs, comBs;
-    vector<double> covA, covB, eVectA, eVectB, eValA, eValB, VDWsA, VDWsB, currentPCACoordA, currentSDCoordA, bestCoordsA;
-
+    double molecularWeightA = molecules[0].GetMolWt(), molecularWeightB = molecules[1].GetMolWt();
+    double bestVolumeOverlap = -1;
+    int bestJ = -1, bestI = -1, stepCount = 0;
+    
     generateVDWRadiusListFromMolecule(VDWsA, molecules[0]);
     generateVDWRadiusListFromMolecule(VDWsB, molecules[1]);
+    generateAtomicMassesListFromMolecule(massesA, molecules[0]);
+    generateAtomicMassesListFromMolecule(massesB, molecules[1]);
     generateCoordsMatrixFromMoleculeConformers(coordAs, molecules[0]);
     generateCoordsMatrixFromMoleculeConformers(coordBs, molecules[1]);
     getMoleculeConformerCenterCoords(comAs, molecules[0]);
-    getMoleculeConformerCenterCoords(comBs, molecules[1]);
+    getMoleculeConformerCenterCoords(comBs, molecules[1]);    
+    eVectAs.resize( molecules[0].NumConformers() ), eVectBs.resize( molecules[1].NumConformers() );
+    for (unsigned int k=0; k < molecules[0].NumConformers(); k++) getPCAEigenMatrix(eVectAs[k], coordAs[k], massesA, molecularWeightA);
+    for (unsigned int k=0; k < molecules[1].NumConformers(); k++) getPCAEigenMatrix(eVectBs[k], coordBs[k], massesB, molecularWeightB);
+    cout << "Finished setting up data; running search...\n";
 
-    double bestVolumeOverlap = -1;
-    int bestJ = -1, bestI = -1;
-    
     for (unsigned int j=0; j < molecules[1].NumConformers(); j++) {
-        molecules[1].SetConformer(j);
-        vector< vector<double> > copyCoordsAs = coordAs;
-        generateCovarMatrixFromMolecule(covB, molecules[1]);
-
         for (unsigned int i=0; i < molecules[0].NumConformers(); i++) {
-            molecules[0].SetConformer(i); 
-
-            generateCovarMatrixFromMolecule(covA, molecules[0]);
-            generateEigenMatrix(eVectA, eValA, covA);
-            generateEigenMatrix(eVectB, eValB, covB);
-
-            PCAEngine(currentPCACoordA, coordAs[i], coordBs[j], eVectA, eVectB, comAs[i], comBs[j], VDWsA, VDWsB);
+            PCAEngine(currentPCACoordA, coordAs[i], coordBs[j], eVectAs[i], eVectBs[j], comAs[i], comBs[j], VDWsA, VDWsB);
             double currentVolumeOverlap = steepestDescentEngine(currentSDCoordA, currentPCACoordA, coordBs[j], VDWsA, VDWsB, comAs[i], 1.0, 10.0 * M_PI / 180.0);
-
             if (currentVolumeOverlap > bestVolumeOverlap) {
                 bestVolumeOverlap = currentVolumeOverlap;
                 bestCoordsA = currentSDCoordA;
                 bestI = i; bestJ = j;
             }
-
-            cout << "finished 1 round" << endl;
+            cout << "finished round " << ++stepCount << endl;
         }
     }
 
-    cout << "\nThe best overlap is between conformer A# " << bestI << " and B# " << bestJ << ", which, after running Steepest Descent, produces a volume overlap of " << bestVolumeOverlap << endl;
+    cout << "\nThe best overlap is between conformer A#" << bestI << " and B#" << bestJ << ", which, after PCA followed by Steepest Descent, produces a volume overlap of " << bestVolumeOverlap << endl;
     cout << "\nSaving those best conformers to file..." << endl;
 
-    molecules[1].SetConformer(bestJ);
     saveCoordsMatrixToMolecule(molecules[0], bestCoordsA);
-
+    molecules[1].SetConformer(bestJ);
     writeMoleculeToFile(argv[3], molecules[0], true);
     writeMoleculeToFile(argv[3], molecules[1]);
 }
@@ -311,9 +337,6 @@ void runComparisons(int argc, char **argv) {
 
 
 int main (int argc, char **argv) {
-    vector<OBMol> molecules;
-    importMoleculesFromFile(molecules, argv[1]);
-    importMoleculesFromFile(molecules, argv[2]);
     runComparisons(argc, argv);
     
     //cout << volumeOverlap (molecules[0], molecules[1]) << endl;
