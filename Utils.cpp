@@ -190,3 +190,13 @@ void removeNonBondedAtomsInMolecule(OBMol &molecule) {
     }
     cout << "deleted " << numDeleted << " unbonded atoms." << endl;
 }
+
+double calculateRMSD(vector<double> &list1, vector<double> &list2, unsigned int dimensions=3) {
+    if (list1.size() != list2.size() or list1.size() % dimensions != 0) { cerr << "ERROR: Cannot run RMSD - list sizes don't match or are incorrect; exiting" << endl; abort(); }
+    double total = 0;
+    for (unsigned int i=0; i < list1.size(); i++) {
+        double difference = list2[i] - list1[i];
+        total += difference * difference;
+    }
+    return sqrt(total / list1.size() / dimensions);
+}

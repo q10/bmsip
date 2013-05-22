@@ -46,13 +46,29 @@ double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double>
     return totalVolumeOverlap;
 }
 
-double volumeOverlap (OBMol &moleculeA, OBMol &moleculeB) {
+double similarityIndex(const vector<double> &coordsMoleculeA, const vector<double> &coordsMoleculeB, const vector<double> &VDWsA, const vector<double> &VDWsB) {
+    double overlapAA = volumeOverlap(coordsMoleculeA, coordsMoleculeA, VDWsA, VDWsA);
+    double overlapBB = volumeOverlap(coordsMoleculeB, coordsMoleculeB, VDWsB, VDWsB);
+    double overlapAB = volumeOverlap(coordsMoleculeA, coordsMoleculeB, VDWsA, VDWsB);
+    return 2.0 * overlapAB / (overlapAA + overlapBB);
+}
+
+double volumeOverlap(OBMol &moleculeA, OBMol &moleculeB) {
     vector<double> coordsA, coordsB, VDWsA, VDWsB;
     generateCoordsMatrixFromMolecule(coordsA, moleculeA);
     generateCoordsMatrixFromMolecule(coordsB, moleculeB);
     generateVDWRadiusListFromMolecule(VDWsA, moleculeA);
     generateVDWRadiusListFromMolecule(VDWsB, moleculeB);
     return volumeOverlap(coordsA, coordsB, VDWsA, VDWsB); 
+}
+
+double similarityIndex(OBMol &moleculeA, OBMol &moleculeB) {
+    vector<double> coordsA, coordsB, VDWsA, VDWsB;
+    generateCoordsMatrixFromMolecule(coordsA, moleculeA);
+    generateCoordsMatrixFromMolecule(coordsB, moleculeB);
+    generateVDWRadiusListFromMolecule(VDWsA, moleculeA);
+    generateVDWRadiusListFromMolecule(VDWsB, moleculeB);
+    return similarityIndex(coordsA, coordsB, VDWsA, VDWsB); 
 }
 
 void generateEigenMatrix(vector<double> &eigenvectors, vector<double> &eigenvalues, const vector<double> &matrix) {
@@ -335,9 +351,30 @@ void runComparisons(int argc, char **argv) {
 }
 
 
+void runRMSDTest(int argc, char **argv) {
+    if(argc < 4) { cout << "Usage: BeginningPosition Reference XRayMatch\n"; abort(); }
+    vector<OBMol> moleculesList;
+    importMoleculesFromFile(moleculesList, argv[1]);
+    importMoleculesFromFile(moleculesList, argv[2]);
+    importMoleculesFromFile(moleculesList, argv[3]);
+ 
+    PCAPlusSteepestDescent(moleculesList[0], moleculesList[1], 1.0, 10.0 * M_PI / 180.0, true);
+
+
+
+    vector<double> matrix1, matrix2;
+    generateCoordsMatrixFromMolecule(matrix1, moleculesList[0]);
+    generateCoordsMatrixFromMolecule(matrix2, moleculesList[2]);
+    cout << "RMSD BETWEEN CRYSTAL STRUCtURE POSITION AND CALCULATED POSITION IS "<< calculateRMSD(matrix1, matrix2) << endl;
+    cout << "CALCULATED VOLUME OVERLAP IS " << volumeOverlap(moleculesList[0], moleculesList[1]) << " FOR THIS PROGRAM AND " << volumeOverlap(moleculesList[2], moleculesList[1]) << " FOR CHIMERA" << endl;
+    
+}
+
 
 int main (int argc, char **argv) {
-    runComparisons(argc, argv);
+    //runComparisons(argc, argv);
+    runRMSDTest(argc, argv);
+
     
     //cout << volumeOverlap (molecules[0], molecules[1]) << endl;
 
