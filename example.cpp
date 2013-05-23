@@ -446,12 +446,12 @@ int main (int argc, char **argv) {
     //runComparisons(argc, argv);
     //runRMSDTest(argc, argv);
     //runRMSDTest2(argc, argv);
-    runRMSDTest2(argc, argv);
-/*    vector<OBMol> moleculesList;
+    //runRMSDTest2(argc, argv);
+    vector<OBMol> moleculesList;
     importMoleculesFromFile(moleculesList, argv[1]);
     generateConformers(moleculesList[0]);
     writeMoleculeConformersToFile(argv[2], moleculesList[0], true);
-*/    //cout << volumeOverlap (molecules[0], molecules[1]) << endl;
+    //cout << volumeOverlap (molecules[0], molecules[1]) << endl;
 
 
     //runComparisons(argc, argv);
