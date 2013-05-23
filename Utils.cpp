@@ -200,3 +200,10 @@ double calculateRMSD(vector<double> &list1, vector<double> &list2, unsigned int 
     }
     return sqrt(total / list1.size() / dimensions);
 }
+
+double calculateRMSD(OBMol &moleculeA, OBMol &moleculeB) {
+    vector<double> matrix1, matrix2;
+    generateCoordsMatrixFromMolecule(matrix1, moleculeA);
+    generateCoordsMatrixFromMolecule(matrix2, moleculeB);
+    return calculateRMSD(matrix1, matrix2);
+}
