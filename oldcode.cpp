@@ -238,3 +238,44 @@ double volumeOverlap (OBMol &moleculeA, OBMol &moleculeB) {
     //sampleTest(mol);
     //testRot();
     //testEigen();
+
+/*
+    vector< vector<double> > coordAs, coordBs, comAs, comBs, eVectAs, eVectBs;
+    vector<double> VDWsA, VDWsB, massesA, massesB, currentPCACoordA, currentSDCoordA, bestCoordsA;
+
+    double molecularWeightA = molecules[0].GetMolWt(), molecularWeightB = molecules[1].GetMolWt();
+    double bestVolumeOverlap = -1;
+    int bestJ = -1, bestI = -1, stepCount = 0;
+    
+    generateVDWRadiusListFromMolecule(VDWsA, molecules[0]);
+    generateVDWRadiusListFromMolecule(VDWsB, molecules[1]);
+    generateAtomicMassesListFromMolecule(massesA, molecules[0]);
+    generateAtomicMassesListFromMolecule(massesB, molecules[1]);
+    generateCoordsMatrixFromMoleculeConformers(coordAs, molecules[0]);
+    generateCoordsMatrixFromMoleculeConformers(coordBs, molecules[1]);
+    getMoleculeConformerCenterCoords(comAs, molecules[0]);
+    getMoleculeConformerCenterCoords(comBs, molecules[1]);    
+    eVectAs.resize( molecules[0].NumConformers() ), eVectBs.resize( molecules[1].NumConformers() );
+    for (unsigned int k=0; k < molecules[0].NumConformers(); k++) getPCAEigenMatrix(eVectAs[k], coordAs[k], massesA, molecularWeightA);
+    for (unsigned int k=0; k < molecules[1].NumConformers(); k++) getPCAEigenMatrix(eVectBs[k], coordBs[k], massesB, molecularWeightB);
+    cout << "Finished setting up data; running search...\n";
+
+    for (unsigned int j=0; j < molecules[1].NumConformers(); j++) {
+        for (unsigned int i=0; i < molecules[0].NumConformers(); i++) {
+            PCAEngine(currentPCACoordA, coordAs[i], coordBs[j], eVectAs[i], eVectBs[j], comAs[i], comBs[j], VDWsA, VDWsB);
+            double currentVolumeOverlap = steepestDescentEngine(currentSDCoordA, currentPCACoordA, coordBs[j], VDWsA, VDWsB, comAs[i], 1.0, 10.0 * M_PI / 180.0);
+            if (currentVolumeOverlap > bestVolumeOverlap) {
+                bestVolumeOverlap = currentVolumeOverlap;
+                bestCoordsA = currentSDCoordA;
+                bestI = i; bestJ = j;
+            }
+            cout << "finished round " << ++stepCount << endl;
+        }
+    }
+
+    cout << "\nThe best overlap is between conformer A#" << bestI << " and B#" << bestJ << ", which, after PCA followed by Steepest Descent, produces a volume overlap of " << bestVolumeOverlap << endl;
+    cout << "\nSaving those best conformers to file..." << endl;
+
+    saveCoordsMatrixToMolecule(molecules[0], bestCoordsA);
+    molecules[1].SetConformer(bestJ);
+*/

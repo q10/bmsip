@@ -63,6 +63,12 @@ void importMoleculeConformersFromFile(vector<OBMol> &moleculesList, const string
     moleculesList.push_back(*tempMoleculeBuild);
 }
 
+void addConformerToMolecule(OBMol &molecule, vector<double> &coordinates) {
+    double *copyInMemory = new double [coordinates.size()];
+    memcpy(copyInMemory, &coordinates[0], sizeof(double) * coordinates.size());
+    molecule.AddConformer(copyInMemory);
+}
+
 
 void tempImportMoleculesFromFile(vector<OBMol> &moleculesList, const string &fileName) {
     string format; extractFileExtension(format, fileName);
@@ -192,7 +198,11 @@ void removeNonBondedAtomsInMolecule(OBMol &molecule) {
 }
 
 double calculateRMSD(vector<double> &list1, vector<double> &list2, unsigned int dimensions=3) {
-    if (list1.size() != list2.size() or list1.size() % dimensions != 0) { cerr << "ERROR: Cannot run RMSD - list sizes don't match or are incorrect; exiting" << endl; abort(); }
+    if (list1.size() != list2.size() or list1.size() % dimensions != 0) { 
+        cerr << "ERROR: Cannot run RMSD - list sizes don't match or are incorrect; list1 has size "
+             << list1.size() << " while list2 has size " << list2.size() << "; exiting." << endl;
+        abort(); 
+    }
     double total = 0;
     for (unsigned int i=0; i < list1.size(); i++) {
         double difference = list2[i] - list1[i];

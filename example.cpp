@@ -298,7 +298,7 @@ void getPCAEigenMatrix(vector<double> &eVects, vector<double> &moleculeCoords, v
     generateEigenMatrix(eVects, eValA, covA);
 }
 
-void runComformerComparisons(OBMol &moleculeA, OBMol &moleculeB) { // A is the target and B is the reference
+void runComformerComparisons(OBMol &moleculeA, OBMol &moleculeB, bool verbose=false) { // A is the target and B is the reference
     vector< vector<double> > coordAs, coordBs, comAs, comBs, eVectAs, eVectBs;
     vector<double> VDWsA, VDWsB, massesA, massesB, currentPCACoordA, currentSDCoordA, bestCoordsA;
 
@@ -328,15 +328,17 @@ void runComformerComparisons(OBMol &moleculeA, OBMol &moleculeB) { // A is the t
                 bestCoordsA = currentSDCoordA;
                 bestI = i; bestJ = j;
             }
-            cout << "finished round " << ++stepCount << " (A#" << i << " and B#" << j << ")" << endl;
+            if (verbose) cout << "finished round " << ++stepCount << " (A#" << i << " and B#" << j << ")" << endl;
         }
     }    
     cout << "\nThe best overlap is between conformer A#" << bestI << " and B#" << bestJ << ", which, after PCA followed by Steepest Descent, produces a volume overlap of " << bestVolumeOverlap << endl;
     
     //saveCoordsMatrixToMolecule(moleculeA, bestCoordsA);
-    moleculeA.AddConformer(&bestCoordsA[0]); moleculeA.SetConformer( moleculeA.NumConformers() - 1 );
+
+    addConformerToMolecule(moleculeA, bestCoordsA); moleculeA.SetConformer(moleculeA.NumConformers() - 1);
     moleculeB.SetConformer(bestJ);
 }
+
 
 void runComparisons(int argc, char **argv) {
     if(argc < 4) { cout << "Usage: " << argv[0] << " ConformerSet1 ConformerSet2 OutputFileName\n"; exit(-1); }
@@ -346,66 +348,23 @@ void runComparisons(int argc, char **argv) {
     cout << "Finished importing molecules\n";
 
     runComformerComparisons(molecules[0], molecules[1]);
-/*
-    vector< vector<double> > coordAs, coordBs, comAs, comBs, eVectAs, eVectBs;
-    vector<double> VDWsA, VDWsB, massesA, massesB, currentPCACoordA, currentSDCoordA, bestCoordsA;
 
-    double molecularWeightA = molecules[0].GetMolWt(), molecularWeightB = molecules[1].GetMolWt();
-    double bestVolumeOverlap = -1;
-    int bestJ = -1, bestI = -1, stepCount = 0;
-    
-    generateVDWRadiusListFromMolecule(VDWsA, molecules[0]);
-    generateVDWRadiusListFromMolecule(VDWsB, molecules[1]);
-    generateAtomicMassesListFromMolecule(massesA, molecules[0]);
-    generateAtomicMassesListFromMolecule(massesB, molecules[1]);
-    generateCoordsMatrixFromMoleculeConformers(coordAs, molecules[0]);
-    generateCoordsMatrixFromMoleculeConformers(coordBs, molecules[1]);
-    getMoleculeConformerCenterCoords(comAs, molecules[0]);
-    getMoleculeConformerCenterCoords(comBs, molecules[1]);    
-    eVectAs.resize( molecules[0].NumConformers() ), eVectBs.resize( molecules[1].NumConformers() );
-    for (unsigned int k=0; k < molecules[0].NumConformers(); k++) getPCAEigenMatrix(eVectAs[k], coordAs[k], massesA, molecularWeightA);
-    for (unsigned int k=0; k < molecules[1].NumConformers(); k++) getPCAEigenMatrix(eVectBs[k], coordBs[k], massesB, molecularWeightB);
-    cout << "Finished setting up data; running search...\n";
-
-    for (unsigned int j=0; j < molecules[1].NumConformers(); j++) {
-        for (unsigned int i=0; i < molecules[0].NumConformers(); i++) {
-            PCAEngine(currentPCACoordA, coordAs[i], coordBs[j], eVectAs[i], eVectBs[j], comAs[i], comBs[j], VDWsA, VDWsB);
-            double currentVolumeOverlap = steepestDescentEngine(currentSDCoordA, currentPCACoordA, coordBs[j], VDWsA, VDWsB, comAs[i], 1.0, 10.0 * M_PI / 180.0);
-            if (currentVolumeOverlap > bestVolumeOverlap) {
-                bestVolumeOverlap = currentVolumeOverlap;
-                bestCoordsA = currentSDCoordA;
-                bestI = i; bestJ = j;
-            }
-            cout << "finished round " << ++stepCount << endl;
-        }
-    }
-
-    cout << "\nThe best overlap is between conformer A#" << bestI << " and B#" << bestJ << ", which, after PCA followed by Steepest Descent, produces a volume overlap of " << bestVolumeOverlap << endl;
-    cout << "\nSaving those best conformers to file..." << endl;
-
-    saveCoordsMatrixToMolecule(molecules[0], bestCoordsA);
-    molecules[1].SetConformer(bestJ);
-*/
     cout << "\nSaving those best conformers to file..." << endl;
     writeMoleculeToFile(argv[3], molecules[0], true);
     writeMoleculeToFile(argv[3], molecules[1]);
 }
 
 void runRMSDTest(int argc, char **argv) {
-    if(argc < 4) { cout << "Usage: " << argv[0] << " BeginningPosition Reference XRayDeterminedFinalPosition\n"; exit(-1); }
+    if(argc != 4) { cout << "Usage: " << argv[0] << " BeginningPosition Reference XRayDeterminedFinalPosition outputPDBFile\n"; exit(-1); }
     vector<OBMol> moleculesList;
     importMoleculesFromFile(moleculesList, argv[1]);
     importMoleculesFromFile(moleculesList, argv[2]);
     importMoleculesFromFile(moleculesList, argv[3]);
  
-    PCAPlusSteepestDescent(moleculesList[0], moleculesList[1], 1.0, 10.0 * M_PI / 180.0, true);
+    PCAPlusSteepestDescent(moleculesList[0], moleculesList[1], 1.0, 10.0 * M_PI / 180.0);
 
-    vector<double> matrix1, matrix2;
-    generateCoordsMatrixFromMolecule(matrix1, moleculesList[0]);
-    generateCoordsMatrixFromMolecule(matrix2, moleculesList[2]);
-    cout << "RMSD BETWEEN CRYSTAL STRUCtURE POSITION AND CALCULATED POSITION IS "<< calculateRMSD(matrix1, matrix2) << endl;
+    cout << "RMSD BETWEEN CRYSTAL STRUCtURE POSITION AND CALCULATED POSITION IS "<< calculateRMSD(moleculesList[0], moleculesList[2]) << endl;
     cout << "CALCULATED VOLUME OVERLAP IS " << volumeOverlap(moleculesList[0], moleculesList[1]) << " FOR THIS PROGRAM AND " << volumeOverlap(moleculesList[2], moleculesList[1]) << " FOR CHIMERA" << endl;
-    
 }
 
 void runRMSDTest2(int argc, char **argv) {
@@ -416,23 +375,23 @@ void runRMSDTest2(int argc, char **argv) {
     importMoleculesFromFile(moleculesList, argv[3]);
     importMoleculesFromFile(moleculesList, argv[4]);
 
-    PCAPlusSteepestDescent(moleculesList[0], moleculesList[2], 1.0, 10.0 * M_PI / 180.0, true);
+    PCAPlusSteepestDescent(moleculesList[0], moleculesList[2], 1.0, 10.0 * M_PI / 180.0);
 
-
-    //generateConformers(copyA);
-    cout << endl << endl << endl << endl << moleculesList[1].NumConformers() << endl;
     runComformerComparisons(moleculesList[1], moleculesList[2]);
+    double bestConformerRMSD = calculateRMSD(moleculesList[1], moleculesList[3]);
 
-
+    //cout << "conformer rmsd's:\n";
+    cout << "conformer overlaps's:\n";
     for (unsigned int i=0; i < moleculesList[1].NumConformers() - 1; i++) {
         moleculesList[1].SetConformer(i);
         PCAPlusSteepestDescent(moleculesList[1], moleculesList[2], 1.0, 10.0 * M_PI / 180.0);
-        double conformerRMSD = calculateRMSD(moleculesList[1], moleculesList[3]);
-        cout << "conformer rmsd is " << conformerRMSD << endl;
+        //double conformerRMSD = calculateRMSD(moleculesList[1], moleculesList[3]);
+        //cout << conformerRMSD << endl;
+        cout << volumeOverlap(moleculesList[1], moleculesList[3]) << endl;
+
     }
 
     double RMSD = calculateRMSD(moleculesList[0], moleculesList[3]);
-    double bestConformerRMSD = calculateRMSD(moleculesList[1], moleculesList[3]);
 
     cout << "RMSD BETWEEN CRYSTAL STRUCtURE FINAL POSITION AND CALCULATED POSITION OF TARGET IS "<< RMSD << endl 
          << "RMSD BETWEEN CRYSTAL STRUCtURE FINAL POSITION AND THE BEST CALCULATED CONFORMER POSITION OF TARGET IS "<< bestConformerRMSD << endl
@@ -440,18 +399,51 @@ void runRMSDTest2(int argc, char **argv) {
 }
 
 
+void runRMSDTest3(int argc, char **argv) {
+    if(argc != 7) { cout << "Usage: " << argv[0] << " TargetBeginningPosition TargetBeginningPositionConformers Reference TargetXRayMatch originalTargetOuput conformerTargetOutput\n"; exit(-1); }
+    vector<OBMol> moleculesList;
+    importMoleculesFromFile(moleculesList, argv[1]);
+    importMoleculeConformersFromFile(moleculesList, argv[2]);
+    importMoleculesFromFile(moleculesList, argv[3]);
+    importMoleculesFromFile(moleculesList, argv[4]);
+
+    PCAPlusSteepestDescent(moleculesList[0], moleculesList[2], 1.0, 10.0 * M_PI / 180.0);
+    runComformerComparisons(moleculesList[1], moleculesList[2]);
+    double RMSD = calculateRMSD(moleculesList[0], moleculesList[3]);
+    double bestConformerRMSD = calculateRMSD(moleculesList[1], moleculesList[3]);
+
+    cout << "conformer RMSDs and overlaps:\n";
+    for (unsigned int i=0; i < moleculesList[1].NumConformers() - 1; i++) {
+        moleculesList[1].SetConformer(i); PCAPlusSteepestDescent(moleculesList[1], moleculesList[2], 1.0, 10.0 * M_PI / 180.0);
+        cout << calculateRMSD(moleculesList[1], moleculesList[3]) << "\t" << volumeOverlap(moleculesList[1], moleculesList[2]) << endl;
+    }
+
+    cout << RMSD << "\t" << volumeOverlap(moleculesList[0], moleculesList[2]) << endl;
+    cout << "0\t" << volumeOverlap(moleculesList[3], moleculesList[2]) << endl;
+
+    cout << "RMSD BETWEEN CRYSTAL STRUCtURE FINAL POSITION AND THE BEST CALCULATED CONFORMER POSITION OF TARGET IS "<< bestConformerRMSD << endl;
+
+/*    cout << "RMSD BETWEEN CRYSTAL STRUCtURE FINAL POSITION AND CALCULATED POSITION OF TARGET IS "<< RMSD << endl 
+         << "RMSD BETWEEN CRYSTAL STRUCtURE FINAL POSITION AND THE BEST CALCULATED CONFORMER POSITION OF TARGET IS "<< bestConformerRMSD << endl
+         << "VOLUME OVERLAP BETWEEN REFERENCE AND CALCULATED POSITION OF TARGET IS " << volumeOverlap(moleculesList[0], moleculesList[2]) << endl
+         << "VOLUME OVERLAP BETWEEN THE REFERENCE AND THE BEST CALCULATED CONFORMER POSITION OF TARGET IS " << volumeOverlap(moleculesList[1], moleculesList[2]) << endl
+         << "AN RMSD DIFFERENCE OF " << abs(bestConformerRMSD - RMSD) << " HAS BEEN OBSERVED.\n";
+*/
+    writeMoleculeToFile(argv[5], moleculesList[0], true);
+    writeMoleculeToFile(argv[6], moleculesList[1], true);
+}
 
 
 int main (int argc, char **argv) {
     //runComparisons(argc, argv);
-    //runRMSDTest(argc, argv);
+    runRMSDTest3(argc, argv);
     //runRMSDTest2(argc, argv);
-    //runRMSDTest2(argc, argv);
-    vector<OBMol> moleculesList;
+
+/*    vector<OBMol> moleculesList;
     importMoleculesFromFile(moleculesList, argv[1]);
     generateConformers(moleculesList[0]);
     writeMoleculeConformersToFile(argv[2], moleculesList[0], true);
-    //cout << volumeOverlap (molecules[0], molecules[1]) << endl;
+*/    //cout << volumeOverlap (molecules[0], molecules[1]) << endl;
 
 
     //runComparisons(argc, argv);
