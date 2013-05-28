@@ -197,6 +197,32 @@ void removeNonBondedAtomsInMolecule(OBMol &molecule) {
     cout << "deleted " << numDeleted << " unbonded atoms." << endl;
 }
 
+void generateConformers(OBMol &molecule, int numConformers=50, int numChildren=10, int mutability=5, int convergence=30) {
+    OBConformerSearch cs;
+    cs.Setup(molecule, numConformers, numChildren, mutability, convergence); // numConformers 30 // numChildren 5 // mutability 5 // convergence 25
+    cs.SetScore(new OBEnergyConformerScore);
+    cs.Search(); cs.GetConformers(molecule);
+
+    //pmol->AddHydrogens(false, true); // Add some hydrogens before running MMFF
+
+    OBForceField* pFF = OBForceField::FindForceField("MMFF94");
+    if (not pFF) {
+        pFF = OBForceField::FindForceField("UFF");
+        if (not pFF) { cerr << "ERROR: CANNOT USE EITHER MMFF94 OR UFF FORCE FIELDS; EXITING\n"; exit(-1); }
+        cerr << "WARNING: CANNOT USE MMFF94, USING UFF FORCE FIELD FOR CALCULATIONS\n";
+    }
+    
+    for (int i = molecule.NumConformers()-1; i >= 0; i--) { // DO NOT USE UNSIGNED INT i!!!
+        molecule.SetConformer(i);
+        pFF->Setup(molecule);
+        if (not pFF->Setup(molecule)) { cerr << "ERROR: CANNOT LOAD MOLECULE TO FORCEFIELDSOLVER; EXITING\n"; exit(-1); }
+        //pFF->SteepestDescent(500, 1.0e-4);
+        //pFF->WeightedRotorSearch(200, 25);
+        pFF->ConjugateGradients(500, 1.0e-6);
+        pFF->GetCoordinates(molecule);
+    }
+}
+
 double calculateRMSD(vector<double> &list1, vector<double> &list2, unsigned int dimensions=3) {
     if (list1.size() != list2.size() or list1.size() % dimensions != 0) { 
         cerr << "ERROR: Cannot run RMSD - list sizes don't match or are incorrect; list1 has size "
@@ -208,10 +234,15 @@ double calculateRMSD(vector<double> &list1, vector<double> &list2, unsigned int 
         double difference = list2[i] - list1[i];
         total += difference * difference;
     }
-    return sqrt(total / list1.size() / dimensions);
+    return sqrt(total * dimensions / list1.size());
 }
 
 double calculateRMSD(OBMol &moleculeA, OBMol &moleculeB) {
+    if (moleculeA.NumAtoms() != moleculeB.NumAtoms()) { 
+        cerr << "ERROR: Cannot run RMSD - number of atoms in molecule don't match or are incorrect; moleculeA has size "
+             << moleculeA.NumAtoms() << " while moleculeB has size " << moleculeB.NumAtoms() << "; exiting." << endl;
+        abort(); 
+    }
     vector<double> matrix1, matrix2;
     generateCoordsMatrixFromMolecule(matrix1, moleculeA);
     generateCoordsMatrixFromMolecule(matrix2, moleculeB);

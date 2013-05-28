@@ -2,6 +2,7 @@
 #include <cmath>
 #include <openbabel/obconversion.h>
 #include <openbabel/conformersearch.h>
+#include <openbabel/forcefield.h>
 #include <openbabel/op.h>
 #include <openbabel/mol.h>
 #include <openbabel/data.h>
@@ -234,16 +235,6 @@ double PCAPlusSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, 
     return bestVolumeOverlap;
 }
 
-
-void generateConformers(OBMol &molecule, int numConformers=50, int numChildren=10, int mutability=5, int convergence=30) {
-    OBConformerSearch cs;
-    cs.Setup(molecule, numConformers, numChildren, mutability, convergence); // numConformers 30 // numChildren 5 // mutability 5 // convergence 25
-    cs.SetScore(new OBEnergyConformerScore);
-    cs.Search(); cs.GetConformers(molecule);
-}
-
-
-
 void PCAEngine(vector<double> &finalCoordsA, vector<double> &coordsMoleculeA, vector<double> &coordsMoleculeB, vector<double> &eVectA, vector<double> &eVectB, vector<double> &comA, vector<double> &comB, vector<double> &VDWsA, vector<double> &VDWsB) {
     vector<double> tempR; double bestVolumeOverlap = 0;
 
@@ -434,10 +425,30 @@ void runRMSDTest3(int argc, char **argv) {
 }
 
 
+void cleanUpAndGenerateConformers(int argc, char **argv) {
+    if(argc != 4) { cout << "Usage: " << argv[0] << " MoleculeInputFile MoleculeOutputFile ConformerOutputFile\n"; exit(-1); }
+    vector<OBMol> moleculesList;
+    importMoleculesFromFile(moleculesList, argv[1]);
+
+    removeNonBondedAtomsInMolecule(moleculesList[0]);
+    moleculesList[0].AddHydrogens(false, true);
+    writeMoleculeToFile(argv[2], moleculesList[0], true);
+
+    generateConformers(moleculesList[0]);
+    writeMoleculeConformersToFile(argv[3], moleculesList[0], true);
+}
+
+
+
+
 int main (int argc, char **argv) {
     //runComparisons(argc, argv);
-    runRMSDTest3(argc, argv);
-    //runRMSDTest2(argc, argv);
+    //runRMSDTest3(argc, argv);
+
+
+    cleanUpAndGenerateConformers(argc, argv);
+
+
 
 /*    vector<OBMol> moleculesList;
     importMoleculesFromFile(moleculesList, argv[1]);

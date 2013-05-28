@@ -1,97 +1,109 @@
-RMSD_TEST/ORIGINAL_PDBS/ligand1TLP.pdb
- OpenBabel05271320493D
+RMSD_TEST/ORIGINAL_PDBS/ligand3TMN.pdb
+ OpenBabel05281317183D
 
- 37 39  0  0  1  0  0  0  0  0999 V2000
-   50.6279   16.8739   -7.7189 C   0  0  1  0  0  0  0  0  0  0  0  0
-   50.4502   18.0902   -7.0653 O   0  0  0  0  0  0  0  0  0  0  0  0
-   49.6686   16.0810   -6.8930 C   0  0  2  0  0  0  0  0  0  0  0  0
-   49.3938   14.7255   -7.4293 O   0  0  0  0  0  0  0  0  0  0  0  0
-   48.3579   16.7525   -7.0478 C   0  0  2  0  0  0  0  0  0  0  0  0
-   47.5783   16.0136   -6.1254 O   0  0  0  0  0  0  0  0  0  0  0  0
-   47.9656   16.5393   -8.4989 C   0  0  1  0  0  0  0  0  0  0  0  0
-   46.6049   16.7907   -8.7027 O   0  0  0  0  0  0  0  0  0  0  0  0
-   48.8707   17.4077   -9.3878 C   0  0  1  0  0  0  0  0  0  0  0  0
-   50.2365   16.9608   -9.1120 O   0  0  0  0  0  0  0  0  0  0  0  0
-   48.5237   17.4633  -10.8819 C   0  0  0  0  0  0  0  0  0  0  0  0
-   51.3541   18.8165   -6.0810 P   0  0  1  0  0  0  0  0  0  0  0  0
-   52.8426   18.9390   -6.4879 O   0  0  0  0  0  0  0  0  0  0  0  0
-   50.8916   20.1542   -5.7407 O   0  0  0  0  0  0  0  0  0  0  0  0
-   51.3929   17.9957   -4.9177 N   0  0  0  0  0  0  0  0  0  0  0  0
-   52.4990   17.8297   -3.9863 C   0  0  2  0  0  0  0  0  0  0  0  0
-   53.2825   16.5518   -4.0681 C   0  0  0  0  0  0  0  0  0  0  0  0
-   54.4533   16.6488   -3.7289 O   0  0  0  0  0  0  0  0  0  0  0  0
-   52.0885   18.0382   -2.5372 C   0  0  0  0  0  0  0  0  0  0  0  0
-   53.2745   17.8616   -1.5088 C   0  0  0  0  0  0  0  0  0  0  0  0
-   54.4536   18.8597   -1.5672 C   0  0  0  0  0  0  0  0  0  0  0  0
-   52.8059   17.8921   -0.0479 C   0  0  0  0  0  0  0  0  0  0  0  0
-   52.6222   15.4136   -4.4900 N   0  0  0  0  0  0  0  0  0  0  0  0
-   53.2011   14.0750   -4.7093 C   0  0  2  0  0  0  0  0  0  0  0  0
-   52.2461   13.0973   -5.4409 C   0  0  0  0  0  0  0  0  0  0  0  0
-   51.0635   13.5498   -5.4921 O   0  0  0  0  0  0  0  0  0  0  0  0
-   53.8091   13.5847   -3.3749 C   0  0  0  0  0  0  0  0  0  0  0  0
-   52.7902   13.1777   -2.3933 C   0  0  0  0  0  0  0  0  0  0  0  0
-   52.0976   14.0122   -1.5742 C   0  0  0  0  0  0  0  0  0  0  0  0
-   52.3211   11.8568   -2.1331 C   0  0  0  0  0  0  0  0  0  0  0  0
-   51.2111   13.3148   -0.8111 N   0  0  0  0  0  0  0  0  0  0  0  0
-   51.3285   11.9907   -1.1170 C   0  0  0  0  0  0  0  0  0  0  0  0
-   52.6433   10.5916   -2.6541 C   0  0  0  0  0  0  0  0  0  0  0  0
-   50.6297   10.9140   -0.6043 C   0  0  0  0  0  0  0  0  0  0  0  0
-   51.9341    9.5213   -2.1474 C   0  0  0  0  0  0  0  0  0  0  0  0
-   50.9644    9.6806   -1.1279 C   0  0  0  0  0  0  0  0  0  0  0  0
-   52.6921   11.9633   -5.9032 O   0  0  0  0  0  0  0  0  0  0  0  0
-  1  2  1  6  0  0  0
-  1  3  1  0  0  0  0
-  1 10  1  0  0  0  0
-  3  4  1  6  0  0  0
-  3  5  1  0  0  0  0
-  5  6  1  6  0  0  0
+ 43 44  0  0  1  0  0  0  0  0999 V2000
+   51.5580   18.5010   -3.8590 N   0  3  0  0  0  0  0  0  0  0  0  0
+   52.9320   18.3990   -3.3070 C   0  0  2  0  0  0  0  0  0  0  0  0
+   53.7540   17.1150   -3.5810 C   0  0  0  0  0  0  0  0  0  0  0  0
+   54.9850   17.1040   -3.5710 O   0  0  0  0  0  0  0  0  0  0  0  0
+   53.1450   18.9100   -1.8860 C   0  0  0  0  0  0  0  0  0  0  0  0
+   52.5560   17.9820   -0.8190 C   0  0  0  0  0  0  0  0  0  0  0  0
+   54.6140   19.3280   -1.6460 C   0  0  0  0  0  0  0  0  0  0  0  0
+   53.0500   16.0150   -3.8250 N   0  0  0  0  0  0  0  0  0  0  0  0
+   53.6750   14.7290   -4.1300 C   0  0  2  0  0  0  0  0  0  0  0  0
+   52.8080   13.9510   -5.1010 C   0  0  0  0  0  0  0  0  0  0  0  0
+   51.6670   14.4380   -5.3950 O   0  5  0  0  0  0  0  0  0  0  0  0
+   54.0940   13.9270   -2.9060 C   0  0  0  0  0  0  0  0  0  0  0  0
+   52.8980   13.4510   -2.2090 C   0  0  0  0  0  0  0  0  0  0  0  0
+   52.1710   14.1770   -1.3400 C   0  0  0  0  0  0  0  0  0  0  0  0
+   52.2840   12.1730   -2.3080 C   0  0  0  0  0  0  0  0  0  0  0  0
+   51.1220   13.4150   -0.8810 N   0  0  0  0  0  0  0  0  0  0  0  0
+   51.1510   12.1940   -1.4710 C   0  0  0  0  0  0  0  0  0  0  0  0
+   52.5600   11.0070   -3.0360 C   0  0  0  0  0  0  0  0  0  0  0  0
+   50.2980   11.0890   -1.3330 C   0  0  0  0  0  0  0  0  0  0  0  0
+   51.7280    9.9040   -2.9130 C   0  0  0  0  0  0  0  0  0  0  0  0
+   50.6060    9.9650   -2.0750 C   0  0  0  0  0  0  0  0  0  0  0  0
+   53.3210   12.9230   -5.6050 O   0  0  0  0  0  0  0  0  0  0  0  0
+   51.5447   18.1294   -4.8088 H   0  0  0  0  0  0  0  0  0  0  0  0
+   51.2687   19.4790   -3.8725 H   0  0  0  0  0  0  0  0  0  0  0  0
+   50.9163   17.9647   -3.2751 H   0  0  0  0  0  0  0  0  0  0  0  0
+   53.3681   19.1249   -3.9610 H   0  0  0  0  0  0  0  0  0  0  0  0
+   52.5741   19.8086   -1.7788 H   0  0  0  0  0  0  0  0  0  0  0  0
+   53.0657   17.0415   -0.8435 H   0  0  0  0  0  0  0  0  0  0  0  0
+   51.5153   17.8288   -1.0147 H   0  0  0  0  0  0  0  0  0  0  0  0
+   52.6756   18.4274    0.1465 H   0  0  0  0  0  0  0  0  0  0  0  0
+   55.2483   18.4712   -1.7384 H   0  0  0  0  0  0  0  0  0  0  0  0
+   54.7117   19.7398   -0.6632 H   0  0  0  0  0  0  0  0  0  0  0  0
+   54.8988   20.0623   -2.3703 H   0  0  0  0  0  0  0  0  0  0  0  0
+   52.0673   16.0680   -3.7994 H   0  0  0  0  0  0  0  0  0  0  0  0
+   54.6085   14.9357   -4.6103 H   0  0  0  0  0  0  0  0  0  0  0  0
+   54.6668   14.5486   -2.2499 H   0  0  0  0  0  0  0  0  0  0  0  0
+   54.6888   13.0913   -3.2105 H   0  0  0  0  0  0  0  0  0  0  0  0
+   52.3691   15.1509   -1.0621 H   0  0  0  0  0  0  0  0  0  0  0  0
+   50.4515   13.7110   -0.2237 H   0  0  0  0  0  0  0  0  0  0  0  0
+   53.3799   10.9695   -3.6616 H   0  0  0  0  0  0  0  0  0  0  0  0
+   49.4784   11.1145   -0.7063 H   0  0  0  0  0  0  0  0  0  0  0  0
+   51.9347    9.0397   -3.4377 H   0  0  0  0  0  0  0  0  0  0  0  0
+   49.9880    9.1410   -2.0100 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  2  1  0  0  0  0
+  1 23  1  0  0  0  0
+  1 24  1  0  0  0  0
+  1 25  1  0  0  0  0
+  2  5  1  0  0  0  0
+  2 26  1  6  0  0  0
+  3  4  2  0  0  0  0
+  3  2  1  0  0  0  0
   5  7  1  0  0  0  0
-  7  8  1  1  0  0  0
-  7  9  1  0  0  0  0
-  9 10  1  0  0  0  0
-  9 11  1  6  0  0  0
- 12  2  1  6  0  0  0
- 12 13  2  0  0  0  0
- 12 14  1  0  0  0  0
- 12 15  1  0  0  0  0
- 15 16  1  0  0  0  0
- 16 17  1  1  0  0  0
- 16 19  1  0  0  0  0
- 17 18  2  0  0  0  0
- 17 23  1  0  0  0  0
- 19 20  1  0  0  0  0
+  5  6  1  0  0  0  0
+  5 27  1  0  0  0  0
+  6 28  1  0  0  0  0
+  6 29  1  0  0  0  0
+  6 30  1  0  0  0  0
+  7 31  1  0  0  0  0
+  7 32  1  0  0  0  0
+  7 33  1  0  0  0  0
+  8  3  1  0  0  0  0
+  8 34  1  0  0  0  0
+  9  8  1  0  0  0  0
+  9 12  1  0  0  0  0
+  9 35  1  6  0  0  0
+ 10  9  1  0  0  0  0
+ 11 10  1  0  0  0  0
+ 12 13  1  0  0  0  0
+ 12 36  1  0  0  0  0
+ 12 37  1  0  0  0  0
+ 13 14  2  0  0  0  0
+ 14 16  1  0  0  0  0
+ 14 38  1  0  0  0  0
+ 15 13  1  0  0  0  0
+ 15 17  2  0  0  0  0
+ 16 39  1  0  0  0  0
+ 17 19  1  0  0  0  0
+ 17 16  1  0  0  0  0
+ 18 20  2  0  0  0  0
+ 18 15  1  0  0  0  0
+ 18 40  1  0  0  0  0
+ 19 41  1  0  0  0  0
  20 21  1  0  0  0  0
- 20 22  1  0  0  0  0
- 23 24  1  0  0  0  0
- 24 25  1  1  0  0  0
- 24 27  1  0  0  0  0
- 25 26  2  0  0  0  0
- 25 37  1  0  0  0  0
- 27 28  1  0  0  0  0
- 28 29  2  0  0  0  0
- 28 30  1  0  0  0  0
- 29 31  1  0  0  0  0
- 30 32  2  0  0  0  0
- 30 33  1  0  0  0  0
- 31 32  1  0  0  0  0
- 32 34  1  0  0  0  0
- 33 35  2  0  0  0  0
- 34 36  2  0  0  0  0
- 35 36  1  0  0  0  0
+ 20 42  1  0  0  0  0
+ 21 19  2  0  0  0  0
+ 21 43  1  0  0  0  0
+ 22 10  2  0  0  0  0
+M  CHG  2   1   1  11  -1
 M  END
 >  <HEADER>
-    HYDROLASE/HYDROLASE INHIBITOR           29-JUN-87   1TLP              
+    HYDROLASE/HYDROLASE INHIBITOR           29-JUN-87   3TMN              
 
 >  <TITLE>
-    CRYSTALLOGRAPHIC STRUCTURAL ANALYSIS OF PHOSPHORAMIDATES AS INHIBITORS
-   2 AND TRANSITION-STATE ANALOGS OF THERMOLYSIN                          
+    THE BINDING OF L-VALYL-L-TRYPTOPHAN TO CRYSTALLINE THERMOLYSIN        
+   2 ILLUSTRATES THE MODE OF INTERACTION OF A PRODUCT OF PEPTIDE          
+   3 HYDROLYSIS                                                           
 
 >  <COMPND>
     MOL_ID: 1;                                                            
    2 MOLECULE: THERMOLYSIN;                                               
    3 CHAIN: E;                                                            
-   4 EC: 3.4.24.27;                                                       
-   5 ENGINEERED: YES                                                      
+   4 EC: 3.4.24.27                                                        
 
 >  <SOURCE>
     MOL_ID: 1;                                                            
@@ -99,29 +111,29 @@ M  END
    3 ORGANISM_TAXID: 1427                                                 
 
 >  <KEYWDS>
-    METALLOPROTEINASE, HYDROLASE-HYDROLASE INHIBITOR COMPLEX              
+    HYDROLASE, METALLOPROTEINASE, HYDROLASE-HYDROLASE INHIBITOR COMPLEX   
 
 >  <EXPDTA>
     X-RAY DIFFRACTION                                                     
 
 >  <AUTHOR>
-    D.E.TRONRUD,A.F.MONZINGO,B.W.MATTHEWS                                 
+    H.M.HOLDEN,B.W.MATTHEWS                                               
 
 >  <REVDAT>
-   5   13-JUL-11 1TLP    1       VERSN                                    
-   4   25-AUG-09 1TLP    1       SOURCE                                   
-   3   24-FEB-09 1TLP    1       VERSN                                    
-   2   08-MAR-95 1TLP    1       COMPND                                   
-   1   09-JAN-89 1TLP    0                                                
+   5   13-JUL-11 3TMN    1       VERSN                                    
+   4   14-JUL-09 3TMN    1       REMARK                                   
+   3   24-FEB-09 3TMN    1       VERSN                                    
+   2   08-MAR-95 3TMN    1       COMPND                                   
+   1   09-JAN-89 3TMN    0                                                
 
 >  <JRNL>
-      AUTH   D.E.TRONRUD,A.F.MONZINGO,B.W.MATTHEWS                        
-      TITL   CRYSTALLOGRAPHIC STRUCTURAL ANALYSIS OF PHOSPHORAMIDATES AS  
-      TITL 2 INHIBITORS AND TRANSITION-STATE ANALOGS OF THERMOLYSIN.      
-      REF    EUR.J.BIOCHEM.                V. 157   261 1986              
-      REFN                   ISSN 0014-2956                               
-      PMID   3709536                                                      
-      DOI    10.1111/J.1432-1033.1986.TB09664.X                           
+      AUTH   H.M.HOLDEN,B.W.MATTHEWS                                      
+      TITL   THE BINDING OF L-VALYL-L-TRYPTOPHAN TO CRYSTALLINE           
+      TITL 2 THERMOLYSIN ILLUSTRATES THE MODE OF INTERACTION OF A PRODUCT 
+      TITL 3 OF PEPTIDE HYDROLYSIS.                                       
+      REF    J.BIOL.CHEM.                  V. 263  3256 1988              
+      REFN                   ISSN 0021-9258                               
+      PMID   3343246                                                      
 
 >  <REMARK>
    1                                                                      
@@ -132,12 +144,11 @@ M  END
    1  REF    SCIENCE                       V. 235   571 1987              
    1  REFN                   ISSN 0036-8075                               
    1 REFERENCE 2                                                          
-   1  AUTH   D.G.HANGAUER,A.F.MONZINGO,B.W.MATTHEWS                       
-   1  TITL   AN INTERACTIVE COMPUTER GRAPHICS STUDY OF                    
-   1  TITL 2 THERMOLYSIN-CATALYZED PEPTIDE CLEAVAGE AND INHIBITION BY     
-   1  TITL 3 N-CARBOXYMETHYL DIPEPTIDES                                   
-   1  REF    BIOCHEMISTRY                  V.  23  5730 1984              
-   1  REFN                   ISSN 0006-2960                               
+   1  AUTH   D.E.TRONRUD,A.F.MONZINGO,B.W.MATTHEWS                        
+   1  TITL   CRYSTALLOGRAPHIC STRUCTURAL ANALYSIS OF PHOSPHORAMIDATES AS  
+   1  TITL 2 INHIBITORS AND TRANSITION-STATE ANALOGS OF THERMOLYSIN       
+   1  REF    EUR.J.BIOCHEM.                V. 157   261 1986              
+   1  REFN                   ISSN 0014-2956                               
    1 REFERENCE 3                                                          
    1  AUTH   A.F.MONZINGO,B.W.MATTHEWS                                    
    1  TITL   BINDING OF N-CARBOXYMETHYL DIPEPETIDE INHIBITORS TO          
@@ -146,215 +157,222 @@ M  END
    1  REF    BIOCHEMISTRY                  V.  23  5724 1984              
    1  REFN                   ISSN 0006-2960                               
    1 REFERENCE 4                                                          
+   1  AUTH   D.G.HANGAUER,A.F.MONZINGO,B.W.MATTHEWS                       
+   1  TITL   AN INTERACTIVE COMPUTER GRAPHICS STUDY OF                    
+   1  TITL 2 THERMOLYSIN-CATALYZED PEPTIDE CLEAVAGE AND INHIBITION BY     
+   1  TITL 3 N-CARBOXYMETHYL DIPEPTIDES                                   
+   1  REF    BIOCHEMISTRY                  V.  23  5730 1984              
+   1  REFN                   ISSN 0006-2960                               
+   1 REFERENCE 5                                                          
    1  AUTH   M.A.HOLMES,D.E.TRONRUD,B.W.MATTHEWS                          
    1  TITL   STRUCTURAL ANALYSIS OF THE INHIBITION OF THERMOLYSIN BY AN   
    1  TITL 2 ACTIVE-SITE-DIRECTED IRREVERSIBLE INHIBITOR                  
    1  REF    BIOCHEMISTRY                  V.  22   236 1983              
    1  REFN                   ISSN 0006-2960                               
-   1 REFERENCE 5                                                          
+   1 REFERENCE 6                                                          
    1  AUTH   A.F.MONZINGO,B.W.MATTHEWS                                    
    1  TITL   STRUCTURE OF A MERCAPTAN-THERMOLYSIN COMPLEX ILLUSTRATES     
    1  TITL 2 MODE OF INHIBITION OF ZINC PROTEASES BY SUBSTRATE-ANALOGUE   
    1  TITL 3 MERCAPTANS                                                   
    1  REF    BIOCHEMISTRY                  V.  21  3390 1982              
    1  REFN                   ISSN 0006-2960                               
-   1 REFERENCE 6                                                          
+   1 REFERENCE 7                                                          
    1  AUTH   M.A.HOLMES,B.W.MATTHEWS                                      
    1  TITL   STRUCTURE OF THERMOLYSIN REFINED AT 1.6 ANGSTROMS RESOLUTION 
    1  REF    J.MOL.BIOL.                   V. 160   623 1982              
    1  REFN                   ISSN 0022-2836                               
-   1 REFERENCE 7                                                          
+   1 REFERENCE 8                                                          
    1  AUTH   M.A.HOLMES,B.W.MATTHEWS                                      
    1  TITL   BINDING OF HYDROXAMIC ACID INHIBITORS TO CRYSTALLINE         
    1  TITL 2 THERMOLYSIN SUGGESTS A PENTACOORDINATE ZINC INTERMEDIATE IN  
    1  TITL 3 CATALYSIS                                                    
    1  REF    BIOCHEMISTRY                  V.  20  6912 1981              
    1  REFN                   ISSN 0006-2960                               
-   1 REFERENCE 8                                                          
+   1 REFERENCE 9                                                          
    1  AUTH   M.C.BOLOGNESI,B.W.MATTHEWS                                   
    1  TITL   BINDING OF THE BIPRODUCT ANALOG L-BENZYLSUCCINIC ACID TO     
    1  TITL 2 THERMOLYSIN DETERMINED BY X-RAY CRYSTALLOGRAPHY              
    1  REF    J.BIOL.CHEM.                  V. 254   634 1979              
    1  REFN                   ISSN 0021-9258                               
-   1 REFERENCE 9                                                          
+   1 REFERENCE 10                                                         
    1  AUTH   W.R.KESTER,B.W.MATTHEWS                                      
    1  TITL   COMPARISON OF THE STRUCTURES OF CARBOXYPEPTIDASE A AND       
    1  TITL 2 THERMOLYSIN                                                  
    1  REF    J.BIOL.CHEM.                  V. 252  7704 1977              
    1  REFN                   ISSN 0021-9258                               
-   1 REFERENCE 10                                                         
+   1 REFERENCE 11                                                         
    1  AUTH   L.H.WEAVER,W.R.KESTER,B.W.MATTHEWS                           
    1  TITL   A CRYSTALLOGRAPHIC STUDY OF THE COMPLEX OF PHOSPHORAMIDON    
    1  TITL 2 WITH THERMOLYSIN. A MODEL FOR THE PRESUMED CATALYTIC         
    1  TITL 3 TRANSITION STATE AND FOR THE BINDING OF EXTENDED SUBSTRATES  
    1  REF    J.MOL.BIOL.                   V. 114   119 1977              
    1  REFN                   ISSN 0022-2836                               
-   1 REFERENCE 11                                                         
+   1 REFERENCE 12                                                         
    1  AUTH   W.R.KESTER,B.W.MATTHEWS                                      
    1  TITL   CRYSTALLOGRAPHIC STUDY OF THE BINDING OF DIPEPTIDE           
    1  TITL 2 INHIBITORS TO THERMOLYSIN. IMPLICATIONS FOR THE MECHANISM OF 
    1  TITL 3 CATALYSIS                                                    
    1  REF    BIOCHEMISTRY                  V.  16  2506 1977              
    1  REFN                   ISSN 0006-2960                               
-   1 REFERENCE 12                                                         
+   1 REFERENCE 13                                                         
    1  AUTH   F.W.DAHLQUIST,J.W.LONG,W.L.BIGBEE                            
    1  TITL   ROLE OF CALCIUM IN THE THERMAL STABILITY OF THERMOLYSIN      
    1  REF    BIOCHEMISTRY                  V.  15  1103 1976              
    1  REFN                   ISSN 0006-2960                               
-   1 REFERENCE 13                                                         
+   1 REFERENCE 14                                                         
    1  AUTH   P.L.LEVY,M.K.PANGBURN,Y.BURSTEIN,L.H.ERICSSON,H.NEURATH,     
    1  AUTH 2 K.A.WALSH                                                    
    1  TITL   EVIDENCE OF HOMOLOGOUS RELATIONSHIP BETWEEN THERMOLYSIN AND  
    1  TITL 2 NEUTRAL PROTEASE A OF BACILLUS SUBTILIS                      
    1  REF    PROC.NATL.ACAD.SCI.USA        V.  72  4341 1975              
    1  REFN                   ISSN 0027-8424                               
-   1 REFERENCE 14                                                         
+   1 REFERENCE 15                                                         
    1  AUTH   L.H.WEAVER,W.R.KESTER,L.F.TENEYCK,B.W.MATTHEWS               
    1  TITL   THE STRUCTURE AND STABILITY OF THERMOLYSIN                   
    1  REF    EXPERIENTIA,SUPPL.            V.  26    31 1976              
    1  REFN                   ISSN 0071-335X                               
-   1 REFERENCE 15                                                         
+   1 REFERENCE 16                                                         
    1  AUTH   B.W.MATTHEWS,L.H.WEAVER,W.R.KESTER                           
    1  TITL   THE CONFORMATION OF THERMOLYSIN                              
    1  REF    J.BIOL.CHEM.                  V. 249  8030 1974              
    1  REFN                   ISSN 0021-9258                               
-   1 REFERENCE 16                                                         
+   1 REFERENCE 17                                                         
    1  AUTH   B.W.MATTHEWS,L.H.WEAVER                                      
    1  TITL   BINDING OF LANTHANIDE IONS TO THERMOLYSIN                    
    1  REF    BIOCHEMISTRY                  V.  13  1719 1974              
    1  REFN                   ISSN 0006-2960                               
-   1 REFERENCE 17                                                         
+   1 REFERENCE 18                                                         
    1  AUTH   P.M.COLMAN,J.N.JANSONIUS,B.W.MATTHEWS                        
    1  TITL   THE STRUCTURE OF THERMOLYSIN. AN ELECTRON DENSITY MAP AT 2.3 
    1  TITL 2 ANGSTROMS RESOLUTION                                         
    1  REF    J.MOL.BIOL.                   V.  70   701 1972              
    1  REFN                   ISSN 0022-2836                               
-   1 REFERENCE 18                                                         
+   1 REFERENCE 19                                                         
    1  AUTH   K.TITANI,M.A.HERMODSON,L.H.ERICSSON,K.A.WALSH,H.NEURATH      
    1  TITL   AMINO-ACID SEQUENCE OF THERMOLYSIN                           
    1  REF    NATURE NEW BIOL.              V. 238    35 1972              
    1  REFN                   ISSN 0369-4887                               
-   1 REFERENCE 19                                                         
+   1 REFERENCE 20                                                         
    1  AUTH   B.W.MATTHEWS,J.N.JANSONIUS,P.M.COLMAN,B.P.SCHOENBORN,        
    1  AUTH 2 D.DUPORQUE                                                   
    1  TITL   THREE DIMENSIONAL STRUCTURE OF THERMOLYSIN                   
    1  REF    NATURE NEW BIOL.              V. 238    37 1972              
    1  REFN                   ISSN 0369-4887                               
-   1 REFERENCE 20                                                         
+   1 REFERENCE 21                                                         
    1  AUTH   B.W.MATTHEWS,P.M.COLMAN,J.N.JANSONIUS,K.TITANI,K.A.WALSH,    
    1  AUTH 2 H.NEURATH                                                    
    1  TITL   STRUCTURE OF THERMOLYSIN                                     
    1  REF    NATURE NEW BIOL.              V. 238    41 1972              
    1  REFN                   ISSN 0369-4887                               
-   1 REFERENCE 21                                                         
+   1 REFERENCE 22                                                         
    1  AUTH   B.W.MATTHEWS                                                 
    1  TITL   THE GAMMA TURN. EVIDENCE FOR A NEW FOLDED CONFORMATION IN    
    1  TITL 2 PROTEINS                                                     
    1  REF    MACROMOLECULES                V.   5   818 1972              
    1  REFN                   ISSN 0024-9297                               
-   1 REFERENCE 22                                                         
+   1 REFERENCE 23                                                         
    1  AUTH   P.M.COLMAN,L.H.WEAVER,B.W.MATTHEWS                           
    1  TITL   RARE EARTHS AS ISOMORPHOUS CALCIUM REPLACEMENTS FOR PROTEIN  
    1  TITL 2 CRYSTALLOGRAPHY                                              
    1  REF    BIOCHEM.BIOPHYS.RES.COMMUN.   V.  46  1999 1972              
    1  REFN                   ISSN 0006-291X                               
    2                                                                      
-   2 RESOLUTION.    2.30 ANGSTROMS.                                       
+   2 RESOLUTION.    1.70 ANGSTROMS.                                       
    3                                                                      
    3 REFINEMENT.                                                          
    3   PROGRAM     : TNT                                                  
    3   AUTHORS     : TRONRUD,TEN EYCK,MATTHEWS                            
    3                                                                      
    3  DATA USED IN REFINEMENT.                                            
-   3   RESOLUTION RANGE HIGH (ANGSTROMS) : 2.30                           
-   3   RESOLUTION RANGE LOW  (ANGSTROMS) : 23.30                          
-   3   DATA CUTOFF            (SIGMA(F)) : NULL                           
+   3   RESOLUTION RANGE HIGH (ANGSTROMS) : 1.70                           
+   3   RESOLUTION RANGE LOW  (ANGSTROMS) : 10.00                          
+   3   DATA CUTOFF            (SIGMA(F)) : 0.000                          
    3   COMPLETENESS FOR RANGE        (%) : NULL                           
-   3   NUMBER OF REFLECTIONS             : 13523                          
+   3   NUMBER OF REFLECTIONS             : 28604                          
    3                                                                      
    3  USING DATA ABOVE SIGMA CUTOFF.                                      
-   3   CROSS-VALIDATION METHOD          : NULL                            
+   3   CROSS-VALIDATION METHOD          : NONE                            
    3   FREE R VALUE TEST SET SELECTION  : NULL                            
-   3   R VALUE     (WORKING + TEST SET) : 0.174                           
+   3   R VALUE     (WORKING + TEST SET) : 0.173                           
    3   R VALUE            (WORKING SET) : NULL                            
    3   FREE R VALUE                     : NULL                            
    3   FREE R VALUE TEST SET SIZE   (%) : NULL                            
    3   FREE R VALUE TEST SET COUNT      : NULL                            
    3                                                                      
    3  USING ALL DATA, NO SIGMA CUTOFF.                                    
-   3   R VALUE   (WORKING + TEST SET, NO CUTOFF) : NULL                   
+   3   R VALUE   (WORKING + TEST SET, NO CUTOFF) : 0.1730                 
    3   R VALUE          (WORKING SET, NO CUTOFF) : NULL                   
    3   FREE R VALUE                  (NO CUTOFF) : NULL                   
    3   FREE R VALUE TEST SET SIZE (%, NO CUTOFF) : NULL                   
    3   FREE R VALUE TEST SET COUNT   (NO CUTOFF) : NULL                   
-   3   TOTAL NUMBER OF REFLECTIONS   (NO CUTOFF) : NULL                   
+   3   TOTAL NUMBER OF REFLECTIONS   (NO CUTOFF) : 28604                  
    3                                                                      
    3  NUMBER OF NON-HYDROGEN ATOMS USED IN REFINEMENT.                    
    3   PROTEIN ATOMS            : 2432                                    
    3   NUCLEIC ACID ATOMS       : 0                                       
-   3   HETEROGEN ATOMS          : 42                                      
-   3   SOLVENT ATOMS            : 163                                     
+   3   HETEROGEN ATOMS          : 27                                      
+   3   SOLVENT ATOMS            : 173                                     
    3                                                                      
    3  WILSON B VALUE (FROM FCALC, A**2) : NULL                            
    3                                                                      
    3  RMS DEVIATIONS FROM IDEAL VALUES.    RMS    WEIGHT  COUNT           
-   3   BOND LENGTHS                 (A) : 0.022 ; NULL  ; NULL            
-   3   BOND ANGLES            (DEGREES) : 2.900 ; NULL  ; NULL            
-   3   TORSION ANGLES         (DEGREES) : NULL  ; NULL  ; NULL            
-   3   PSEUDOROTATION ANGLES  (DEGREES) : NULL  ; NULL  ; NULL            
-   3   TRIGONAL CARBON PLANES       (A) : NULL  ; NULL  ; NULL            
-   3   GENERAL PLANES               (A) : NULL  ; NULL  ; NULL            
-   3   ISOTROPIC THERMAL FACTORS (A**2) : NULL  ; NULL  ; NULL            
+   3   BOND LENGTHS                 (A) : 0.016 ; NULL  ; NULL            
+   3   BOND ANGLES            (DEGREES) : 3.200 ; NULL  ; NULL            
+   3   TORSION ANGLES         (DEGREES) : 16.600; 0.000 ; NULL            
+   3   PSEUDOROTATION ANGLES  (DEGREES) : NULL  ; 0.000 ; NULL            
+   3   TRIGONAL CARBON PLANES       (A) : 0.011 ; NULL  ; NULL            
+   3   GENERAL PLANES               (A) : 0.017 ; NULL  ; NULL            
+   3   ISOTROPIC THERMAL FACTORS (A**2) : NULL  ; 0.000 ; NULL            
    3   NON-BONDED CONTACTS          (A) : NULL  ; NULL  ; NULL            
    3                                                                      
    3  INCORRECT CHIRAL-CENTERS (COUNT) : NULL                             
    3                                                                      
    3  BULK SOLVENT MODELING.                                              
-   3   METHOD USED : NULL                                                 
+   3   METHOD USED : NONE                                                 
    3   KSOL        : NULL                                                 
    3   BSOL        : NULL                                                 
    3                                                                      
    3  RESTRAINT LIBRARIES.                                                
-   3   STEREOCHEMISTRY : NULL                                             
+   3   STEREOCHEMISTRY : TNT PROTGEO VERSION 1.0                          
    3   ISOTROPIC THERMAL FACTOR RESTRAINTS : NULL                         
    3                                                                      
    3  OTHER REFINEMENT REMARKS: NULL                                      
    4                                                                      
-   4 1TLP COMPLIES WITH FORMAT V. 3.30, 13-JUL-11                         
+   4 3TMN COMPLIES WITH FORMAT V. 3.30, 13-JUL-11                         
  100                                                                      
  100 THIS ENTRY HAS BEEN PROCESSED BY BNL.                                
  200                                                                      
  200 EXPERIMENTAL DETAILS                                                 
  200  EXPERIMENT TYPE                : X-RAY DIFFRACTION                  
- 200  DATE OF DATA COLLECTION        : NULL                               
- 200  TEMPERATURE           (KELVIN) : NULL                               
- 200  PH                             : NULL                               
- 200  NUMBER OF CRYSTALS USED        : NULL                               
+ 200  DATE OF DATA COLLECTION        : 1988                               
+ 200  TEMPERATURE           (KELVIN) : 285                                
+ 200  PH                             : 7.2                                
+ 200  NUMBER OF CRYSTALS USED        : 1                                  
  200                                                                      
- 200  SYNCHROTRON              (Y/N) : NULL                               
- 200  RADIATION SOURCE               : NULL                               
+ 200  SYNCHROTRON              (Y/N) : N                                  
+ 200  RADIATION SOURCE               : ROTATING ANODE                     
  200  BEAMLINE                       : NULL                               
- 200  X-RAY GENERATOR MODEL          : NULL                               
- 200  MONOCHROMATIC OR LAUE    (M/L) : NULL                               
- 200  WAVELENGTH OR RANGE        (A) : NULL                               
- 200  MONOCHROMATOR                  : NULL                               
+ 200  X-RAY GENERATOR MODEL          : ELLIOTT GX-21                      
+ 200  MONOCHROMATIC OR LAUE    (M/L) : M                                  
+ 200  WAVELENGTH OR RANGE        (A) : 1.54                               
+ 200  MONOCHROMATOR                  : GRAPHITE MONOCHROMATOR             
  200  OPTICS                         : NULL                               
  200                                                                      
- 200  DETECTOR TYPE                  : NULL                               
- 200  DETECTOR MANUFACTURER          : NULL                               
- 200  INTENSITY-INTEGRATION SOFTWARE : NULL                               
- 200  DATA SCALING SOFTWARE          : NULL                               
+ 200  DETECTOR TYPE                  : FILM                               
+ 200  DETECTOR MANUFACTURER          : KODAK                              
+ 200  INTENSITY-INTEGRATION SOFTWARE : OSCTST                             
+ 200  DATA SCALING SOFTWARE          : AGROVATA/ROTAVATE                  
  200                                                                      
- 200  NUMBER OF UNIQUE REFLECTIONS   : NULL                               
- 200  RESOLUTION RANGE HIGH      (A) : 2.300                              
- 200  RESOLUTION RANGE LOW       (A) : 23.300                             
- 200  REJECTION CRITERIA  (SIGMA(I)) : NULL                               
+ 200  NUMBER OF UNIQUE REFLECTIONS   : 28779                              
+ 200  RESOLUTION RANGE HIGH      (A) : 1.700                              
+ 200  RESOLUTION RANGE LOW       (A) : 29.800                             
+ 200  REJECTION CRITERIA  (SIGMA(I)) : 0.000                              
  200                                                                      
  200 OVERALL.                                                             
  200  COMPLETENESS FOR RANGE     (%) : NULL                               
  200  DATA REDUNDANCY                : NULL                               
- 200  R MERGE                    (I) : NULL                               
- 200  R SYM                      (I) : NULL                               
+ 200  R MERGE                    (I) : 0.04900                            
+ 200  R SYM                      (I) : 0.03100                            
  200  <I/SIGMA(I)> FOR THE DATA SET  : NULL                               
  200                                                                      
  200 IN THE HIGHEST RESOLUTION SHELL.                                     
@@ -366,18 +384,18 @@ M  END
  200  R SYM FOR SHELL            (I) : NULL                               
  200  <I/SIGMA(I)> FOR SHELL         : NULL                               
  200                                                                      
- 200 DIFFRACTION PROTOCOL: NULL                                           
- 200 METHOD USED TO DETERMINE THE STRUCTURE: NULL                         
- 200 SOFTWARE USED: NULL                                                  
+ 200 DIFFRACTION PROTOCOL: SINGLE CRYSTAL                                 
+ 200 METHOD USED TO DETERMINE THE STRUCTURE: MOLECULAR SUPSTATUTION       
+ 200 SOFTWARE USED: FRODO                                                 
  200 STARTING MODEL: NULL                                                 
  200                                                                      
  200 REMARK: NULL                                                         
  280                                                                      
  280 CRYSTAL                                                              
- 280 SOLVENT CONTENT, VS   (%): 48.87                                     
- 280 MATTHEWS COEFFICIENT, VM (ANGSTROMS**3/DA): 2.41                     
+ 280 SOLVENT CONTENT, VS   (%): 49.21                                     
+ 280 MATTHEWS COEFFICIENT, VM (ANGSTROMS**3/DA): 2.42                     
  280                                                                      
- 280 CRYSTALLIZATION CONDITIONS: NULL                                     
+ 280 CRYSTALLIZATION CONDITIONS: PH 7.2                                   
  285                                                                      
  285 THE ENTRY COORDINATES                                                
  285 ARE NOT PRESENTED IN THE STANDARD CRYSTAL FRAME.                     
@@ -410,35 +428,35 @@ M  END
  290   SMTRY1   1  1.000000  0.000000  0.000000        0.00000            
  290   SMTRY2   1  0.000000  1.000000  0.000000        0.00000            
  290   SMTRY3   1  0.000000  0.000000  1.000000        0.00000            
- 290   SMTRY1   2 -0.499959 -0.866026  0.000000        0.00000            
- 290   SMTRY2   2  0.866025 -0.500041  0.000000        0.00000            
+ 290   SMTRY1   2 -0.500041 -0.866026  0.000000        0.00000            
+ 290   SMTRY2   2  0.866025 -0.499959  0.000000        0.00000            
  290   SMTRY3   2  0.000000  0.000000  1.000000       43.80201            
- 290   SMTRY1   3 -0.500041  0.866026  0.000000        0.00000            
- 290   SMTRY2   3 -0.866025 -0.499959  0.000000        0.00000            
+ 290   SMTRY1   3 -0.499959  0.866026  0.000000        0.00000            
+ 290   SMTRY2   3 -0.866025 -0.500041  0.000000        0.00000            
  290   SMTRY3   3  0.000000  0.000000  1.000000       87.60403            
  290   SMTRY1   4 -1.000000  0.000000  0.000000        0.00000            
  290   SMTRY2   4  0.000000 -1.000000  0.000000        0.00000            
  290   SMTRY3   4  0.000000  0.000000  1.000000       65.70302            
- 290   SMTRY1   5  0.499959  0.866026  0.000000        0.00000            
- 290   SMTRY2   5 -0.866025  0.500041  0.000000        0.00000            
+ 290   SMTRY1   5  0.500041  0.866026  0.000000        0.00000            
+ 290   SMTRY2   5 -0.866025  0.499959  0.000000        0.00000            
  290   SMTRY3   5  0.000000  0.000000  1.000000      109.50504            
- 290   SMTRY1   6  0.500041 -0.866026  0.000000        0.00000            
- 290   SMTRY2   6  0.866025  0.499959  0.000000        0.00000            
+ 290   SMTRY1   6  0.499959 -0.866026  0.000000        0.00000            
+ 290   SMTRY2   6  0.866025  0.500041  0.000000        0.00000            
  290   SMTRY3   6  0.000000  0.000000  1.000000       21.90101            
- 290   SMTRY1   7  0.499959  0.866026  0.000000        0.00000            
- 290   SMTRY2   7  0.866072 -0.499959  0.000000        0.00000            
+ 290   SMTRY1   7  0.500041  0.866026  0.000000        0.00000            
+ 290   SMTRY2   7  0.865978 -0.500041  0.000000        0.00000            
  290   SMTRY3   7  0.000000  0.000000 -1.000000       43.80201            
- 290   SMTRY1   8  0.500041 -0.866026  0.000000        0.00000            
- 290   SMTRY2   8 -0.865978 -0.500041  0.000000        0.00000            
+ 290   SMTRY1   8  0.499959 -0.866026  0.000000        0.00000            
+ 290   SMTRY2   8 -0.866072 -0.499959  0.000000        0.00000            
  290   SMTRY3   8  0.000000  0.000000 -1.000000        0.00000            
  290   SMTRY1   9 -1.000000  0.000000  0.000000        0.00000            
  290   SMTRY2   9  0.000000  1.000000  0.000000        0.00000            
  290   SMTRY3   9  0.000000  0.000000 -1.000000       87.60403            
- 290   SMTRY1  10 -0.499959 -0.866026  0.000000        0.00000            
- 290   SMTRY2  10 -0.866072  0.499959  0.000000        0.00000            
+ 290   SMTRY1  10 -0.500041 -0.866026  0.000000        0.00000            
+ 290   SMTRY2  10 -0.865978  0.500041  0.000000        0.00000            
  290   SMTRY3  10  0.000000  0.000000 -1.000000      109.50504            
- 290   SMTRY1  11 -0.500041  0.866026  0.000000        0.00000            
- 290   SMTRY2  11  0.865978  0.500041  0.000000        0.00000            
+ 290   SMTRY1  11 -0.499959  0.866026  0.000000        0.00000            
+ 290   SMTRY2  11  0.866072  0.499959  0.000000        0.00000            
  290   SMTRY3  11  0.000000  0.000000 -1.000000       65.70302            
  290   SMTRY1  12  1.000000  0.000000  0.000000        0.00000            
  290   SMTRY2  12  0.000000 -1.000000  0.000000        0.00000            
@@ -466,6 +484,22 @@ M  END
  350   BIOMT1   1  1.000000  0.000000  0.000000        0.00000            
  350   BIOMT2   1  0.000000  1.000000  0.000000        0.00000            
  350   BIOMT3   1  0.000000  0.000000  1.000000        0.00000            
+ 400                                                                      
+ 400 COMPOUND                                                             
+ 400 THE ACTIVE SITE CLEFT OF THERMOLYSIN CONTAINS AT LEAST FOUR          
+ 400 SUBSITES S1, S1(PRIME), S2, AND S2(PRIME) WHICH PARTICIPATE IN THE   
+ 400 BINDING OF EXTENDED SUBSTRATES. THEY ARE SPECIFIED ON *SITE*         
+ 400 RECORDS BELOW.                                                       
+ 500                                                                      
+ 500 GEOMETRY AND STEREOCHEMISTRY                                         
+ 500 SUBTOPIC: CLOSE CONTACTS IN SAME ASYMMETRIC UNIT                     
+ 500                                                                      
+ 500 THE FOLLOWING ATOMS ARE IN CLOSE CONTACT.                            
+ 500                                                                      
+ 500  ATM1  RES C  SSEQI   ATM2  RES C  SSEQI           DISTANCE          
+ 500   NH1  ARG E   269     OD2  ASP E   294              2.19            
+ 500                                                                      
+ 500 REMARK: NULL                                                         
  500                                                                      
  500 GEOMETRY AND STEREOCHEMISTRY                                         
  500 SUBTOPIC: CLOSE CONTACTS                                             
@@ -482,8 +516,30 @@ M  END
  500 1.6 ANGSTROMS FOR CONTACTS INVOLVING HYDROGEN ATOMS                  
  500                                                                      
  500  ATM1  RES C  SSEQI   ATM2  RES C  SSEQI  SSYMOP   DISTANCE          
- 500   O    HOH E   434     O    HOH E   434     7555     1.03            
- 500   O    HOH E   387     O    HOH E   387    12565     1.86            
+ 500   O    HOH E   485     O    HOH E   485     7555     1.34            
+ 500   O    HOH E   418     O    HOH E   418    12565     2.05            
+ 500                                                                      
+ 500 REMARK: NULL                                                         
+ 500                                                                      
+ 500 GEOMETRY AND STEREOCHEMISTRY                                         
+ 500 SUBTOPIC: COVALENT BOND LENGTHS                                      
+ 500                                                                      
+ 500 THE STEREOCHEMICAL PARAMETERS OF THE FOLLOWING RESIDUES              
+ 500 HAVE VALUES WHICH DEVIATE FROM EXPECTED VALUES BY MORE               
+ 500 THAN 6*RMSD (M=MODEL NUMBER; RES=RESIDUE NAME; C=CHAIN               
+ 500 IDENTIFIER; SSEQ=SEQUENCE NUMBER; I=INSERTION CODE).                 
+ 500                                                                      
+ 500 STANDARD TABLE:                                                      
+ 500 FORMAT: (10X,I3,1X,2(A3,1X,A1,I4,A1,1X,A4,3X),1X,F6.3)               
+ 500                                                                      
+ 500 EXPECTED VALUES PROTEIN: ENGH AND HUBER, 1999                        
+ 500 EXPECTED VALUES NUCLEIC ACID: CLOWNEY ET AL 1996                     
+ 500                                                                      
+ 500  M RES CSSEQI ATM1   RES CSSEQI ATM2   DEVIATION                     
+ 500    GLU E 119   CD    GLU E 119   OE1    -0.081                       
+ 500    GLU E 166   CD    GLU E 166   OE1    -0.078                       
+ 500    GLU E 166   CD    GLU E 166   OE2     0.067                       
+ 500    GLU E 187   CD    GLU E 187   OE2     0.078                       
  500                                                                      
  500 REMARK: NULL                                                         
  500                                                                      
@@ -502,25 +558,40 @@ M  END
  500 EXPECTED VALUES NUCLEIC ACID: CLOWNEY ET AL 1996                     
  500                                                                      
  500  M RES CSSEQI ATM1   ATM2   ATM3                                     
- 500    SER E   5   N   -  CA  -  CB  ANGL. DEV. =   9.1 DEGREES          
- 500    VAL E   9   CA  -  CB  -  CG2 ANGL. DEV. =   9.1 DEGREES          
- 500    THR E  26   N   -  CA  -  CB  ANGL. DEV. =  12.4 DEGREES          
- 500    TYR E  27   CB  -  CG  -  CD2 ANGL. DEV. =  -4.6 DEGREES          
- 500    TYR E  29   CB  -  CG  -  CD2 ANGL. DEV. =   4.6 DEGREES          
- 500    TYR E  29   CB  -  CG  -  CD1 ANGL. DEV. =  -7.4 DEGREES          
- 500    ARG E  35   NE  -  CZ  -  NH1 ANGL. DEV. =   3.6 DEGREES          
- 500    TYR E  42   CB  -  CG  -  CD1 ANGL. DEV. =  -4.5 DEGREES          
- 500    TYR E  46   CB  -  CG  -  CD1 ANGL. DEV. =  -4.6 DEGREES          
- 500    TYR E  75   CB  -  CG  -  CD1 ANGL. DEV. =  -4.2 DEGREES          
- 500    TYR E 106   CB  -  CG  -  CD2 ANGL. DEV. =  -4.1 DEGREES          
- 500    TYR E 151   CB  -  CG  -  CD2 ANGL. DEV. =  -5.7 DEGREES          
- 500    ARG E 220   NE  -  CZ  -  NH1 ANGL. DEV. =   4.0 DEGREES          
- 500    ARG E 220   NE  -  CZ  -  NH2 ANGL. DEV. =  -6.2 DEGREES          
- 500    ARG E 260   NE  -  CZ  -  NH1 ANGL. DEV. =   3.4 DEGREES          
- 500    ARG E 260   NE  -  CZ  -  NH2 ANGL. DEV. =  -3.5 DEGREES          
- 500    TYR E 268   CB  -  CG  -  CD2 ANGL. DEV. =  -5.0 DEGREES          
- 500    TYR E 274   CB  -  CG  -  CD1 ANGL. DEV. =  -6.0 DEGREES          
- 500    VAL E 313   CA  -  CB  -  CG1 ANGL. DEV. =  10.6 DEGREES          
+ 500    THR E   4   OG1 -  CB  -  CG2 ANGL. DEV. = -14.2 DEGREES          
+ 500    THR E   6   OG1 -  CB  -  CG2 ANGL. DEV. = -14.9 DEGREES          
+ 500    ASP E  16   CB  -  CG  -  OD2 ANGL. DEV. =  -8.1 DEGREES          
+ 500    TYR E  29   CB  -  CG  -  CD1 ANGL. DEV. =  -5.1 DEGREES          
+ 500    ASP E  57   CB  -  CG  -  OD1 ANGL. DEV. =  10.9 DEGREES          
+ 500    TYR E  66   CB  -  CG  -  CD1 ANGL. DEV. =   4.3 DEGREES          
+ 500    ASP E  67   CB  -  CG  -  OD1 ANGL. DEV. =   6.1 DEGREES          
+ 500    ASP E  67   CB  -  CG  -  OD2 ANGL. DEV. =  -6.0 DEGREES          
+ 500    ASP E  72   CB  -  CG  -  OD1 ANGL. DEV. =   6.9 DEGREES          
+ 500    ARG E 101   CG  -  CD  -  NE  ANGL. DEV. = -16.0 DEGREES          
+ 500    ARG E 101   CD  -  NE  -  CZ  ANGL. DEV. =  10.3 DEGREES          
+ 500    ARG E 101   NE  -  CZ  -  NH2 ANGL. DEV. =  -3.3 DEGREES          
+ 500    SER E 118   N   -  CA  -  CB  ANGL. DEV. =   9.4 DEGREES          
+ 500    TYR E 151   CB  -  CG  -  CD2 ANGL. DEV. =  -3.7 DEGREES          
+ 500    ASP E 185   CB  -  CG  -  OD1 ANGL. DEV. =   7.0 DEGREES          
+ 500    ILE E 197   CA  -  CB  -  CG1 ANGL. DEV. =  16.8 DEGREES          
+ 500    ASP E 200   CB  -  CG  -  OD1 ANGL. DEV. =   5.8 DEGREES          
+ 500    ASP E 200   CB  -  CG  -  OD2 ANGL. DEV. =  -9.0 DEGREES          
+ 500    ASP E 207   CB  -  CG  -  OD2 ANGL. DEV. =  -7.1 DEGREES          
+ 500    ASP E 215   CB  -  CG  -  OD2 ANGL. DEV. =  -5.5 DEGREES          
+ 500    ARG E 220   N   -  CA  -  CB  ANGL. DEV. = -11.5 DEGREES          
+ 500    ARG E 220   NE  -  CZ  -  NH1 ANGL. DEV. =   3.3 DEGREES          
+ 500    ARG E 220   NE  -  CZ  -  NH2 ANGL. DEV. =  -4.7 DEGREES          
+ 500    ARG E 260   NE  -  CZ  -  NH1 ANGL. DEV. =   5.1 DEGREES          
+ 500    ARG E 260   NE  -  CZ  -  NH2 ANGL. DEV. =  -4.4 DEGREES          
+ 500    ASP E 261   CB  -  CG  -  OD2 ANGL. DEV. =  -6.9 DEGREES          
+ 500    ARG E 269   CD  -  NE  -  CZ  ANGL. DEV. = -15.1 DEGREES          
+ 500    ARG E 269   NE  -  CZ  -  NH1 ANGL. DEV. =  -5.1 DEGREES          
+ 500    TYR E 274   CB  -  CG  -  CD2 ANGL. DEV. =   5.5 DEGREES          
+ 500    THR E 278   N   -  CA  -  CB  ANGL. DEV. = -15.4 DEGREES          
+ 500    SER E 282   CB  -  CA  -  C   ANGL. DEV. =  12.6 DEGREES          
+ 500    ARG E 285   NE  -  CZ  -  NH1 ANGL. DEV. =   3.8 DEGREES          
+ 500    ASP E 311   CB  -  CG  -  OD2 ANGL. DEV. =  -5.8 DEGREES          
+ 500    LYS E 316   CB  -  CA  -  C   ANGL. DEV. =  12.4 DEGREES          
  500                                                                      
  500 REMARK: NULL                                                         
  500                                                                      
@@ -538,16 +609,18 @@ M  END
  500 CHOLOGY: RAMACHANDRAN REVISITED. STRUCTURE 4, 1395 - 1400            
  500                                                                      
  500  M RES CSSEQI        PSI       PHI                                   
- 500    SER E  25       87.59   -161.52                                   
- 500    THR E  26      -56.39     70.21                                   
- 500    PHE E  62       61.31   -112.02                                   
- 500    SER E  92     -176.32     62.74                                   
- 500    SER E 107     -162.40     56.67                                   
- 500    ASN E 111       52.64    -92.66                                   
- 500    SER E 118      -12.70   -141.34                                   
- 500    THR E 152     -102.03   -107.68                                   
- 500    ASN E 159     -147.37     59.20                                   
- 500    THR E 194       79.22     30.58                                   
+ 500    SER E  25       85.62   -158.36                                   
+ 500    THR E  26      -58.59     74.88                                   
+ 500    PHE E  62       66.54   -113.99                                   
+ 500    SER E  92     -174.55     61.98                                   
+ 500    SER E 107     -161.09     59.87                                   
+ 500    ASN E 111       41.24    -94.39                                   
+ 500    SER E 118      -17.20   -141.18                                   
+ 500    GLN E 128      -40.04   -133.40                                   
+ 500    THR E 152      -98.07   -111.11                                   
+ 500    ASN E 159     -143.13     59.91                                   
+ 500    THR E 194       76.08     32.84                                   
+ 500    ASP E 207       80.04   -150.07                                   
  500                                                                      
  500 REMARK: NULL                                                         
  500                                                                      
@@ -565,126 +638,108 @@ M  END
  500 FORMAT: (10X,I3,1X,A3,1X,A1,I4,A1,6X,F5.1,6X,A1,10X,A1,3X,A16)       
  500                                                                      
  500  M RES CSSEQI    IMPROPER   EXPECTED   FOUND DETAILS                 
- 500    THR E  26        15.4      L          L   OUTSIDE RANGE           
- 500    ALA E  68        21.9      L          L   OUTSIDE RANGE           
- 500    VAL E  79        17.2      L          L   OUTSIDE RANGE           
- 500    TYR E  84        24.4      L          L   OUTSIDE RANGE           
- 500    SER E 118        23.6      L          L   OUTSIDE RANGE           
- 500    LEU E 133        21.6      L          L   OUTSIDE RANGE           
- 500    ASN E 159        23.9      L          L   OUTSIDE RANGE           
- 500    ARG E 260        12.7      L          L   OUTSIDE RANGE           
+ 500    THR E  26        19.0      L          L   OUTSIDE RANGE           
+ 500    ALA E  68        24.1      L          L   OUTSIDE RANGE           
+ 500    SER E 118        19.1      L          L   OUTSIDE RANGE           
+ 500    LEU E 133        24.3      L          L   OUTSIDE RANGE           
+ 500    TYR E 251        25.0      L          L   OUTSIDE RANGE           
+ 500    ARG E 260        11.8      L          L   OUTSIDE RANGE           
+ 500    SER E 298        23.5      L          L   OUTSIDE RANGE           
+ 500    LYS E 316        24.8      L          L   OUTSIDE RANGE           
  500                                                                      
  500 REMARK: NULL                                                         
+ 600                                                                      
+ 600 HETEROGEN                                                            
+ 600 THE DIPEPTIDE VAL-TRP IS PRODUCT OF MERCAPTOACETYL-L-VALYL-L-        
+ 600 TRYPTOPHAN HYDROLYZED BY THERMOLYSIN                                 
  620                                                                      
  620 METAL COORDINATION                                                   
  620 (M=MODEL NUMBER; RES=RESIDUE NAME; C=CHAIN IDENTIFIER;               
  620 SSEQ=SEQUENCE NUMBER; I=INSERTION CODE):                             
  620                                                                      
  620 COORDINATION ANGLES FOR:  M RES CSSEQI METAL                         
- 620                              CA E 318  CA                            
- 620 N RES CSSEQI ATOM                                                    
- 620 1 ASP E 138   OD1                                                    
- 620 2 GLU E 177   OE1  74.3                                              
- 620 3 GLU E 177   OE2 120.0  45.9                                        
- 620 4 GLU E 187   O    82.0 139.9 146.2                                  
- 620 5 GLU E 190   OE1  82.9 127.1 125.0  80.0                            
- 620 6 GLU E 190   OE2  97.7  84.6  74.8 131.0  51.7                      
- 620 7 ASP E 185   OD2 162.7 122.5  77.2  81.6  88.8  88.8                
- 620 8 HOH E 335   O    94.7  77.2  79.5  73.0 152.9 154.3  85.8          
- 620 N                    1     2     3     4     5     6     7           
- 620                                                                      
- 620 COORDINATION ANGLES FOR:  M RES CSSEQI METAL                         
  620                              CA E 319  CA                            
  620 N RES CSSEQI ATOM                                                    
- 620 1 GLU E 177   OE2                                                    
- 620 2 GLU E 190   OE2  89.7                                              
- 620 3 HOH E 342   O    91.7  96.6                                        
- 620 4 HOH E 424   O   176.9  89.8  85.3                                  
- 620 5 ASN E 183   O    85.7 166.7  95.9  95.4                            
- 620 6 ASP E 185   OD1  88.4  79.6 176.2  94.6  87.9                      
- 620 N                    1     2     3     4     5                       
+ 620 1 ASP E 138   OD1                                                    
+ 620 2 GLU E 177   OE1  77.0                                              
+ 620 3 GLU E 177   OE2 122.5  46.6                                        
+ 620 4 GLU E 187   O    86.2 144.5 145.1                                  
+ 620 5 GLU E 190   OE1  82.8 130.5 122.5  76.6                            
+ 620 6 GLU E 190   OE2  98.9  84.9  70.4 128.9  54.1                      
+ 620 7 ASP E 185   OD2 162.3 120.7  75.1  78.2  85.3  84.6                
+ 620 8 HOH E 346   O   100.5  76.9  79.4  75.8 151.9 149.5  84.1          
+ 620 N                    1     2     3     4     5     6     7           
  620                                                                      
  620 COORDINATION ANGLES FOR:  M RES CSSEQI METAL                         
  620                              CA E 320  CA                            
  620 N RES CSSEQI ATOM                                                    
- 620 1 HOH E 447   O                                                      
- 620 2 HOH E 431   O    88.7                                              
- 620 3 GLN E  61   O   176.5  92.5                                        
- 620 4 ASP E  59   OD1  85.4  74.2  91.7                                  
- 620 5 ASP E  57   OD2  90.0 144.7  87.1  70.6                            
- 620 6 ASP E  57   OD1  84.0 163.5  95.6 119.8  50.3                      
- 620 7 HOH E 388   O    99.3  84.0  84.1 157.6 130.8  82.6                
- 620 N                    1     2     3     4     5     6                 
+ 620 1 GLU E 177   OE2                                                    
+ 620 2 GLU E 190   OE2  82.9                                              
+ 620 3 HOH E 353   O    90.6  94.6                                        
+ 620 4 HOH E 475   O   168.8  88.7  82.7                                  
+ 620 5 ASN E 183   O    91.7 170.2  93.6  97.7                            
+ 620 6 ASP E 185   OD1  88.0  78.1 172.7  97.5  93.7                      
+ 620 N                    1     2     3     4     5                       
  620                                                                      
  620 COORDINATION ANGLES FOR:  M RES CSSEQI METAL                         
  620                              CA E 321  CA                            
  620 N RES CSSEQI ATOM                                                    
- 620 1 HOH E 343   O                                                      
- 620 2 ASP E 200   OD1  76.5                                              
- 620 3 ILE E 197   O   114.5  88.6                                        
- 620 4 TYR E 193   O    83.5 129.2 141.9                                  
- 620 5 THR E 194   OG1 131.3  76.5 104.6  83.2                            
- 620 6 THR E 194   O   154.1 129.3  73.5  77.2  63.6                      
- 620 7 HOH E 429   O    81.4 137.0  67.7  83.3 142.5  79.3                
+ 620 1 HOH E 419   O                                                      
+ 620 2 ASP E  57   OD1  84.9                                              
+ 620 3 ASP E  57   OD2 134.9  51.6                                        
+ 620 4 ASP E  59   OD1 154.6 120.4  69.6                                  
+ 620 5 GLN E  61   O    83.6  97.9  90.5  90.4                            
+ 620 6 HOH E 482   O    80.4 160.7 144.7  75.3  92.7                      
+ 620 7 HOH E 503   O    99.6  80.7  86.1  87.4 176.4  89.5                
  620 N                    1     2     3     4     5     6                 
  620                                                                      
  620 COORDINATION ANGLES FOR:  M RES CSSEQI METAL                         
- 620                              ZN E 322  ZN                            
+ 620                              CA E 322  CA                            
  620 N RES CSSEQI ATOM                                                    
- 620 1 GLU E 166   OE1                                                    
- 620 2 HIS E 142   NE2 128.2                                              
- 620 3 HIS E 146   NE2  97.9 101.1                                        
- 620 4 GLU E 166   OE2  52.2  81.2 134.6                                  
- 620 5 RDF E 317   O1P  98.9 115.8 114.1 104.8                            
- 620 N                    1     2     3     4                             
- 630                                                                      
- 630 MOLECULE TYPE: NULL                                                  
- 630 MOLECULE NAME: N-ALPHA-L-RHAMNOPYRANOSYLOXY(HYDROXYPHOSPHINYL)-L-    
- 630 LEUCYL-L-TRYPTOPHAN                                                  
- 630 (M=MODEL NUMBER; RES=RESIDUE NAME; C=CHAIN IDENTIFIER;               
- 630  SSSEQ=SEQUENCE NUMBER; I=INSERTION CODE.)                           
- 630                                                                      
- 630   M RES C SSSEQI                                                     
- 630     RDF E   317                                                      
- 630 SOURCE: NULL                                                         
- 630 TAXONOMY: NULL                                                       
- 630 SUBCOMP:    RHA LEU TRP                                              
- 630 DETAILS: NULL                                                        
+ 620 1 THR E 194   O                                                      
+ 620 2 THR E 194   OG1  65.8                                              
+ 620 3 TYR E 193   O    76.0  79.0                                        
+ 620 4 ILE E 197   O    82.2 105.5 153.6                                  
+ 620 5 ASP E 200   OD1 131.5  76.6 126.6  79.3                            
+ 620 6 HOH E 354   O   153.9 128.3  85.1 109.9  74.4                      
+ 620 7 HOH E 480   O    82.8 147.8  86.7  75.8 133.6  78.3                
+ 620 N                    1     2     3     4     5     6                 
+ 620                                                                      
+ 620 COORDINATION ANGLES FOR:  M RES CSSEQI METAL                         
+ 620                              ZN E 323  ZN                            
+ 620 N RES CSSEQI ATOM                                                    
+ 620 1 HOH E 810   O                                                      
+ 620 2 HIS E 142   NE2 117.8                                              
+ 620 3 HIS E 146   NE2 125.1 100.3                                        
+ 620 4 GLU E 166   OE1  90.9 127.2  96.1                                  
+ 620 N                    1     2     3                                   
  700                                                                      
  700 SHEET                                                                
  700 THE *ACTIVE-SITE* SHEET SUBSTRUCTURE OF THIS MOLECULE HAS            
  700 ONE EDGE-STRAND COMPRISED OF TWO DISTINCT SEQUENCES OF THE           
  700 POLYPEPTIDE CHAIN.  TO REPRESENT THIS FEATURE AN EXTRA               
  700 SHEET IS DEFINED.  STRANDS 2,3,4,5 OF S1 ARE IDENTICAL TO            
- 700 STRANDS 2,3,4,5 OF S2.                                               
+ 700 STRANDS STRANDS 2,3,4,5 OF S2.                                       
  800                                                                      
  800 SITE                                                                 
- 800 SITE_IDENTIFIER: AC1                                                 
- 800 EVIDENCE_CODE: SOFTWARE                                              
- 800 SITE_DESCRIPTION: BINDING SITE FOR RESIDUE RDF E 317                 
+ 800 SITE_IDENTIFIER: S1                                                  
+ 800 EVIDENCE_CODE: UNKNOWN                                               
+ 800 SITE_DESCRIPTION: NULL                                               
  800                                                                      
- 800 SITE_IDENTIFIER: AC2                                                 
- 800 EVIDENCE_CODE: SOFTWARE                                              
- 800 SITE_DESCRIPTION: BINDING SITE FOR RESIDUE CA E 318                  
+ 800 SITE_IDENTIFIER: S1P                                                 
+ 800 EVIDENCE_CODE: UNKNOWN                                               
+ 800 SITE_DESCRIPTION: NULL                                               
  800                                                                      
- 800 SITE_IDENTIFIER: AC3                                                 
- 800 EVIDENCE_CODE: SOFTWARE                                              
- 800 SITE_DESCRIPTION: BINDING SITE FOR RESIDUE CA E 319                  
+ 800 SITE_IDENTIFIER: S2                                                  
+ 800 EVIDENCE_CODE: UNKNOWN                                               
+ 800 SITE_DESCRIPTION: NULL                                               
  800                                                                      
- 800 SITE_IDENTIFIER: AC4                                                 
- 800 EVIDENCE_CODE: SOFTWARE                                              
- 800 SITE_DESCRIPTION: BINDING SITE FOR RESIDUE CA E 320                  
- 800                                                                      
- 800 SITE_IDENTIFIER: AC5                                                 
- 800 EVIDENCE_CODE: SOFTWARE                                              
- 800 SITE_DESCRIPTION: BINDING SITE FOR RESIDUE CA E 321                  
- 800                                                                      
- 800 SITE_IDENTIFIER: AC6                                                 
- 800 EVIDENCE_CODE: SOFTWARE                                              
- 800 SITE_DESCRIPTION: BINDING SITE FOR RESIDUE ZN E 322                  
+ 800 SITE_IDENTIFIER: S2P                                                 
+ 800 EVIDENCE_CODE: UNKNOWN                                               
+ 800 SITE_DESCRIPTION: NULL                                               
 
 >  <DBREF>
- 1TLP E    1   316  UNP    P00800   THER_BACTH       1    316             
+ 3TMN E    1   316  UNP    P00800   THER_BACTH       1    316             
 
 >  <SEQRES>
    1 E  316  ILE THR GLY THR SER THR VAL GLY VAL GLY ARG GLY VAL          
@@ -714,107 +769,97 @@ M  END
   25 E  316  VAL GLY VAL LYS                                              
 
 >  <HET>
- RDF  E 317      37                                                       
-  CA  E 318       1                                                       
+ VAL  E 317       7                                                       
+ TRP  E 318      15                                                       
   CA  E 319       1                                                       
   CA  E 320       1                                                       
   CA  E 321       1                                                       
-  ZN  E 322       1                                                       
+  CA  E 322       1                                                       
+  ZN  E 323       1                                                       
 
 >  <HETNAM>
-     RDF N-ALPHA-L-RHAMNOPYRANOSYLOXY(HYDROXYPHOSPHINYL)-L-               
-   2 RDF  LEUCYL-L-TRYPTOPHAN                                             
+     VAL VALINE                                                           
+     TRP TRYPTOPHAN                                                       
       CA CALCIUM ION                                                      
       ZN ZINC ION                                                         
 
->  <HETSYN>
-     RDF PHOSPHORAMIDON                                                   
-
 >  <FORMUL>
-   2  RDF    C23 H34 N3 O10 P                                             
-   3   CA    4(CA 2+)                                                     
-   7   ZN    ZN 2+                                                        
-   8  HOH   *163(H2 O)                                                    
+   2  VAL    C5 H11 N O2                                                  
+   3  TRP    C11 H12 N2 O2                                                
+   4   CA    4(CA 2+)                                                     
+   8   ZN    ZN 2+                                                        
+   9  HOH   *173(H2 O)                                                    
 
 >  <HELIX>
- 802 802 SER E   65  VAL E   87  1                                  23
- 803 803 LEU E  133  GLY E  135  1                                   3
- 804 804 ILE E  137  ASP E  150  1                                  14
- 805 805 GLU E  160  ALA E  180  1                                  21
- 806 806 GLU E  190  VAL E  192  1                                   3
- 807 807 PRO E  208  TYR E  211  1                                   4
- 808 808 TYR E  217  LYS E  219  1                                   3
- 809 809 ASP E  226  GLY E  229  1                                   4
- 810 810 ASN E  233  GLN E  246  1                                  14
- 811 811 ARG E  260  TYR E  274  1                                  15
- 812 812 PHE E  281  TYR E  296  1                                  16
- 813 813 GLN E  301  VAL E  313  1                                  13
+ 765 765 SER E   65  VAL E   87  1                                  23
+ 766 766 LEU E  133  GLY E  135  1                                   3
+ 767 767 ILE E  137  ASP E  150  1                                  14
+ 768 768 GLU E  160  ALA E  180  1                                  21
+ 769 769 GLU E  190  VAL E  192  1                                   3
+ 770 770 PRO E  208  TYR E  211  1                                   4
+ 771 771 TYR E  217  LYS E  219  1                                   3
+ 772 772 ASP E  226  GLY E  229  1                                   4
+ 773 773 ASN E  233  GLN E  246  1                                  14
+ 774 774 ARG E  260  TYR E  274  1                                  15
+ 775 775 PHE E  281  TYR E  296  1                                  16
+ 776 776 GLN E  301  VAL E  313  1                                  13
 
 >  <SHEET>
- 671 671 1 THR E   2  ARG E  11  0
- 672 672 1 ASP E  16  SER E  25  0
- 673 673 1 TYR E  27  TYR E  29  0
- 674 674 1 GLN E  31  ASP E  32  0
- 675 675 1 ILE E  39  ASP E  43  0
- 676 676 1 GLY E  52  ASP E  57  0
- 677 677 1 GLN E  61  PHE E  62  0
- 678 678 1 ILE E 100  TYR E 106  0
- 679 679 1 ASN E 112  TRP E 115  0
- 680 680 1 GLU E 119  TYR E 122  0
+ 641 641 1 THR E   2  ARG E  11  0
+ 642 642 1 ASP E  16  SER E  25  0
+ 643 643 1 TYR E  27  TYR E  29  0
+ 644 644 1 GLN E  31  ASP E  32  0
+ 645 645 1 ILE E  39  ASP E  43  0
+ 646 646 1 GLY E  52  ASP E  57  0
+ 647 647 1 GLN E  61  PHE E  62  0
+ 648 648 1 ILE E 100  TYR E 106  0
+ 649 649 1 ASN E 112  TRP E 115  0
+ 650 650 1 GLU E 119  TYR E 122  0
 
 >  <LINK>
-      CA    CA E 318                 OD1 ASP E 138     1555   1555  2.44  
-      CA    CA E 318                 OE1 GLU E 177     1555   1555  2.73  
-      CA    CA E 318                 OE2 GLU E 177     1555   1555  2.87  
-      CA    CA E 318                 O   GLU E 187     1555   1555  2.34  
-      CA    CA E 318                 OE1 GLU E 190     1555   1555  2.50  
-      CA    CA E 318                 OE2 GLU E 190     1555   1555  2.58  
-      CA    CA E 318                 OD2 ASP E 185     1555   1555  2.45  
-      CA    CA E 318                 O   HOH E 335     1555   1555  2.67  
-      CA    CA E 319                 OE2 GLU E 177     1555   1555  2.35  
-      CA    CA E 319                 OE2 GLU E 190     1555   1555  2.35  
-      CA    CA E 319                 O   HOH E 342     1555   1555  2.22  
-      CA    CA E 319                 O   HOH E 424     1555   1555  2.29  
-      CA    CA E 319                 O   ASN E 183     1555   1555  2.51  
-      CA    CA E 319                 OD1 ASP E 185     1555   1555  2.45  
-      CA    CA E 320                 O   HOH E 447     1555   1555  2.33  
-      CA    CA E 320                 O   HOH E 431     1555   1555  2.44  
-      CA    CA E 320                 O   GLN E  61     1555   1555  2.24  
-      CA    CA E 320                 OD1 ASP E  59     1555   1555  2.32  
-      CA    CA E 320                 OD2 ASP E  57     1555   1555  2.80  
-      CA    CA E 320                 OD1 ASP E  57     1555   1555  2.34  
-      CA    CA E 320                 O   HOH E 388     1555   1555  2.39  
-      CA    CA E 321                 O   HOH E 343     1555   1555  2.60  
-      CA    CA E 321                 OD1 ASP E 200     1555   1555  2.24  
-      CA    CA E 321                 O   ILE E 197     1555   1555  2.29  
-      CA    CA E 321                 O   TYR E 193     1555   1555  2.54  
-      CA    CA E 321                 OG1 THR E 194     1555   1555  2.40  
-      CA    CA E 321                 O   THR E 194     1555   1555  2.47  
-      CA    CA E 321                 O   HOH E 429     1555   1555  2.36  
-      ZN    ZN E 322                 OE1 GLU E 166     1555   1555  1.95  
-      ZN    ZN E 322                 NE2 HIS E 142     1555   1555  2.22  
-      ZN    ZN E 322                 NE2 HIS E 146     1555   1555  2.19  
-      ZN    ZN E 322                 OE2 GLU E 166     1555   1555  2.68  
-       O1P RDF E 317                ZN    ZN E 322     1555   1555  1.75  
+      CA    CA E 319                 OD1 ASP E 138     1555   1555  2.42  
+      CA    CA E 319                 OE1 GLU E 177     1555   1555  2.63  
+      CA    CA E 319                 OE2 GLU E 177     1555   1555  2.86  
+      CA    CA E 319                 O   GLU E 187     1555   1555  2.24  
+      CA    CA E 319                 OE1 GLU E 190     1555   1555  2.41  
+      CA    CA E 319                 OE2 GLU E 190     1555   1555  2.47  
+      CA    CA E 319                 OD2 ASP E 185     1555   1555  2.49  
+      CA    CA E 319                 O   HOH E 346     1555   1555  2.62  
+      CA    CA E 320                 OE2 GLU E 177     1555   1555  2.33  
+      CA    CA E 320                 OE2 GLU E 190     1555   1555  2.34  
+      CA    CA E 320                 O   HOH E 353     1555   1555  2.42  
+      CA    CA E 320                 O   HOH E 475     1555   1555  1.98  
+      CA    CA E 320                 O   ASN E 183     1555   1555  2.42  
+      CA    CA E 320                 OD1 ASP E 185     1555   1555  2.43  
+      CA    CA E 321                 O   HOH E 419     1555   1555  2.50  
+      CA    CA E 321                 OD1 ASP E  57     1555   1555  2.19  
+      CA    CA E 321                 OD2 ASP E  57     1555   1555  2.59  
+      CA    CA E 321                 OD1 ASP E  59     1555   1555  2.38  
+      CA    CA E 321                 O   GLN E  61     1555   1555  2.25  
+      CA    CA E 321                 O   HOH E 482     1555   1555  2.18  
+      CA    CA E 321                 O   HOH E 503     1555   1555  2.39  
+      CA    CA E 322                 O   THR E 194     1555   1555  2.41  
+      CA    CA E 322                 OG1 THR E 194     1555   1555  2.36  
+      CA    CA E 322                 O   TYR E 193     1555   1555  2.47  
+      CA    CA E 322                 O   ILE E 197     1555   1555  2.21  
+      CA    CA E 322                 OD1 ASP E 200     1555   1555  2.27  
+      CA    CA E 322                 O   HOH E 354     1555   1555  2.56  
+      CA    CA E 322                 O   HOH E 480     1555   1555  2.09  
+      ZN    ZN E 323                 O   HOH E 810     1555   1555  2.13  
+      ZN    ZN E 323                 NE2 HIS E 142     1555   1555  2.12  
+      ZN    ZN E 323                 NE2 HIS E 146     1555   1555  2.12  
+      ZN    ZN E 323                 OE1 GLU E 166     1555   1555  2.17  
+       C   VAL E 317                 N   TRP E 318     1555   1555  1.33  
 
 >  <CISPEP>
-   1 LEU E   50    PRO E   51          0        -0.95                     
+   1 LEU E   50    PRO E   51          0         1.59                     
 
 >  <SITE>
-   1 AC1 14 ASN E 111  ASN E 112  ALA E 113  PHE E 114                    
-   2 AC1 14 PHE E 130  HIS E 142  GLU E 143  HIS E 146                    
-   3 AC1 14 TYR E 157  GLU E 166  ARG E 203  HIS E 231                    
-   4 AC1 14  ZN E 322  HOH E 485                                          
-   1 AC2  6 ASP E 138  GLU E 177  ASP E 185  GLU E 187                    
-   2 AC2  6 GLU E 190  HOH E 335                                          
-   1 AC3  6 GLU E 177  ASN E 183  ASP E 185  GLU E 190                    
-   2 AC3  6 HOH E 342  HOH E 424                                          
-   1 AC4  6 ASP E  57  ASP E  59  GLN E  61  HOH E 388                    
-   2 AC4  6 HOH E 431  HOH E 447                                          
-   1 AC5  6 TYR E 193  THR E 194  ILE E 197  ASP E 200                    
-   2 AC5  6 HOH E 343  HOH E 429                                          
-   1 AC6  5 HIS E 142  HIS E 146  TYR E 157  GLU E 166                    
-   2 AC6  5 RDF E 317                                                     
+   1  S1  1 PHE E 114                                                     
+   1 S1P  7 PHE E 130  LEU E 133  VAL E 139  ILE E 188                    
+   2 S1P  7 GLY E 189  VAL E 192  LEU E 202                               
+   1  S2  1 TRP E 115                                                     
+   1 S2P  2 PHE E 130  LEU E 202                                          
 
 >  <ORIGX1>
       0.866025 -0.500000  0.000000        0.00000                         
@@ -829,7 +874,7 @@ M  END
       0.012271  0.000000  0.000000        0.00000                         
 
 >  <SCALE2>
-      0.006135  0.010627  0.000000        0.00000                         
+      0.006136  0.010627  0.000000        0.00000                         
 
 >  <SCALE3>
       0.000000  0.000000  0.007610        0.00000                         
