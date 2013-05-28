@@ -434,8 +434,8 @@ void cleanUpAndGenerateConformers(int argc, char **argv) {
     moleculesList[0].AddHydrogens(false, true);
     writeMoleculeToFile(argv[2], moleculesList[0], true);
 
-    generateConformers(moleculesList[0]);
-    writeMoleculeConformersToFile(argv[3], moleculesList[0], true);
+    //generateConformers(moleculesList[0]);
+    //writeMoleculeConformersToFile(argv[3], moleculesList[0], true);
 }
 
 
@@ -443,10 +443,10 @@ void cleanUpAndGenerateConformers(int argc, char **argv) {
 
 int main (int argc, char **argv) {
     //runComparisons(argc, argv);
-    //runRMSDTest3(argc, argv);
+    runRMSDTest3(argc, argv);
 
 
-    cleanUpAndGenerateConformers(argc, argv);
+    //cleanUpAndGenerateConformers(argc, argv);
 
 
 
