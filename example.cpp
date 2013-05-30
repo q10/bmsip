@@ -438,12 +438,17 @@ void cleanUpAndGenerateConformers(int argc, char **argv) {
     //writeMoleculeConformersToFile(argv[3], moleculesList[0], true);
 }
 
-
-
+void printRMSD(int argc, char **argv) {
+    vector<OBMol> moleculesList;
+    importMoleculesFromFile(moleculesList, argv[1]);
+    importMoleculesFromFile(moleculesList, argv[2]);
+    cout << calculateRMSD(moleculesList[0], moleculesList[1]) << endl;
+}
 
 int main (int argc, char **argv) {
     //runComparisons(argc, argv);
     runRMSDTest3(argc, argv);
+    //printRMSD(argc, argv);
 
 
     //cleanUpAndGenerateConformers(argc, argv);
