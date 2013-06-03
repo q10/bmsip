@@ -445,21 +445,37 @@ void printRMSD(int argc, char **argv) {
     cout << calculateRMSD(moleculesList[0], moleculesList[1]) << endl;
 }
 
+void makeConformers(int argc, char **argv) {
+    vector<OBMol> moleculesList;
+    importMoleculesFromFile(moleculesList, argv[1]);
+
+    for (int num=50; num < 550; num+=50) {
+        OBMol mol = moleculesList[0];
+        generateConformers(mol, num);
+        stringstream outfilename; outfilename << string(argv[2]) << num << ".sdf";
+        writeMoleculeConformersToFile(outfilename.str(), mol, true);
+    }
+}
+
+
+void makeConformers2(int argc, char **argv) {
+    if(argc != 3) { cerr << "Usage: " << argv[0] << " MoleculeInputFile ConformerOutputFile\n"; exit(-1); }
+    vector<OBMol> moleculesList;
+    importMoleculesFromFile(moleculesList, argv[1]);
+    removeNonBondedAtomsInMolecule(moleculesList[0]);
+    moleculesList[0].AddHydrogens(false, true);
+    generateConformers(moleculesList[0], 50);
+    writeMoleculeConformersToFile(argv[2], moleculesList[0], true);    
+}
+
 int main (int argc, char **argv) {
     //runComparisons(argc, argv);
-    runRMSDTest3(argc, argv);
+    //runRMSDTest3(argc, argv);
     //printRMSD(argc, argv);
-
+    //makeConformers(argc, argv);
+    makeConformers2(argc, argv);
 
     //cleanUpAndGenerateConformers(argc, argv);
-
-
-
-/*    vector<OBMol> moleculesList;
-    importMoleculesFromFile(moleculesList, argv[1]);
-    generateConformers(moleculesList[0]);
-    writeMoleculeConformersToFile(argv[2], moleculesList[0], true);
-*/    //cout << volumeOverlap (molecules[0], molecules[1]) << endl;
 
 
     //runComparisons(argc, argv);

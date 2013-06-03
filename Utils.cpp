@@ -218,7 +218,7 @@ void generateConformers(OBMol &molecule, int numConformers=50, int numChildren=1
         if (not pFF->Setup(molecule)) { cerr << "ERROR: CANNOT LOAD MOLECULE TO FORCEFIELDSOLVER; EXITING\n"; exit(-1); }
         //pFF->SteepestDescent(500, 1.0e-4);
         //pFF->WeightedRotorSearch(200, 25);
-        pFF->ConjugateGradients(500, 1.0e-6);
+        pFF->ConjugateGradients(1000, 1.0e-6);
         pFF->GetCoordinates(molecule);
     }
 }
