@@ -43,4 +43,4 @@ while jjobs.size > 0 do
 	sleep 60
 end
 
-system "git add ../ALL_PAIRS_BQ123_AS_REFERENCE/ && git commit \™results of all-pairs\™ && git push"
+system "git add ../ALL_PAIRS_BQ123_AS_REFERENCE/ && git commit -a -m \™results of all-pairs\™ && git push"
