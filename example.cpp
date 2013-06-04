@@ -339,6 +339,7 @@ void runComparisons(int argc, char **argv) {
     cout << "Finished importing molecules\n";
 
     runComformerComparisons(molecules[0], molecules[1]);
+    cout << "Tanimoto (Hodgkin) similarity index: " << similarityIndex(molecules[0], molecules[1]) << endl;
 
     cout << "\nSaving those best conformers to file..." << endl;
     writeMoleculeToFile(argv[3], molecules[0], true);
