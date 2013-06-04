@@ -332,10 +332,10 @@ void runComformerComparisons(OBMol &moleculeA, OBMol &moleculeB, bool verbose=fa
 
 
 void runComparisons(int argc, char **argv) {
-    if(argc < 4) { cout << "Usage: " << argv[0] << " ConformerSet1 ConformerSet2 OutputFileName\n"; exit(-1); }
+    if(argc < 4) { cout << "Usage: " << argv[0] << " ConformerSet1(Reference) ConformerSet2 OutputFileName\n"; exit(-1); }
     vector<OBMol> molecules;
+    importMoleculeConformersFromFile(molecules, argv[2]); // import query conformer set first before importing reference set
     importMoleculeConformersFromFile(molecules, argv[1]);
-    importMoleculeConformersFromFile(molecules, argv[2]);
     cout << "Finished importing molecules\n";
 
     runComformerComparisons(molecules[0], molecules[1]);
@@ -469,11 +469,11 @@ void makeConformers2(int argc, char **argv) {
 }
 
 int main (int argc, char **argv) {
-    //runComparisons(argc, argv);
+    runComparisons(argc, argv);
     //runRMSDTest3(argc, argv);
     //printRMSD(argc, argv);
     //makeConformers(argc, argv);
-    makeConformers2(argc, argv);
+    //makeConformers2(argc, argv);
 
     //cleanUpAndGenerateConformers(argc, argv);
 
