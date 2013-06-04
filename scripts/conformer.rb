@@ -14,7 +14,6 @@ end
 end
 =end
 
-
 THREADS = 10
 jjobs = []
 pids = []
@@ -43,3 +42,5 @@ while jjobs.size > 0 do
 	end
 	sleep 60
 end
+
+system "git add ../ALL_PAIRS_BQ123_AS_REFERENCE/ && git commit \™results of all-pairs\™ && git push"
