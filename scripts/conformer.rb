@@ -28,7 +28,8 @@ Dir.glob("../CONFORMERS/*").delete_if { |x| x =~ /BQ123|234551|TAK044/ }.each do
 end
 
 THREADS.times do
-	pids.push fork { exec jjobs.pop }
+	text = jjobs.pop
+	pids.push fork { exec text }
 	system "renice -20 " + pids[-1].to_s
 end
 
@@ -37,7 +38,8 @@ while jjobs.size > 0 do
 
 	remaining = (THREADS - pids.size) > jjobs.size ? jjobs.size : (THREADS - pids.size) # in case number of open threads is larger than number of un-run trials
 	remaining.times do
-		pids.push fork { exec jjobs.pop }
+		text = jjobs.pop
+		pids.push fork { exec text }
 		system "renice -20 " + pids[-1].to_s
 	end
 	sleep 60

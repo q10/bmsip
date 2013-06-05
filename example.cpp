@@ -319,7 +319,7 @@ void runComformerComparisons(OBMol &moleculeA, OBMol &moleculeB, bool verbose=fa
                 bestCoordsA = currentSDCoordA;
                 bestI = i; bestJ = j;
             }
-            if (verbose) cout << "finished round " << ++stepCount << " (A#" << i << " and B#" << j << ")" << endl;
+            cout << "finished round " << ++stepCount << " (A#" << i << " and B#" << j << ")" << endl;
         }
     }    
     cout << "\nThe best overlap is between conformer A#" << bestI << " and B#" << bestJ << ", which, after PCA followed by Steepest Descent, produces a volume overlap of " << bestVolumeOverlap << endl;
