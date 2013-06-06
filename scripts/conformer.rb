@@ -10,7 +10,6 @@ end
 	outfile = "CONFORMERS/" + f.split(".").first + ".mol2"
 	system "./example ../Downloads/ANALOGS/FORMAL/" + f + " " + outfile
 end
-=end
 
 
 jjobs = Dir.glob("../CONFORMERS/*").delete_if { |x| not File.file?(x) or x =~ /BQ123|234551|TAK044/ }.collect do |fl|
@@ -25,3 +24,11 @@ end
 runJobs(jjobs)
 
 #system "git add ../ALL_PAIRS_BQ123_AS_REFERENCE/ && git commit -a -m \™results of all-pairs\™ && git push"
+=end
+
+Dir.glob("../ALL_PAIRS_BQ123_AS_REFERENCE/*.log").delete_if { |x| not File.file?(x) or x =~ /234551|TAK044/ }.collect do |fl|
+	comparison = File.basename( fl, ".*" )
+	tanimoto = open(fl).grep(/Tanimoto/)[0].gsub(/\n/,"").split(" ")[-1]
+	puts comparison + "\t" + tanimoto
+end
+

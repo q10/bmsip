@@ -16,12 +16,18 @@ module Enumerable
 		return Math.sqrt(self.variance)
     end
     def median
-    	temp, len = self.sort, self.length
+		temp, len = self.sort, self.length
 		return len % 2 == 1 ? temp[len/2] : (temp[len/2 - 1] + temp[len/2]) / 2
-    end
+	end
     def dataStats
 		arr = self.collect { |i| i.to_f }
 		return [arr.mean, arr.stddev, arr.median, arr.min, arr.max]
+	end
+end
+
+class String
+	def basename
+		File.basename(self, ".*")
 	end
 end
 
@@ -29,7 +35,7 @@ def self.processorCount
 	case RbConfig::CONFIG['host_os']
 	when /darwin9/
 		`hwprefs cpu_count`.to_i
-    when /darwin/
+	when /darwin/
 		((`which hwprefs` != '') ? `hwprefs thread_count` : `sysctl -n hw.ncpu`).to_i
 	when /linux/
 		`cat /proc/cpuinfo | grep processor | wc -l`.to_i
