@@ -13,7 +13,7 @@ end
 =end
 
 
-jjobs = Dir.glob("../CONFORMERS/*").delete_if { |x| x =~ /BQ123|234551|TAK044/ }.collect do |fl|
+jjobs = Dir.glob("../CONFORMERS/*").delete_if { |x| not File.file?(x) or x =~ /BQ123|234551|TAK044/ }.collect do |fl|
 	ligand = File.basename( fl, ".*" ) # get base filename without the file extension
 	reference = "../CONFORMERS/BQ123.mol2"
 	final_struct = "../ALL_PAIRS_BQ123_AS_REFERENCE/BQ123_" + ligand + ".mol2"

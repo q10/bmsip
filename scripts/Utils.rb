@@ -1,5 +1,30 @@
 require "RbConfig"
 
+module Enumerable
+    def sum
+		self.inject(:+)
+    end
+    def mean
+		self.sum / self.length.to_f
+    end
+    def variance
+		m = self.mean
+		sum = self.inject(0){|accum, i| accum + (i-m)**2 }
+		sum/(self.length - 1).to_f
+    end
+    def stddev
+		return Math.sqrt(self.variance)
+    end
+    def median
+    	temp, len = self.sort, self.length
+		return len % 2 == 1 ? temp[len/2] : (temp[len/2 - 1] + temp[len/2]) / 2
+    end
+    def dataStats
+		arr = self.collect { |i| i.to_f }
+		return [arr.mean, arr.stddev, arr.median, arr.min, arr.max]
+	end
+end
+
 def self.processorCount
 	case RbConfig::CONFIG['host_os']
 	when /darwin9/
@@ -18,18 +43,16 @@ def self.processorCount
 	end
 end
 
-def runJobs(jobList, numThreads=nil, priority=-20, sleepTime=60)
+def self.runJobs(jobList, numThreads=processorCount()-2, priority=-20, sleepTime=60)
 	raise ArgumentError unless (jobList.kind_of? Array or jobList.kind_of? String)
-	raise ArgumentError unless (numThreads.nil? or (numThreads.kind_of? Integer and numThreads > 0))
+	raise ArgumentError unless (numThreads.kind_of? Integer and (numThreads+2) > 0)
 	raise ArgumentError unless (priority.kind_of? Integer and (-20...20) === priority)
 	raise ArgumentError unless ((sleepTime.kind_of? Integer or sleepTime.kind_of? Float) and  sleepTime > 0)
-	jobList = [jobList] if jobList.kind_of? String
-	if numThreads.nil?
-		ideal = processorCount() - 2
-		numThreads = ideal if ideal > 0 else 1 
-	end
 
+	jobList = [jobList] if jobList.kind_of? String
+	numThreads = 1 if numThreads < 1
 	pids = []
+
 	while jobList.size > 0 do
 		pids.delete_if { |x| Process.waitpid(x, Process::WNOHANG) }
 
