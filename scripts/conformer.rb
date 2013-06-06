@@ -26,9 +26,15 @@ runJobs(jjobs)
 #system "git add ../ALL_PAIRS_BQ123_AS_REFERENCE/ && git commit -a -m \™results of all-pairs\™ && git push"
 =end
 
-Dir.glob("../ALL_PAIRS_BQ123_AS_REFERENCE/*.log").delete_if { |x| not File.file?(x) or x =~ /234551|TAK044/ }.collect do |fl|
-	comparison = File.basename( fl, ".*" )
+
+# Grab Tanimoto Indexes and conformers
+his = []
+
+Dir.globfiles("../ALL_PAIRS_BQ123_AS_REFERENCE/*.log").each do |fl|
 	tanimoto = open(fl).grep(/Tanimoto/)[0].gsub(/\n/,"").split(" ")[-1]
-	puts comparison + "\t" + tanimoto
+	conformers = open(fl).grep(/conformer\ A#[0-9]+\ and\ B#[0-9]+/)[0].split(" ").select { |w| w =~ /#/}.collect { |x| x.gsub(/[^a-zA-Z0-9]/, "").gsub(/[a-zA-Z]/, "") }.join "\t"
+	puts [fl.basename, tanimoto, conformers].join "\t"
+	his.push conformers.split("\t")[-1]
 end
 
+his.histogram.sort { |x, y| x[0].to_i <=> y[0].to_i }.each { |x| puts x.join "\t" }

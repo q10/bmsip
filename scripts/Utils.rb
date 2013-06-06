@@ -23,11 +23,21 @@ module Enumerable
 		arr = self.collect { |i| i.to_f }
 		return [arr.mean, arr.stddev, arr.median, arr.min, arr.max]
 	end
+	def histogram
+		his = inject(Hash.new(0)) { |h, x| h[x] += 1; h }
+		return his.keys.zip( his.values )
+  	end
 end
 
 class String
 	def basename
 		File.basename(self, ".*")
+	end
+end
+
+class Dir
+	def self.globfiles(path)
+		self.glob(path).delete_if { |x| not File.file? x }
 	end
 end
 

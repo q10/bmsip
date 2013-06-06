@@ -470,7 +470,7 @@ void makeConformers2(int argc, char **argv) {
 }
 
 int main (int argc, char **argv) {
-    runComparisons(argc, argv);
+    //runComparisons(argc, argv);
     //runRMSDTest3(argc, argv);
     //printRMSD(argc, argv);
     //makeConformers(argc, argv);
@@ -482,8 +482,9 @@ int main (int argc, char **argv) {
     //runComparisons(argc, argv);
     //if(argc < 3) { cout << "Usage: ProgrameName InputFileName OutputFileName\n"; return 1; }
 
-    //vector<OBMol> molecules;
-    //importMoleculesFromFile(molecules, argv[1]);
+    vector<OBMol> molecules;
+    importMoleculesFromFile(molecules, argv[1]);
+    cout << similarityIndex(molecules[0], molecules[1]) << endl;
     //removeNonBondedAtomsInMolecule(molecules[0]);
     //generateConformers(molecules[0]);
     //writeMoleculeConformersToFile(argv[2], molecules[0], true);
