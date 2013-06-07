@@ -1,12 +1,16 @@
 require "RbConfig"
 
 module Enumerable
-    def sum
+	def sum
 		self.inject(:+)
-    end
-    def mean
+	end
+	def mean
 		self.sum / self.length.to_f
-    end
+	end
+	def normalize
+		s = self.sum
+		self.collect{ |x| x / s }
+	end
     def variance
 		m = self.mean
 		sum = self.inject(0){|accum, i| accum + (i-m)**2 }

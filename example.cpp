@@ -23,7 +23,7 @@ using namespace OpenBabel;
 
 #include "Utils.cpp"
 
-double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double> &coordsMoleculeB, const vector<double> &VDWsA, const vector<double> &VDWsB) {
+double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double> &coordsMoleculeB, const vector<double> &VDWsA, const vector<double> &VDWsB, bool byParts=false) {
     if (coordsMoleculeA.size() != VDWsA.size() * 3 or coordsMoleculeB.size() != VDWsB.size() * 3) { cerr << "ERROR: INCORRECT MATCHING OF NUMBER OF COORDINATES AND ATOMIC NUMBERS; EXITING" << endl; abort(); }
 
     double totalVolumeOverlap = 0;
@@ -33,7 +33,7 @@ double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double>
 
     for (unsigned int i=0; i < coordsMoleculeA.size(); i+=3) {
         double vdwRA = VDWsA[i / 3]; // atomic number vectir is 3x shorter than 3d coordinates vector
-        double sqvA = vdwRA * vdwRA;
+        double sqvA = vdwRA * vdwRA, partialOverlap = 0;
 
         for (unsigned int j=0; j < coordsMoleculeB.size(); j+=3) {
             double vdwRB = VDWsB[j / 3];            
@@ -41,8 +41,10 @@ double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double>
             double C = sqvA + sqvB;
 
             double distanceSquared = pow(coordsMoleculeB[j]-coordsMoleculeA[i], 2) + pow(coordsMoleculeB[j+1]-coordsMoleculeA[i+1], 2) + pow(coordsMoleculeB[j+2]-coordsMoleculeA[i+2], 2);
-            totalVolumeOverlap += A * pow(sqvA * sqvB  / C, 1.5) * exp(B * distanceSquared / C);
+            partialOverlap += A * pow(sqvA * sqvB  / C, 1.5) * exp(B * distanceSquared / C);
         }
+        if (byParts) cout << partialOverlap << endl;
+        totalVolumeOverlap += partialOverlap;
     }
     return totalVolumeOverlap;
 }
@@ -54,13 +56,13 @@ double similarityIndex(const vector<double> &coordsMoleculeA, const vector<doubl
     return 2.0 * overlapAB / (overlapAA + overlapBB);
 }
 
-double volumeOverlap(OBMol &moleculeA, OBMol &moleculeB) {
+double volumeOverlap(OBMol &moleculeA, OBMol &moleculeB, bool byParts=false) {
     vector<double> coordsA, coordsB, VDWsA, VDWsB;
     generateCoordsMatrixFromMolecule(coordsA, moleculeA);
     generateCoordsMatrixFromMolecule(coordsB, moleculeB);
     generateVDWRadiusListFromMolecule(VDWsA, moleculeA);
     generateVDWRadiusListFromMolecule(VDWsB, moleculeB);
-    return volumeOverlap(coordsA, coordsB, VDWsA, VDWsB); 
+    return volumeOverlap(coordsA, coordsB, VDWsA, VDWsB, byParts); 
 }
 
 double similarityIndex(OBMol &moleculeA, OBMol &moleculeB) {
@@ -484,7 +486,8 @@ int main (int argc, char **argv) {
 
     vector<OBMol> molecules;
     importMoleculesFromFile(molecules, argv[1]);
-    cout << similarityIndex(molecules[0], molecules[1]) << endl;
+    for (OBAtomIterator iter = molecules[1].BeginAtoms(); iter != molecules[1].EndAtoms(); iter++) cout << (*iter)->x() << "\t" << (*iter)->y() << "\t" << (*iter)->z() << endl;
+    //volumeOverlap(molecules[1], molecules[0], true);
     //removeNonBondedAtomsInMolecule(molecules[0]);
     //generateConformers(molecules[0]);
     //writeMoleculeConformersToFile(argv[2], molecules[0], true);

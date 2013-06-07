@@ -28,13 +28,21 @@ runJobs(jjobs)
 
 
 # Grab Tanimoto Indexes and conformers
-his = []
-
+conformerhis = []
 Dir.globfiles("../ALL_PAIRS_BQ123_AS_REFERENCE/*.log").each do |fl|
 	tanimoto = open(fl).grep(/Tanimoto/)[0].gsub(/\n/,"").split(" ")[-1]
 	conformers = open(fl).grep(/conformer\ A#[0-9]+\ and\ B#[0-9]+/)[0].split(" ").select { |w| w =~ /#/}.collect { |x| x.gsub(/[^a-zA-Z0-9]/, "").gsub(/[a-zA-Z]/, "") }.join "\t"
 	puts [fl.basename, tanimoto, conformers].join "\t"
-	his.push conformers.split("\t")[-1]
+	conformerhis.push conformers.split("\t")[-1]
 end
+puts conformerhis.inspect
+((0...50).collect{ |x| x.to_s }.to_a + conformerhis).histogram.sort { |x, y| x[0].to_i <=> y[0].to_i }.each { |x| puts x[0] + "\t" + (x[1]-1).to_s }
 
-his.histogram.sort { |x, y| x[0].to_i <=> y[0].to_i }.each { |x| puts x.join "\t" }
+
+overlapContributions = []
+ligands = []
+Dir.globfiles("../ALL_PAIRS_BQ123_AS_REFERENCE/*.mol2").each do |fl|
+	ligands.push fl.basename.split("_")[-1]
+	overlapContributions.push `../example #{fl}`.split("\n").collect { |x| x.to_f }.normalize.collect { |x| x.to_s }
+end
+overlapContributions.transpose.unshift(ligands).each { |x| puts x.join "\t" }
