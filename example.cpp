@@ -485,8 +485,11 @@ int main (int argc, char **argv) {
     //if(argc < 3) { cout << "Usage: ProgrameName InputFileName OutputFileName\n"; return 1; }
 
     vector<OBMol> molecules;
-    importMoleculesFromFile(molecules, argv[1]);
-    for (OBAtomIterator iter = molecules[1].BeginAtoms(); iter != molecules[1].EndAtoms(); iter++) cout << (*iter)->x() << "\t" << (*iter)->y() << "\t" << (*iter)->z() << endl;
+    importMoleculeConformersFromFile(molecules, argv[1]);
+    molecules[0].SetConformer(atoi(argv[2]));
+    molecules[0].DeleteHydrogens();
+    for (OBAtomIterator iter = molecules[0].BeginAtoms(); iter != molecules[0].EndAtoms(); iter++) cout << (*iter)->x() << "\t" << (*iter)->y() << "\t" << (*iter)->z() << endl;
+    writeMoleculeToFile(argv[3], molecules[0]);
     //volumeOverlap(molecules[1], molecules[0], true);
     //removeNonBondedAtomsInMolecule(molecules[0]);
     //generateConformers(molecules[0]);
