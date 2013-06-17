@@ -28,6 +28,7 @@ runJobs(jjobs)
 
 
 # Grab Tanimoto Indexes and conformers
+=begin
 conformerhis = []
 Dir.globfiles("../ALL_PAIRS_BQ123_AS_REFERENCE/*.log").each do |fl|
 	tanimoto = open(fl).grep(/Tanimoto/)[0].gsub(/\n/,"").split(" ")[-1]
@@ -46,3 +47,10 @@ Dir.globfiles("../ALL_PAIRS_BQ123_AS_REFERENCE/*.mol2").each do |fl|
 	overlapContributions.push `../example #{fl}`.split("\n").collect { |x| x.to_f }.normalize.collect { |x| x.to_s }
 end
 overlapContributions.transpose.unshift(ligands).each { |x| puts x.join "\t" }
+=end
+
+a = Dir.globfiles("../../Downloads/ANALOGS/2D/*").delete_if { |x| x=~/mat.dat/ }.collect #do |fl|
+	#puts fl.basename #['obabel', fl, '-O', fl.basename+'.png'].join " "
+#end
+
+puts a.each_slice(6).each { |x| puts x.collect {|y| y.basename}.join "\t" }
