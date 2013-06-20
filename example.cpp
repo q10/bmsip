@@ -487,7 +487,10 @@ int main (int argc, char **argv) {
     vector<OBMol> molecules;
     importMoleculeConformersFromFile(molecules, argv[1]);
     importMoleculeConformersFromFile(molecules, argv[2]);
-    PCAPlusSteepestDescent(molecules[0], molecules[1], 1.0, 10.0 * M_PI / 180.0, true);
+    //molecules[0].SetConformer(35);
+    //molecules[1].SetConformer(0);
+    runComformerComparisons(molecules[0], molecules[1]);
+    //PCAPlusSteepestDescent(molecules[0], molecules[1], 1.0, 10.0 * M_PI / 180.0, true);
     writeMoleculeToFile(argv[3], molecules[0], true);
     writeMoleculeToFile(argv[4], molecules[1], true);
 
