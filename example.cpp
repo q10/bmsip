@@ -404,14 +404,14 @@ void runRMSDTest2(int argc, char **argv) {
 void runRMSDTest3(int argc, char **argv) {
     if(argc != 7) { cout << "Usage: " << argv[0] << " TargetBeginningPosition TargetBeginningPositionConformers Reference TargetXRayMatch originalTargetOuput conformerTargetOutput\n"; exit(-1); }
     vector<OBMol> molecules;
-    importMoleculesFromFile(molecules, argv[1]);
-    importMoleculeConformersFromFile(molecules, argv[2]);
-    importMoleculesFromFile(molecules, argv[3]);
-    importMoleculesFromFile(molecules, argv[4]);
+    importMoleculesFromFile(molecules, argv[1]); // target beginning poition (original conformer)
+    importMoleculeConformersFromFile(molecules, argv[2]); // target conformer beginning position
+    importMoleculesFromFile(molecules, argv[3]); // reference
+    importMoleculesFromFile(molecules, argv[4]); // chimera superimposed target end position
 
-    PCAPlusSteepestDescent(molecules[0], molecules[2], 1.0, 10.0 * M_PI / 180.0);
-    runComformerComparisons(molecules[1], molecules[2]);
-    double RMSD = calculateRMSD(molecules[0], molecules[3]);
+    PCAPlusSteepestDescent(molecules[0], molecules[2], 1.0, 10.0 * M_PI / 180.0); // run superimpose using original conformer
+    runComformerComparisons(molecules[1], molecules[2]); // search for best superimposed non-original conformer
+    double RMSD = calculateRMSD(molecules[0], molecules[3]); // get RMSD between the ROKS and chimera superimposition
     double bestConformerRMSD = calculateRMSD(molecules[1], molecules[3]);
 
     cout << "conformer RMSDs and overlaps:\n";
@@ -420,10 +420,10 @@ void runRMSDTest3(int argc, char **argv) {
         cout << calculateRMSD(molecules[1], molecules[3]) << "\t" << volumeOverlap(molecules[1], molecules[2]) << endl;
     }
 
-    cout << RMSD << "\t" << volumeOverlap(molecules[0], molecules[2]) << endl;
-    cout << "0\t" << volumeOverlap(molecules[3], molecules[2]) << endl;
+    cout << endl << RMSD << "\t" << volumeOverlap(molecules[0], molecules[2]) << endl; // plot of original conformer, ROKS solution
+    cout << "0\t" << volumeOverlap(molecules[3], molecules[2]) << endl; // plot of chimera solution
 
-    cout << "RMSD BETWEEN CRYSTAL STRUCtURE FINAL POSITION AND THE BEST CALCULATED CONFORMER POSITION OF TARGET IS "<< bestConformerRMSD << endl;
+    cout << "RMSD BETWEEN CRYSTAL STRUCTURE FINAL POSITION AND THE BEST CALCULATED CONFORMER POSITION OF TARGET IS "<< bestConformerRMSD << endl;
 
 /*    cout << "RMSD BETWEEN CRYSTAL STRUCtURE FINAL POSITION AND CALCULATED POSITION OF TARGET IS "<< RMSD << endl 
          << "RMSD BETWEEN CRYSTAL STRUCtURE FINAL POSITION AND THE BEST CALCULATED CONFORMER POSITION OF TARGET IS "<< bestConformerRMSD << endl
@@ -479,7 +479,7 @@ void makeConformers2(int argc, char **argv) {
 
 int main (int argc, char **argv) {
     //runComparisons(argc, argv);
-    //runRMSDTest3(argc, argv);
+    runRMSDTest3(argc, argv);
     //printRMSD(argc, argv);
     //makeConformers(argc, argv);
     //makeConformers2(argc, argv);
@@ -490,11 +490,11 @@ int main (int argc, char **argv) {
     //runComparisons(argc, argv);
     //if(argc < 3) { cout << "Usage: ProgrameName InputFileName OutputFileName\n"; return 1; }
 
-    vector<OBMol> molecules;
+/*    vector<OBMol> molecules;
     importMoleculeConformersFromFile(molecules, argv[1]);
     importMoleculeConformersFromFile(molecules, argv[2]);
     PCAPlusSteepestDescent(molecules[0], molecules[1], 1.0, 10.0 * M_PI / 180.0);
     writeMoleculeToFile(argv[3], molecules[0], true);
     writeMoleculeToFile(argv[4], molecules[1], true);
-    return 0;
+*/    return 0;
 }

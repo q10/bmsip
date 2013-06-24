@@ -172,8 +172,8 @@ void generateAtomMatchScoringTableFromTwoMolecules(vector< vector<double> > &ato
             else if (atomB->IsCarbon()) b = 2; // class L
             else if (not atomB->IsHydrogen()) b = 1; // class X
 
-
-            if (a == b) atomMatchScoringTable[i].push_back(alpha);
+            if (a == 0 or b == 0) atomMatchScoringTable[i].push_back(0); // ignore the hydrogens if they have not been removed yet
+            else if (a == b) atomMatchScoringTable[i].push_back(alpha);
             else if ((a == 6 and (b == 5 or b == 4))  or  (b == 6 and (a == 5 or a == 4))) atomMatchScoringTable[i].push_back(alpha); // Scoring between HBond donors/acceptors 
             else atomMatchScoringTable[i].push_back(beta);
         }

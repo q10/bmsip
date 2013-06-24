@@ -47,10 +47,28 @@ Dir.globfiles("../ALL_PAIRS_BQ123_AS_REFERENCE/*.mol2").each do |fl|
 	overlapContributions.push `../example #{fl}`.split("\n").collect { |x| x.to_f }.normalize.collect { |x| x.to_s }
 end
 overlapContributions.transpose.unshift(ligands).each { |x| puts x.join "\t" }
-=end
 
 a = Dir.globfiles("../../Downloads/ANALOGS/2D/*").delete_if { |x| x=~/mat.dat/ }.collect #do |fl|
 	#puts fl.basename #['obabel', fl, '-O', fl.basename+'.png'].join " "
 #end
 
 puts a.each_slice(6).each { |x| puts x.collect {|y| y.basename}.join "\t" }
+=end
+
+
+system "cd .. && make clean all"
+
+files = %w(1TMN 3TMN 4TMN 1THL 1TLP)
+jjobs = files.product(files).collect do |x, y|
+	targetBeginningPosition = "../RMSD_TEST/ORIGINAL_PDBS/ligand" + y + ".mol2"
+	targetBeginningPositionConformers = "../RMSD_TEST/ORIGINAL_PDBS/conformer" + y + ".mol2"
+	reference = "../RMSD_TEST/CHIMERA_SUPERPOSITION_1TMN_AS_REFERENCE/" + x + "_ligand.mol2"
+	targetXRayMatch = "../RMSD_TEST/CHIMERA_SUPERPOSITION_1TMN_AS_REFERENCE/"+ y + "_ligand.mol2"
+	originalTargetOuput = "../RMSD_TEST/ROKS2/" + x + "-" + y + "_original.sdf"
+	conformerTargetOutput = "../RMSD_TEST/ROKS2/" + x + "-" + y + "_conformers.sdf"
+	logfile = "../RMSD_TEST/ROKS2/" + x + "-" + y + ".log"
+	["./example", targetBeginningPosition, targetBeginningPositionConformers, 
+		reference, targetXRayMatch, originalTargetOuput, conformerTargetOutput, ">", logfile, "2>&1"].join " "
+end
+puts jjobs
+#runJobs(jjobs)
