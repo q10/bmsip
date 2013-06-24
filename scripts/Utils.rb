@@ -85,3 +85,7 @@ def self.runJobs(jobList, numThreads=processorCount()-2, priority=-20, sleepTime
 		sleep sleepTime
 	end
 end
+
+=begin
+egrep 'out of|SCF Don|Converged|NO|YES' Bosentan.log
+=end

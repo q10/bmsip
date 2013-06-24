@@ -69,7 +69,6 @@ void addConformerToMolecule(OBMol &molecule, vector<double> &coordinates) {
     molecule.AddConformer(copyInMemory);
 }
 
-
 void tempImportMoleculesFromFile(vector<OBMol> &moleculesList, const string &fileName) {
     string format; extractFileExtension(format, fileName);
     OBConversion obconversion;
@@ -149,6 +148,36 @@ void generateAtomicMassesListFromMolecule(vector<double> &massList, OBMol &molec
     massList.clear();
     for (OBAtomIterator iter = molecule.BeginAtoms(); iter != molecule.EndAtoms(); iter++)
         massList.push_back( (*iter)->GetAtomicMass() );
+}
+
+void generateAtomMatchScoringTableFromTwoMolecules(vector< vector<double> > &atomMatchScoringTable, OBMol &moleculeA, OBMol &moleculeB, double alpha=1.0, double beta=0) {
+    atomMatchScoringTable.resize(moleculeA.NumAtoms()); unsigned int i=0;
+    for(unsigned int k=0; k < atomMatchScoringTable.size(); k++) atomMatchScoringTable[k].clear();
+
+    for (OBAtomIterator iterA = moleculeA.BeginAtoms(); iterA != moleculeA.EndAtoms(); iterA++, i++) {
+        OBAtom *atomA = *iterA; int a = 0;
+        if (atomA->IsHbondDonor() and atomA->IsHbondAcceptor()) a = 6; // class B
+        else if (atomA->IsHbondDonor()) a = 5; // class D
+        else if (atomA->IsHbondAcceptor()) a = 4; // class A
+        else if (atomA->IsAromatic()) a = 3; // class R
+        else if (atomA->IsCarbon()) a = 2; // class L
+        else if (not atomA->IsHydrogen()) a = 1; // class X
+
+        for (OBAtomIterator iterB = moleculeB.BeginAtoms(); iterB != moleculeB.EndAtoms(); iterB++) {
+            OBAtom *atomB = *iterB; int b;
+            if (atomB->IsHbondDonor() and atomB->IsHbondAcceptor()) b = 6; // class B
+            else if (atomB->IsHbondDonor()) b = 5; // class D
+            else if (atomB->IsHbondAcceptor()) b = 4; // class A
+            else if (atomB->IsAromatic()) b = 3; // class R
+            else if (atomB->IsCarbon()) b = 2; // class L
+            else if (not atomB->IsHydrogen()) b = 1; // class X
+
+
+            if (a == b) atomMatchScoringTable[i].push_back(alpha);
+            else if ((a == 6 and (b == 5 or b == 4))  or  (b == 6 and (a == 5 or a == 4))) atomMatchScoringTable[i].push_back(alpha); // Scoring between HBond donors/acceptors 
+            else atomMatchScoringTable[i].push_back(beta);
+        }
+    }
 }
 
 void getMoleculeCenterCoords(vector<double> &centerCoords, OBMol &molecule) {

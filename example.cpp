@@ -23,7 +23,7 @@ using namespace OpenBabel;
 
 #include "Utils.cpp"
 
-double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double> &coordsMoleculeB, const vector<double> &VDWsA, const vector<double> &VDWsB, bool byParts=false) {
+double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double> &coordsMoleculeB, const vector<double> &VDWsA, const vector<double> &VDWsB, const vector< vector<double> > &atomMatchScoringTable, bool byParts=false) {
     if (coordsMoleculeA.size() != VDWsA.size() * 3 or coordsMoleculeB.size() != VDWsB.size() * 3) { cerr << "ERROR: INCORRECT MATCHING OF NUMBER OF COORDINATES AND ATOMIC NUMBERS; EXITING" << endl; abort(); }
 
     double totalVolumeOverlap = 0;
@@ -41,7 +41,7 @@ double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double>
             double C = sqvA + sqvB;
 
             double distanceSquared = pow(coordsMoleculeB[j]-coordsMoleculeA[i], 2) + pow(coordsMoleculeB[j+1]-coordsMoleculeA[i+1], 2) + pow(coordsMoleculeB[j+2]-coordsMoleculeA[i+2], 2);
-            partialOverlap += A * pow(sqvA * sqvB  / C, 1.5) * exp(B * distanceSquared / C);
+            partialOverlap += atomMatchScoringTable[i/3][j/3] * A * pow(sqvA * sqvB  / C, 1.5) * exp(B * distanceSquared / C);
         }
         if (byParts) cout << partialOverlap << endl;
         totalVolumeOverlap += partialOverlap;
@@ -49,29 +49,35 @@ double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double>
     return totalVolumeOverlap;
 }
 
-double similarityIndex(const vector<double> &coordsMoleculeA, const vector<double> &coordsMoleculeB, const vector<double> &VDWsA, const vector<double> &VDWsB) {
-    double overlapAA = volumeOverlap(coordsMoleculeA, coordsMoleculeA, VDWsA, VDWsA);
-    double overlapBB = volumeOverlap(coordsMoleculeB, coordsMoleculeB, VDWsB, VDWsB);
-    double overlapAB = volumeOverlap(coordsMoleculeA, coordsMoleculeB, VDWsA, VDWsB);
+double volumeOverlap(OBMol &moleculeA, OBMol &moleculeB, double alpha=1, double beta=0.5, bool byParts=false) {
+    vector<double> coordsA, coordsB, VDWsA, VDWsB;
+    vector< vector<double> > atomMatchScoringTable;
+    generateCoordsMatrixFromMolecule(coordsA, moleculeA);
+    generateCoordsMatrixFromMolecule(coordsB, moleculeB);
+    generateVDWRadiusListFromMolecule(VDWsA, moleculeA);
+    generateVDWRadiusListFromMolecule(VDWsB, moleculeB);
+    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTable, moleculeA, moleculeB, alpha, beta);
+    return volumeOverlap(coordsA, coordsB, VDWsA, VDWsB, atomMatchScoringTable, byParts); 
+}
+
+double similarityIndex(const vector<double> &coordsMoleculeA, const vector<double> &coordsMoleculeB, const vector<double> &VDWsA, const vector<double> &VDWsB, const vector< vector<double> > &atomMatchScoringTableAA, const vector< vector<double> > &atomMatchScoringTableBB, const vector< vector<double> > &atomMatchScoringTableAB) {
+    double overlapAA = volumeOverlap(coordsMoleculeA, coordsMoleculeA, VDWsA, VDWsA, atomMatchScoringTableAA);
+    double overlapBB = volumeOverlap(coordsMoleculeB, coordsMoleculeB, VDWsB, VDWsB, atomMatchScoringTableBB);
+    double overlapAB = volumeOverlap(coordsMoleculeA, coordsMoleculeB, VDWsA, VDWsB, atomMatchScoringTableAB);
     return 2.0 * overlapAB / (overlapAA + overlapBB);
 }
 
-double volumeOverlap(OBMol &moleculeA, OBMol &moleculeB, bool byParts=false) {
+double similarityIndex(OBMol &moleculeA, OBMol &moleculeB, double alpha=1, double beta=0.5) {
     vector<double> coordsA, coordsB, VDWsA, VDWsB;
+    vector< vector<double> > atomMatchScoringTableAA, atomMatchScoringTableBB, atomMatchScoringTableAB;
     generateCoordsMatrixFromMolecule(coordsA, moleculeA);
     generateCoordsMatrixFromMolecule(coordsB, moleculeB);
     generateVDWRadiusListFromMolecule(VDWsA, moleculeA);
     generateVDWRadiusListFromMolecule(VDWsB, moleculeB);
-    return volumeOverlap(coordsA, coordsB, VDWsA, VDWsB, byParts); 
-}
-
-double similarityIndex(OBMol &moleculeA, OBMol &moleculeB) {
-    vector<double> coordsA, coordsB, VDWsA, VDWsB;
-    generateCoordsMatrixFromMolecule(coordsA, moleculeA);
-    generateCoordsMatrixFromMolecule(coordsB, moleculeB);
-    generateVDWRadiusListFromMolecule(VDWsA, moleculeA);
-    generateVDWRadiusListFromMolecule(VDWsB, moleculeB);
-    return similarityIndex(coordsA, coordsB, VDWsA, VDWsB); 
+    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTableAA, moleculeA, moleculeA, alpha, beta);
+    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTableBB, moleculeB, moleculeB, alpha, beta);
+    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTableAB, moleculeA, moleculeB, alpha, beta);
+    return similarityIndex(coordsA, coordsB, VDWsA, VDWsB, atomMatchScoringTableAA, atomMatchScoringTableBB, atomMatchScoringTableAB);
 }
 
 void generateEigenMatrix(vector<double> &eigenvectors, vector<double> &eigenvalues, const vector<double> &matrix) {
@@ -154,6 +160,9 @@ void findBestPCAOrientation(OBMol &moleculeA, OBMol &moleculeB) {
     generateEigenMatrix(eVectA, eValA, covA);
     generateEigenMatrix(eVectB, eValB, covB);
 
+    vector< vector<double> > atomMatchScoringTable;
+    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTable, moleculeA, moleculeB);
+
     double bestVolumeOverlap=0; int bestRcode=0;
     for (int i=0; i<4; i++) {
         generatePCARotationMatrix(tempR, i, eVectA, eVectB);
@@ -163,7 +172,7 @@ void findBestPCAOrientation(OBMol &moleculeA, OBMol &moleculeB) {
         rotate3DMatrixCoordinates(currentPCACoordA, tempR);
         translate3DMatrixCoordinates(currentPCACoordA, comB[0], comB[1], comB[2]);
 
-        double curVolOverlap = volumeOverlap(currentPCACoordA, coordB, VDWsA, VDWsB);
+        double curVolOverlap = volumeOverlap(currentPCACoordA, coordB, VDWsA, VDWsB, atomMatchScoringTable);
         if (curVolOverlap > bestVolumeOverlap) {
             bestRcode = i;
             bestVolumeOverlap = curVolOverlap;
@@ -180,12 +189,7 @@ void findBestPCAOrientation(OBMol &moleculeA, OBMol &moleculeB) {
 }
 
 
-
-
-
-
 #include "SteepestDescent.cpp"
-
 
 
 double PCAPlusSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, double betaRadians, bool verbose=false) {
@@ -200,6 +204,9 @@ double PCAPlusSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, 
     generateVDWRadiusListFromMolecule(VDWsB, moleculeB);
     getMoleculeCenterCoords(comA, moleculeA);
     getMoleculeCenterCoords(comB, moleculeB);
+
+    vector< vector<double> > atomMatchScoringTable;
+    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTable, moleculeA, moleculeB);
     
     generateCovarMatrixFromMolecule(covA, moleculeA);
     generateCovarMatrixFromMolecule(covB, moleculeB);
@@ -216,7 +223,7 @@ double PCAPlusSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, 
         translate3DMatrixCoordinates(currentPCACoordA, comB[0], comB[1], comB[2]);
 
         if (verbose) cout << endl << "BEGIN STEEPEST DESCENT SEARCH..." << endl;
-        double curVolOverlap = steepestDescentEngine(currentSDCoordA, currentPCACoordA, coordB, VDWsA, VDWsB, comA, alpha, betaRadians, verbose);
+        double curVolOverlap = steepestDescentEngine(currentSDCoordA, currentPCACoordA, coordB, VDWsA, VDWsB, comA, atomMatchScoringTable, alpha, betaRadians, verbose);
         
         if (verbose) cout << "END STEEOEST DESCENT SEARCH.\nThe convergent solution starting with position PCA0 produces a volume overlap of " << curVolOverlap << endl;
         if (curVolOverlap > bestVolumeOverlap) {
@@ -237,7 +244,7 @@ double PCAPlusSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, 
     return bestVolumeOverlap;
 }
 
-void PCAEngine(vector<double> &finalCoordsA, vector<double> &coordsMoleculeA, vector<double> &coordsMoleculeB, vector<double> &eVectA, vector<double> &eVectB, vector<double> &comA, vector<double> &comB, vector<double> &VDWsA, vector<double> &VDWsB) {
+void PCAEngine(vector<double> &finalCoordsA, vector<double> &coordsMoleculeA, vector<double> &coordsMoleculeB, vector<double> &eVectA, vector<double> &eVectB, vector<double> &comA, vector<double> &comB, vector<double> &VDWsA, vector<double> &VDWsB, const vector< vector<double> > &atomMatchScoringTable) {
     vector<double> tempR; double bestVolumeOverlap = 0;
 
     for (unsigned int k=0; k < 4; k++) {
@@ -248,7 +255,7 @@ void PCAEngine(vector<double> &finalCoordsA, vector<double> &coordsMoleculeA, ve
         rotate3DMatrixCoordinates(currentPCACoordA, tempR);
         translate3DMatrixCoordinates(currentPCACoordA, comB[0], comB[1], comB[2]);
 
-        double currentVolumeOverlap = volumeOverlap(currentPCACoordA, coordsMoleculeB, VDWsA, VDWsB);
+        double currentVolumeOverlap = volumeOverlap(currentPCACoordA, coordsMoleculeB, VDWsA, VDWsB, atomMatchScoringTable);
         if (currentVolumeOverlap > bestVolumeOverlap) {
             finalCoordsA = currentPCACoordA;
             bestVolumeOverlap = currentVolumeOverlap;
@@ -294,11 +301,13 @@ void getPCAEigenMatrix(vector<double> &eVects, vector<double> &moleculeCoords, v
 void runComformerComparisons(OBMol &moleculeA, OBMol &moleculeB, bool verbose=false) { // A is the target and B is the reference
     vector< vector<double> > coordAs, coordBs, comAs, comBs, eVectAs, eVectBs;
     vector<double> VDWsA, VDWsB, massesA, massesB, currentPCACoordA, currentSDCoordA, bestCoordsA;
+    vector< vector<double> > atomMatchScoringTable;
 
     double molecularWeightA = moleculeA.GetMolWt(), molecularWeightB = moleculeB.GetMolWt();
     double bestVolumeOverlap = -1;
     int bestJ = -1, bestI = -1, stepCount = 0;
     
+    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTable, moleculeA, moleculeB);
     generateVDWRadiusListFromMolecule(VDWsA, moleculeA);
     generateVDWRadiusListFromMolecule(VDWsB, moleculeB);
     generateAtomicMassesListFromMolecule(massesA, moleculeA);
@@ -314,8 +323,8 @@ void runComformerComparisons(OBMol &moleculeA, OBMol &moleculeB, bool verbose=fa
 
     for (unsigned int j=0; j < moleculeB.NumConformers(); j++) {
         for (unsigned int i=0; i < moleculeA.NumConformers(); i++) {
-            PCAEngine(currentPCACoordA, coordAs[i], coordBs[j], eVectAs[i], eVectBs[j], comAs[i], comBs[j], VDWsA, VDWsB);
-            double currentVolumeOverlap = steepestDescentEngine(currentSDCoordA, currentPCACoordA, coordBs[j], VDWsA, VDWsB, comAs[i], 1.0, 10.0 * M_PI / 180.0);
+            PCAEngine(currentPCACoordA, coordAs[i], coordBs[j], eVectAs[i], eVectBs[j], comAs[i], comBs[j], VDWsA, VDWsB, atomMatchScoringTable);
+            double currentVolumeOverlap = steepestDescentEngine(currentSDCoordA, currentPCACoordA, coordBs[j], VDWsA, VDWsB, comAs[i], atomMatchScoringTable, 1.0, 10.0 * M_PI / 180.0);
             if (currentVolumeOverlap > bestVolumeOverlap) {
                 bestVolumeOverlap = currentVolumeOverlap;
                 bestCoordsA = currentSDCoordA;
@@ -392,7 +401,6 @@ void runRMSDTest2(int argc, char **argv) {
          << "AN RMSD DIFFERENCE OF " << abs(bestConformerRMSD - RMSD) << " HAS BEEN OBSERVED.\n";
 }
 
-
 void runRMSDTest3(int argc, char **argv) {
     if(argc != 7) { cout << "Usage: " << argv[0] << " TargetBeginningPosition TargetBeginningPositionConformers Reference TargetXRayMatch originalTargetOuput conformerTargetOutput\n"; exit(-1); }
     vector<OBMol> molecules;
@@ -427,7 +435,6 @@ void runRMSDTest3(int argc, char **argv) {
     writeMoleculeToFile(argv[6], molecules[1], true);
 }
 
-
 void cleanUpAndGenerateConformers(int argc, char **argv) {
     if(argc != 4) { cout << "Usage: " << argv[0] << " MoleculeInputFile MoleculeOutputFile ConformerOutputFile\n"; exit(-1); }
     vector<OBMol> molecules;
@@ -460,7 +467,6 @@ void makeConformers(int argc, char **argv) {
     }
 }
 
-
 void makeConformers2(int argc, char **argv) {
     if(argc != 3) { cerr << "Usage: " << argv[0] << " MoleculeInputFile ConformerOutputFile\n"; exit(-1); }
     vector<OBMol> molecules;
@@ -487,33 +493,8 @@ int main (int argc, char **argv) {
     vector<OBMol> molecules;
     importMoleculeConformersFromFile(molecules, argv[1]);
     importMoleculeConformersFromFile(molecules, argv[2]);
-    //molecules[0].SetConformer(35);
-    //molecules[1].SetConformer(0);
-    runComformerComparisons(molecules[0], molecules[1]);
-    //PCAPlusSteepestDescent(molecules[0], molecules[1], 1.0, 10.0 * M_PI / 180.0, true);
+    PCAPlusSteepestDescent(molecules[0], molecules[1], 1.0, 10.0 * M_PI / 180.0);
     writeMoleculeToFile(argv[3], molecules[0], true);
     writeMoleculeToFile(argv[4], molecules[1], true);
-
-    /*importMoleculeConformersFromFile(molecules, argv[1]);
-    molecules[0].SetConformer(atoi(argv[2]));
-    molecules[0].DeleteHydrogens();
-    for (OBAtomIterator iter = molecules[0].BeginAtoms(); iter != molecules[0].EndAtoms(); iter++) cout << (*iter)->x() << "\t" << (*iter)->y() << "\t" << (*iter)->z() << endl;
-    writeMoleculeToFile(argv[3], molecules[0]);
-    *///volumeOverlap(molecules[1], molecules[0], true);
-    //removeNonBondedAtomsInMolecule(molecules[0]);
-    //generateConformers(molecules[0]);
-    //writeMoleculeConformersToFile(argv[2], molecules[0], true);
-
-/*    cout << "VEC SIZE: " << molecules.size() << endl;
-    cout << "NUM CONFORMERS: " << molecules[0].NumConformers() << endl;
-    cout << "NUM ATOMS: " << molecules[0].NumAtoms() << endl;
-*/
-    //molecules[1].SetConformer(10);
-
-
-    //findBestPCAOrientation(molecules[0], molecules[1]);
-    //runSteepestDescent(molecules[0], molecules[1], 0.5, 10.0 * M_PI / 180.0);
-    //PCAPlusSteepestDescent(molecules[0], molecules[1], 0.5, 10.0 * M_PI / 180.0);
-
     return 0;
 }
