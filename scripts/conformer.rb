@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'Utils'
 
 =begin
@@ -67,8 +68,8 @@ jjobs = files.product(files).collect do |x, y|
 	originalTargetOuput = "../RMSD_TEST/ROKS2/" + x + "-" + y + "_original.sdf"
 	conformerTargetOutput = "../RMSD_TEST/ROKS2/" + x + "-" + y + "_conformers.sdf"
 	logfile = "../RMSD_TEST/ROKS2/" + x + "-" + y + ".log"
-	["./example", targetBeginningPosition, targetBeginningPositionConformers, 
+	["../example", targetBeginningPosition, targetBeginningPositionConformers, 
 		reference, targetXRayMatch, originalTargetOuput, conformerTargetOutput, ">", logfile, "2>&1"].join " "
 end
 puts jjobs
-#runJobs(jjobs)
+runJobs(jjobs)

@@ -1,4 +1,4 @@
-require "RbConfig"
+#require "RbConfig"
 
 module Enumerable
 	def sum
@@ -44,7 +44,7 @@ class Dir
 		self.glob(path).delete_if { |x| not File.file? x }
 	end
 end
-
+=begin
 def self.processorCount
 	case RbConfig::CONFIG['host_os']
 	when /darwin9/
@@ -62,8 +62,8 @@ def self.processorCount
 		cpu.to_enum.first.NumberOfCores
 	end
 end
-
-def self.runJobs(jobList, numThreads=processorCount()-2, priority=-20, sleepTime=60)
+=end
+def self.runJobs(jobList, numThreads=11, priority=-20, sleepTime=60)
 	raise ArgumentError unless (jobList.kind_of? Array or jobList.kind_of? String)
 	raise ArgumentError unless (numThreads.kind_of? Integer and (numThreads+2) > 0)
 	raise ArgumentError unless (priority.kind_of? Integer and (-20...20) === priority)
