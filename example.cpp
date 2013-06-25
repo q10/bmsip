@@ -49,14 +49,14 @@ double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double>
     return totalVolumeOverlap;
 }
 
-double volumeOverlap(OBMol &moleculeA, OBMol &moleculeB, double alpha=1, double beta=0.5, bool byParts=false) {
+double volumeOverlap(OBMol &moleculeA, OBMol &moleculeB, bool byParts=false) {
     vector<double> coordsA, coordsB, VDWsA, VDWsB;
     vector< vector<double> > atomMatchScoringTable;
     generateCoordsMatrixFromMolecule(coordsA, moleculeA);
     generateCoordsMatrixFromMolecule(coordsB, moleculeB);
     generateVDWRadiusListFromMolecule(VDWsA, moleculeA);
     generateVDWRadiusListFromMolecule(VDWsB, moleculeB);
-    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTable, moleculeA, moleculeB, alpha, beta);
+    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTable, moleculeA, moleculeB);
     return volumeOverlap(coordsA, coordsB, VDWsA, VDWsB, atomMatchScoringTable, byParts); 
 }
 
@@ -67,16 +67,16 @@ double similarityIndex(const vector<double> &coordsMoleculeA, const vector<doubl
     return 2.0 * overlapAB / (overlapAA + overlapBB);
 }
 
-double similarityIndex(OBMol &moleculeA, OBMol &moleculeB, double alpha=1, double beta=0.5) {
+double similarityIndex(OBMol &moleculeA, OBMol &moleculeB) {
     vector<double> coordsA, coordsB, VDWsA, VDWsB;
     vector< vector<double> > atomMatchScoringTableAA, atomMatchScoringTableBB, atomMatchScoringTableAB;
     generateCoordsMatrixFromMolecule(coordsA, moleculeA);
     generateCoordsMatrixFromMolecule(coordsB, moleculeB);
     generateVDWRadiusListFromMolecule(VDWsA, moleculeA);
     generateVDWRadiusListFromMolecule(VDWsB, moleculeB);
-    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTableAA, moleculeA, moleculeA, alpha, beta);
-    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTableBB, moleculeB, moleculeB, alpha, beta);
-    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTableAB, moleculeA, moleculeB, alpha, beta);
+    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTableAA, moleculeA, moleculeA);
+    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTableBB, moleculeB, moleculeB);
+    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTableAB, moleculeA, moleculeB);
     return similarityIndex(coordsA, coordsB, VDWsA, VDWsB, atomMatchScoringTableAA, atomMatchScoringTableBB, atomMatchScoringTableAB);
 }
 
@@ -478,8 +478,8 @@ void makeConformers2(int argc, char **argv) {
 }
 
 int main (int argc, char **argv) {
-    //runComparisons(argc, argv);
-    runRMSDTest3(argc, argv);
+    runComparisons(argc, argv);
+    //runRMSDTest3(argc, argv);
     //printRMSD(argc, argv);
     //makeConformers(argc, argv);
     //makeConformers2(argc, argv);
