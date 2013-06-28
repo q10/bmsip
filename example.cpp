@@ -5,6 +5,7 @@
 #include <openbabel/forcefield.h>
 #include <openbabel/op.h>
 #include <openbabel/mol.h>
+#include <openbabel/chains.h>
 #include <openbabel/data.h>
 
 #ifdef __APPLE__
@@ -477,8 +478,18 @@ void makeConformers2(int argc, char **argv) {
     writeMoleculeConformersToFile(argv[2], molecules[0], true);    
 }
 
+
+void printScoreContributions(int argc, char **argv) {
+    if(argc != 2) { cerr << "Usage: " << argv[0] << " MoleculeInputFile\n"; exit(-1); }
+    vector<OBMol> molecules;
+    importMoleculesFromFile(molecules, argv[1]);
+    volumeOverlap(molecules[1], molecules[0], true);
+}
+
+
 int main (int argc, char **argv) {
-    runComparisons(argc, argv);
+    //printScoreContributions(argc, argv);
+    //runComparisons(argc, argv);
     //runRMSDTest3(argc, argv);
     //printRMSD(argc, argv);
     //makeConformers(argc, argv);
@@ -490,11 +501,18 @@ int main (int argc, char **argv) {
     //runComparisons(argc, argv);
     //if(argc < 3) { cout << "Usage: ProgrameName InputFileName OutputFileName\n"; return 1; }
 
-/*    vector<OBMol> molecules;
-    importMoleculeConformersFromFile(molecules, argv[1]);
-    importMoleculeConformersFromFile(molecules, argv[2]);
-    PCAPlusSteepestDescent(molecules[0], molecules[1], 1.0, 10.0 * M_PI / 180.0);
+    vector<OBMol> molecules;
+    importMoleculesFromFile(molecules, argv[1]);
+    importMoleculesFromFile(molecules, argv[2]);
+    OBChainsParser s; s.PerceiveChains(molecules[0]);
+//    molecules[0].DeleteHydrogens();
+//    molecules[1].DeleteHydrogens();
+//    PCAPlusSteepestDescent(molecules[0], molecules[1], 1.0, 10.0 * M_PI / 180.0);
+    //findBestPCAOrientation(molecules[0], molecules[1]);
+
+    //molecules[0].SetConformer(27);
+    //importMoleculeConformersFromFile(molecules, argv[2]);
     writeMoleculeToFile(argv[3], molecules[0], true);
     writeMoleculeToFile(argv[4], molecules[1], true);
-*/    return 0;
+    return 0;
 }

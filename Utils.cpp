@@ -150,7 +150,7 @@ void generateAtomicMassesListFromMolecule(vector<double> &massList, OBMol &molec
         massList.push_back( (*iter)->GetAtomicMass() );
 }
 
-void generateAtomMatchScoringTableFromTwoMolecules(vector< vector<double> > &atomMatchScoringTable, OBMol &moleculeA, OBMol &moleculeB, double alpha=1.0, double beta=0) {
+void generateAtomMatchScoringTableFromTwoMolecules(vector< vector<double> > &atomMatchScoringTable, OBMol &moleculeA, OBMol &moleculeB, double alpha=1.0, double beta=1.0) {
     atomMatchScoringTable.resize(moleculeA.NumAtoms()); unsigned int i=0;
     for(unsigned int k=0; k < atomMatchScoringTable.size(); k++) atomMatchScoringTable[k].clear();
 
