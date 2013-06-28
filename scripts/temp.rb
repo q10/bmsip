@@ -8,21 +8,15 @@ Dir.globfiles("../ALL_PAIRS_BQ123_AS_REFERENCE/ROKS2/*.log").sort {|x, y| x.base
 	conformers = open(fl).grep(/conformer\ A#[0-9]+\ and\ B#[0-9]+/)[0].split(" ").select { |w| w =~ /#/}.collect { |x| x.gsub(/[^a-zA-Z0-9]/, "").gsub(/[a-zA-Z]/, "") }.join "\t"
 	
   topMatchingBs = open(fl).grep(/ROUND/).collect { |x| ar=x.split(" "); [ar[-1], ar[4][2..-1]] }.sort {|y, x| x[0].to_f <=> y[0].to_f }.collect {|x| x[1] }.first(50)
-  #puts topMatchingBs.inspect
-
   puts [fl.basename.split("-")[-1], tanimoto, conformers].join "\t"
-#	conformerhis.push conformers.split("\t")[-1]
   conformerhis = conformerhis + topMatchingBs
-
 #  names.push fl.basename.split("-")[-1]
 #  all_tables.push open(fl).grep(/ROUND/).collect { |x| x.split(" ")[-1].to_f }
 end
-
 puts conformerhis.inspect
 ((0...50).collect{ |x| x.to_s }.to_a + conformerhis).histogram.sort { |x, y| x[0].to_i <=> y[0].to_i }.each { |x| puts x[0] + "\t" + (x[1]-1).to_s }
 
 #all_tables = all_tables.transpose
-
 
 #names.each_with_index do |x, i|
 #  puts x + "\t" + all_tables.sort {|y, x| x[i+2] <=> y[i+2]}.first(20).collect{|x| x[1] }.join("\t")
