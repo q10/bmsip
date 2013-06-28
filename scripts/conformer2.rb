@@ -1,6 +1,6 @@
 require 'Utils'
 
-puts "make clean all"
+system "cd .. && make clean all"
 
 jjobs = Dir.glob("../CONFORMERS/*").delete_if { |x| not File.file?(x) or x =~ /BQ123/ }.collect do |fl|
 	ligand = File.basename( fl, ".*" ) # get base filename without the file extension
@@ -11,4 +11,4 @@ jjobs = Dir.glob("../CONFORMERS/*").delete_if { |x| not File.file?(x) or x =~ /B
 	["../example", reference, fl, final_struct, "&>", logfile].join " "
 end
 
-puts(jjobs)
+runJobs(jjobs)

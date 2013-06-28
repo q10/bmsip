@@ -72,7 +72,7 @@ def self.runJobs(jobList, numThreads=11, priority=-20, sleepTime=60)
 	jobList = [jobList] if jobList.kind_of? String
 	numThreads = 1 if numThreads < 1
 	pids = []
-
+  startTime = Time.now
 	while jobList.size > 0 do
 		pids.delete_if { |x| Process.waitpid(x, Process::WNOHANG) }
 
@@ -84,6 +84,7 @@ def self.runJobs(jobList, numThreads=11, priority=-20, sleepTime=60)
 		end
 		sleep sleepTime
 	end
+  puts "Job batch finished in approximately #{Time.now - startTime} seconds."
 end
 
 =begin
