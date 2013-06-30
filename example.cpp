@@ -1,5 +1,7 @@
 #include <iostream>
+#include <iomanip>
 #include <cmath>
+#include <cstdlib>
 #include <openbabel/obconversion.h>
 #include <openbabel/conformersearch.h>
 #include <openbabel/forcefield.h>
@@ -478,13 +480,66 @@ void makeConformers2(int argc, char **argv) {
     writeMoleculeConformersToFile(argv[2], molecules[0], true);    
 }
 
-
 void printScoreContributions(int argc, char **argv) {
     if(argc != 2) { cerr << "Usage: " << argv[0] << " MoleculeInputFile\n"; exit(-1); }
     vector<OBMol> molecules;
     importMoleculesFromFile(molecules, argv[1]);
     volumeOverlap(molecules[1], molecules[0], true);
 }
+
+
+void PCAonMDPDB(int argc, char **argv) {
+    vector< vector<double> > rotationMatrixSets;
+
+
+    vector< vector<string> > PDBFile;
+    readPDBFile(PDBFile, argv[1]);
+    
+    vector< vector<double> > *coordSets, comSets, atomMatchScoringTable;
+    vector<double> VDWList, atomicMasses;
+    extractBackboneDataFromMDPDB(&coordSets, comSets, VDWList, atomicMasses, PDBFile);
+    for (unsigned int i=0; i < VDWList.size(); i++) atomMatchScoringTable.push_back( vector<double>(VDWList.size(), 1.0) );
+
+    map<int, string> RTable; RTable[0] = "R0"; RTable[1] = "Rx"; RTable[2] = "Ry"; RTable[3] = "Rz";
+    vector<double> covA, covB, eVectA, eVectB, eValA, eValB, tempR, bestR, bestA, VDWsA, VDWsB;
+
+
+    generateCovarMatrixFromTables(covB, (*coordSets)[0], atomicMasses);
+    generateEigenMatrix(eVectB, eValB, covB);
+    for (unsigned int modelnum = 1; modelnum < coordSets->size(); modelnum++) {
+        generateCovarMatrixFromTables(covA, (*coordSets)[modelnum], atomicMasses);
+        generateEigenMatrix(eVectA, eValA, covA);
+
+        double bestVolumeOverlap=0; int bestRcode=0;
+        for (int i=0; i<4; i++) {
+            generatePCARotationMatrix(tempR, i, eVectA, eVectB);
+            vector<double> currentPCACoordA = (*coordSets)[modelnum];
+
+            translate3DMatrixCoordinates(currentPCACoordA, -comSets[modelnum][0], -comSets[modelnum][1], -comSets[modelnum][2]);
+            rotate3DMatrixCoordinates(currentPCACoordA, tempR);
+            translate3DMatrixCoordinates(currentPCACoordA, comSets[0][0], comSets[0][1], comSets[0][2]);
+
+            double curVolOverlap = volumeOverlap(currentPCACoordA, (*coordSets)[0], VDWList, VDWList, atomMatchScoringTable);
+            if (curVolOverlap > bestVolumeOverlap) {
+                bestRcode = i;
+                bestVolumeOverlap = curVolOverlap;
+                bestR = tempR;
+            }
+        }
+
+        rotationMatrixSets.push_back(bestR);
+    }
+
+    for (unsigned int i=0; i<rotationMatrixSets.size(); i++) {
+        for (unsigned int j=0; j<rotationMatrixSets[i].size(); j++) cout << rotationMatrixSets[i][j] << "\t";
+        cout << endl;
+    }
+
+    delete coordSets;
+
+    writePDBFile("cpp.pdb", PDBFile);
+}
+
 
 
 int main (int argc, char **argv) {
@@ -501,18 +556,50 @@ int main (int argc, char **argv) {
     //runComparisons(argc, argv);
     //if(argc < 3) { cout << "Usage: ProgrameName InputFileName OutputFileName\n"; return 1; }
 
+
+    PCAonMDPDB(argc, argv);
+
+/*
+    vector< vector<string> > PDBFile;
+    readPDBFile(PDBFile, argv[1]);
+
+    vector< vector<double> > coordSets, comSets;
+    vector<double> VDWList, atomicMasses;
+    extractBackboneDataFromMDPDB(coordSets, comSets, VDWList, atomicMasses, PDBFile);
+    for (int i = 0; i < 70; i++) cout << coordSets[0][i] << "\t";
+    cout << endl;
+
+    cout << VDWList.size() << endl;
+    for (int i = 0; i < VDWList.size(); i++) cout << VDWList[i] << "\t";
+    cout << endl;
+
+    cout << comSets.size() << endl;
+    for (int i = 0; i < comSets[0].size(); i++) cout << comSets[0][i] << "\t";
+    cout << endl;
+*/    
+
+/*    getMoleculeCenterCoordsFromMDPDB(centerCoords, coordSets[0], PDBFile);
+    for (int i=0; i < centerCoords.size(); i ++) cout << centerCoords[i] << "\t";
+    cout << endl;
+
+
     vector<OBMol> molecules;
-    importMoleculesFromFile(molecules, argv[1]);
-    importMoleculesFromFile(molecules, argv[2]);
-    OBChainsParser s; s.PerceiveChains(molecules[0]);
-//    molecules[0].DeleteHydrogens();
+    //importMoleculesFromFile(molecules, argv[1]);
+    importMoleculeConformersFromFile(molecules, argv[1]);
+    cout << molecules[0].NumConformers() << endl;
+/*    OBChainsParser s; s.PerceiveChains(molecules[0]);
+
+    for (OBAtomIterator iterB = molecules[0].BeginAtoms(); iterB != molecules[0].EndAtoms(); iterB++) {
+        cout << (*iterB)->GetType() << endl;
+    }
+*///    molecules[0].DeleteHydrogens();
 //    molecules[1].DeleteHydrogens();
 //    PCAPlusSteepestDescent(molecules[0], molecules[1], 1.0, 10.0 * M_PI / 180.0);
     //findBestPCAOrientation(molecules[0], molecules[1]);
 
     //molecules[0].SetConformer(27);
     //importMoleculeConformersFromFile(molecules, argv[2]);
-    writeMoleculeToFile(argv[3], molecules[0], true);
-    writeMoleculeToFile(argv[4], molecules[1], true);
+    //writeMoleculeToFile(argv[3], molecules[0], true);
+    //writeMoleculeToFile(argv[4], molecules[1], true);
     return 0;
 }

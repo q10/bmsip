@@ -277,3 +277,113 @@ double calculateRMSD(OBMol &moleculeA, OBMol &moleculeB) {
     generateCoordsMatrixFromMolecule(matrix2, moleculeB);
     return calculateRMSD(matrix1, matrix2);
 }
+
+void readPDBFile(vector< vector<string> > &PDBFile, const string &filename) {
+    ifstream filestream(filename.c_str());
+    if (not filestream.is_open()) { cerr << "Could not open input PDB file " << filename << "; exiting" << endl; abort(); }
+    PDBFile.clear(); string line;
+    while (getline(filestream, line)) {
+        vector<string> tokenedPDBLine; string temp; istringstream iss(line);
+        while (iss >> temp) { tokenedPDBLine.push_back(temp); }
+        PDBFile.push_back(tokenedPDBLine);
+    }
+}
+
+void writePDBFile(const string &filename, vector< vector<string> > &PDBFile) {
+    ofstream outfile(filename.c_str());
+    if (not outfile.is_open()) { cerr << "Could not open output PDB file " << filename << " for writing; exiting" << endl; abort(); }
+
+    for (unsigned int i=0; i < PDBFile.size(); i++) {
+        vector<string> &line = PDBFile[i];
+        if (line[0].compare("MODEL") == 0) outfile << line[0] << setw(16) << line[1] << "\n";
+        else if (line[0].compare("ENDMDL") == 0) outfile << line[0] << "\n";
+        else {
+            outfile << line[0] 
+                       << right << setw(7) << line[1]
+                       << " " << left << setw(5) << line[2]
+                       << left << setw(4) << line[3]
+                       << line[4]
+                       << right << setw(4) << line[5]
+                       << right << setw(12) << line[6]
+                       << right << setw(8) << line[7]
+                       << right << setw(8) << line[8] << "\n";
+        }
+    }
+    outfile.close();
+}
+
+void extractBackboneDataFromMDPDB(vector< vector<double> > **coordSetsHandle, vector< vector<double> > &comSets, vector<double> &VDWList, 
+                                vector<double> &atomicMasses, const vector< vector<string> > &PDBFile) {
+    /*
+    ATOM      1  N   CYS A   1       1.943   5.540   6.216
+    ATOM      2  H1  CYS A   1       1.256   5.445   6.951
+    ATOM      3  H2  CYS A   1       2.854   5.693   6.624
+    */
+    *coordSetsHandle = new vector< vector<double> >();
+    vector< vector<double> > &coordSets = **coordSetsHandle;
+    VDWList.clear(); atomicMasses.clear(); bool flag = true;
+    for (unsigned int i=0; i < PDBFile.size(); i++) {
+        if (PDBFile[i][0].compare("MODEL") == 0) coordSets.push_back( vector<double>() );
+        else if ((PDBFile[i][0].compare("ATOM") == 0) and (PDBFile[i][2].compare("N") == 0 or PDBFile[i][2].compare("CA") == 0 or 
+                    PDBFile[i][2].compare("C") == 0 or PDBFile[i][2].compare("O") == 0)) {
+            coordSets[coordSets.size() - 1].push_back( atof(&PDBFile[i][6][0]) );
+            coordSets[coordSets.size() - 1].push_back( atof(&PDBFile[i][7][0]) );
+            coordSets[coordSets.size() - 1].push_back( atof(&PDBFile[i][8][0]) );
+
+
+            if (flag) {
+                if (PDBFile[i][2] == "N") {
+                    VDWList.push_back(1.55); atomicMasses.push_back(14.0067); 
+                } else if (PDBFile[i][2].compare("CA") == 0 or PDBFile[i][2].compare("C") == 0) {
+                    VDWList.push_back(1.70); atomicMasses.push_back(12.0107);
+                } else if (PDBFile[i][2] == "O") {
+                    VDWList.push_back(1.52); atomicMasses.push_back(15.9994);
+                }
+            }
+        }
+        else if (PDBFile[i][0].compare("ENDMDL") == 0) flag = false;
+    }
+
+    comSets.clear();
+    for (unsigned int i=0; i < coordSets.size(); i++) {
+        double totalMass = 0; vector<double> centerCoords(3, 0);
+        for (unsigned int j=0; j < coordSets[i].size();) {
+            double tmpMass = atomicMasses[j]; totalMass += tmpMass;
+            centerCoords[0] += tmpMass*coordSets[i][j++]; centerCoords[1] += tmpMass*coordSets[i][j++]; centerCoords[2] += tmpMass*coordSets[i][j++];
+        }
+        for (unsigned int i=0; i < centerCoords.size(); i++) centerCoords[i] /= totalMass;
+        comSets.push_back(centerCoords);
+    }
+}
+
+
+/*new generate covar matrix*/
+void generateCovarMatrixFromTables(vector<double> &matrix, const vector<double> &coords, const vector<double> &masses) {
+    double uX = 0, uY = 0, uZ = 0, totalMass = 0; unsigned int j=0;
+    for (unsigned int i=0; i < coords.size(); i+=3) {
+        totalMass += masses[j++];
+        uX += coords[i]; uY += coords[i+1]; uZ += coords[i+2];
+    }
+    uX /= masses.size(); uY /= masses.size(); uZ /= masses.size();
+
+    double cXX = 0, cYY = 0, cZZ = 0, cXY = 0, cXZ = 0, cYZ = 0; j=0;
+    for (unsigned int i=0; i < coords.size(); i+=3) {
+        double atomWeight = masses[j++];
+        cXX += pow(coords[i] - uX, 2) * atomWeight;
+        cYY += pow(coords[i+1] - uY, 2) * atomWeight;
+        cZZ += pow(coords[i+2] - uZ, 2) * atomWeight;
+        cXY += (coords[i] - uX) * (coords[i+1] - uY) * atomWeight;
+        cXZ += (coords[i] - uX) * (coords[i+2] - uZ) * atomWeight;
+        cYZ += (coords[i+1] - uY) * (coords[i+2] - uZ) * atomWeight;
+    }
+
+    matrix.clear(); matrix.resize(9);
+    matrix[0] = cXX; 
+    matrix[1] = matrix[3] = cXY; 
+    matrix[2] = matrix[6] = cXZ; 
+    matrix[4] = cYY;
+    matrix[5] = matrix[7] = cYZ;  
+    matrix[8] = cZZ;
+
+    for (unsigned int i=0; i < matrix.size(); i++) matrix[i] /= totalMass;
+}
