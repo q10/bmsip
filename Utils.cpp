@@ -289,27 +289,49 @@ void readPDBFile(vector< vector<string> > &PDBFile, const string &filename) {
     }
 }
 
-void writePDBFile(const string &filename, vector< vector<string> > &PDBFile) {
+void writeMDPDBFile(const string &filename, vector< vector<string> > &PDBFile, vector< vector<double> > *coordSets) {
     ofstream outfile(filename.c_str());
     if (not outfile.is_open()) { cerr << "Could not open output PDB file " << filename << " for writing; exiting" << endl; abort(); }
+    outfile << fixed << setprecision(3);
 
+    int coordCounter = 0, setCounter = 0;
     for (unsigned int i=0; i < PDBFile.size(); i++) {
         vector<string> &line = PDBFile[i];
-        if (line[0].compare("MODEL") == 0) outfile << line[0] << setw(16) << line[1] << "\n";
-        else if (line[0].compare("ENDMDL") == 0) outfile << line[0] << "\n";
-        else {
+        if (line[0].compare("MODEL") == 0) {
+            coordCounter = 0;
+            outfile << line[0] << setw(16) << line[1] << "\n";
+        } else if (line[0].compare("ENDMDL") == 0) {
+            setCounter++;
+            outfile << line[0] << "\n";
+        } else {
+            vector<double> &coords = (*coordSets)[setCounter];
             outfile << line[0] 
                        << right << setw(7) << line[1]
                        << " " << left << setw(5) << line[2]
                        << left << setw(4) << line[3]
                        << line[4]
                        << right << setw(4) << line[5]
-                       << right << setw(12) << line[6]
-                       << right << setw(8) << line[7]
-                       << right << setw(8) << line[8] << "\n";
+                       << right << setw(12) << coords[coordCounter]
+                       << right << setw(8) << coords[coordCounter+1]
+                       << right << setw(8) << coords[coordCounter+2] << "\n";
+                       coordCounter+=3;
         }
     }
     outfile.close();
+}
+
+
+void extractAllCoordsFromMDPDB(vector< vector<double> > **coordSetsHandle, const vector< vector<string> > &PDBFile) {
+    *coordSetsHandle = new vector< vector<double> >();
+    vector< vector<double> > &coordSets = **coordSetsHandle;
+    for (unsigned int i=0; i < PDBFile.size(); i++) {
+        if (PDBFile[i][0].compare("MODEL") == 0) coordSets.push_back( vector<double>() );
+        else if ((PDBFile[i][0].compare("ATOM") == 0)) {
+            coordSets.back().push_back( atof(&PDBFile[i][6][0]) );
+            coordSets.back().push_back( atof(&PDBFile[i][7][0]) );
+            coordSets.back().push_back( atof(&PDBFile[i][8][0]) );
+        }
+    }
 }
 
 void extractBackboneDataFromMDPDB(vector< vector<double> > **coordSetsHandle, vector< vector<double> > &comSets, vector<double> &VDWList, 
@@ -326,9 +348,9 @@ void extractBackboneDataFromMDPDB(vector< vector<double> > **coordSetsHandle, ve
         if (PDBFile[i][0].compare("MODEL") == 0) coordSets.push_back( vector<double>() );
         else if ((PDBFile[i][0].compare("ATOM") == 0) and (PDBFile[i][2].compare("N") == 0 or PDBFile[i][2].compare("CA") == 0 or 
                     PDBFile[i][2].compare("C") == 0 or PDBFile[i][2].compare("O") == 0)) {
-            coordSets[coordSets.size() - 1].push_back( atof(&PDBFile[i][6][0]) );
-            coordSets[coordSets.size() - 1].push_back( atof(&PDBFile[i][7][0]) );
-            coordSets[coordSets.size() - 1].push_back( atof(&PDBFile[i][8][0]) );
+            coordSets.back().push_back( atof(&PDBFile[i][6][0]) );
+            coordSets.back().push_back( atof(&PDBFile[i][7][0]) );
+            coordSets.back().push_back( atof(&PDBFile[i][8][0]) );
 
 
             if (flag) {

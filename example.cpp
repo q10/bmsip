@@ -519,6 +519,9 @@ void PCAonMDPDB(int argc, char **argv) {
             rotate3DMatrixCoordinates(currentPCACoordA, tempR);
             translate3DMatrixCoordinates(currentPCACoordA, comSets[0][0], comSets[0][1], comSets[0][2]);
 
+            //vector<double> currentSDCoordA;
+            //double curVolOverlap = steepestDescentEngine(currentSDCoordA, currentPCACoordA, (*coordSets)[0], VDWList, VDWList, comSets[modelnum], atomMatchScoringTable, 1.0, 10.0 * M_PI / 180.0);
+
             double curVolOverlap = volumeOverlap(currentPCACoordA, (*coordSets)[0], VDWList, VDWList, atomMatchScoringTable);
             if (curVolOverlap > bestVolumeOverlap) {
                 bestRcode = i;
@@ -530,14 +533,23 @@ void PCAonMDPDB(int argc, char **argv) {
         rotationMatrixSets.push_back(bestR);
     }
 
-    for (unsigned int i=0; i<rotationMatrixSets.size(); i++) {
+/*    for (unsigned int i=0; i<rotationMatrixSets.size(); i++) {
         for (unsigned int j=0; j<rotationMatrixSets[i].size(); j++) cout << rotationMatrixSets[i][j] << "\t";
         cout << endl;
     }
-
+*/
     delete coordSets;
+    extractAllCoordsFromMDPDB(&coordSets, PDBFile);
 
-    writePDBFile("cpp.pdb", PDBFile);
+
+    for (unsigned int modelnum = 1; modelnum < coordSets->size(); modelnum++) {
+        vector<double> &currentCoordSet = (*coordSets)[modelnum];
+        translate3DMatrixCoordinates(currentCoordSet, -comSets[modelnum][0], -comSets[modelnum][1], -comSets[modelnum][2]);
+        rotate3DMatrixCoordinates(currentCoordSet, rotationMatrixSets[modelnum-1]);
+        translate3DMatrixCoordinates(currentCoordSet, comSets[0][0], comSets[0][1], comSets[0][2]);
+    }
+
+    writeMDPDBFile("cpp.pdb", PDBFile, coordSets);
 }
 
 

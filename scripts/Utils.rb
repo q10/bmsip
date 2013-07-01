@@ -89,4 +89,11 @@ end
 
 =begin
 egrep 'out of|SCF Don|Converged|NO|YES' Bosentan.log
+
+# retains only protein heavy atoms, no waters, ions, or remarks
+sed '/WAT/d' ../../7_min_PME/all_min3.pdb | sed '/CIP/d' | sed '/CIM/d' | sed '/REMARK/d' | awk '$3!~/^H/' > temp.pdb
+
+# backbone atoms only
+sed '/WAT/d' ../../7_min_PME/all_min3.pdb | sed '/CIP/d' | sed '/CIM/d' | sed '/REMARK/d' | awk '$3~/(^CA$)|(^C$)|(^N$)|(^O$)/' > temp.pdb
+
 =end
