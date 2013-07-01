@@ -556,7 +556,7 @@ void PCAonMDPDB(int argc, char **argv) {
 
 int main (int argc, char **argv) {
     //printScoreContributions(argc, argv);
-    //runComparisons(argc, argv);
+    runComparisons(argc, argv);
     //runRMSDTest3(argc, argv);
     //printRMSD(argc, argv);
     //makeConformers(argc, argv);
@@ -569,7 +569,7 @@ int main (int argc, char **argv) {
     //if(argc < 3) { cout << "Usage: ProgrameName InputFileName OutputFileName\n"; return 1; }
 
 
-    PCAonMDPDB(argc, argv);
+    //PCAonMDPDB(argc, argv);
 
 /*
     vector< vector<string> > PDBFile;
