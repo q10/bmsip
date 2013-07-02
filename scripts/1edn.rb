@@ -4,7 +4,10 @@ require 'Utils'
 
 
 jjobs = Dir.globfiles("../1EDN/*").product( Dir.globfiles("../CONFORMERS/*") ).collect do |peptide, ligand|
-	["../example", peptide, ligand, "../1EDN_SUPERIMPOSITIONS/"+peptide.basename+"__"+ligand.basename+".pdb"].join " "
+  filename = "../1EDN_SUPERIMPOSITIONS/"+peptide.basename+"__"+ligand.basename
+
+	["../example", peptide, ligand, filename+".pdb", "&>", filename+".log"].join " "
 end
 
 runJobs(jjobs)
+#puts jjobs
