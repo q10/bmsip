@@ -1,4 +1,5 @@
 require 'Utils'
+
 conformerhis = []
 all_tables = (0...50).collect.product((0...50).collect).transpose.reverse
 names = []
