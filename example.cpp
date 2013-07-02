@@ -555,8 +555,8 @@ void PCAonMDPDB(int argc, char **argv) {
 
 
 int main (int argc, char **argv) {
-    //printScoreContributions(argc, argv);
-    runComparisons(argc, argv);
+    printScoreContributions(argc, argv);
+    //runComparisons(argc, argv);
     //runRMSDTest3(argc, argv);
     //printRMSD(argc, argv);
     //makeConformers(argc, argv);

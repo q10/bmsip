@@ -1,5 +1,6 @@
 require 'Utils'
 
+=begin
 jjobs = Dir.globfiles("../1EDN/*").product( Dir.globfiles("../CONFORMERS/*") ).collect do |peptide, ligand|
 	filename = "../1EDN_SUPERIMPOSITIONS/"+peptide.basename+"__"+ligand.basename
 	["../example", peptide, ligand, filename+".mol2", "&>", filename+".log"].join " "
@@ -7,7 +8,6 @@ end
 
 runJobs(jjobs)
 #puts jjobs
-=begin
 
 Dir.globfiles("../1EDN_SUPERIMPOSITIONS/*.pdb").each do |fl|
 	system ["obabel", fl, "-O", "../1EDN_SUPERIMPOSITIONS/"+fl.basename+".sdf"].join " "
@@ -24,15 +24,20 @@ end
 puts conformerhis.inspect
 ((0...50).collect{ |x| x.to_s }.to_a + conformerhis).histogram.sort { |x, y| x[0].to_i <=> y[0].to_i }.each { |x| puts x[0] + "\t" + (x[1]-1).to_s }
 
+=end
 
 overlapContributions = []
 ligands = []
-Dir.globfiles("../ALL_PAIRS_BQ123_AS_REFERENCE/*.mol2").each do |fl|
-	ligands.push fl.basename.split("_")[-1]
-	overlapContributions.push `../example #{fl}`.split("\n").collect { |x| x.to_f }.normalize.collect { |x| x.to_s }
-end
-overlapContributions.transpose.unshift(ligands).each { |x| puts x.join "\t" }
 
-=end
+%w(XRAY 3STEP PCA1 PCA2 PCA3).each do |typ|
+	Dir.globfiles("../1EDN_SUPERIMPOSITIONS/"+typ+"*.mol2").each do |fl|
+		ligands.push fl.basename.split("_")[-1]
+		overlapContributions.push `../example #{fl}`.split("\n").collect { |x| x.to_f }.normalize.collect { |x| x.to_s }
+	end
+	overlapContributions.transpose.unshift(ligands).each { |x| puts x.join "," }
+	overlapContributions = []
+	ligands = []
+	puts "\n"
+end
 
 
