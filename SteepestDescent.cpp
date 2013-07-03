@@ -112,8 +112,6 @@ double steepestDescentEngine(vector<double> &finalCoordsA, vector<double> &coord
 	return bestVolumeOverlapSoFar;
 }
 
-
-
 void runSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alphaTranslation, double betaRadians, bool verbose) {
     if (verbose) cout << endl << "BEGIN STEEPEST DESCENT SEARCH" << endl << "alphaTranslation = " << alphaTranslation << endl << "beta = " << betaRadians << endl << "Initializing data..." << endl;
 

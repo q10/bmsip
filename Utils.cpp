@@ -150,7 +150,7 @@ void generateAtomicMassesListFromMolecule(vector<double> &massList, OBMol &molec
         massList.push_back( (*iter)->GetAtomicMass() );
 }
 
-void generateAtomMatchScoringTableFromTwoMolecules(vector< vector<double> > &atomMatchScoringTable, OBMol &moleculeA, OBMol &moleculeB, double alpha=1.0, double beta=1.0) {
+void generateAtomMatchScoringTableFromTwoMolecules(vector< vector<double> > &atomMatchScoringTable, OBMol &moleculeA, OBMol &moleculeB, double alpha=1.0, double beta=0.0) {
     atomMatchScoringTable.resize(moleculeA.NumAtoms()); unsigned int i=0;
     for(unsigned int k=0; k < atomMatchScoringTable.size(); k++) atomMatchScoringTable[k].clear();
 
@@ -378,8 +378,6 @@ void extractBackboneDataFromMDPDB(vector< vector<double> > **coordSetsHandle, ve
     }
 }
 
-
-/*new generate covar matrix*/
 void generateCovarMatrixFromTables(vector<double> &matrix, const vector<double> &coords, const vector<double> &masses) {
     double uX = 0, uY = 0, uZ = 0, totalMass = 0; unsigned int j=0;
     for (unsigned int i=0; i < coords.size(); i+=3) {
