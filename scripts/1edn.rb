@@ -55,4 +55,5 @@ jjobs = %w(XRAY_17-21, 3STEPMIN_17-21, PCA1_17-21, PCA2_17-21, PCA3_17-21).produ
 	["../example", cut, ligand, filename+".mol2", original, "&>", filename+".log"].join " "
 
 end
-puts jjobs
+runJobs jjobs
+#puts jjobs

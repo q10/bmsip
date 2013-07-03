@@ -80,3 +80,31 @@ ROUND 26 A#25 and B#0 = 962.651
 ROUND 27 A#26 and B#0 = 1084.33
 ROUND 28 A#27 and B#0 = 1085.42
 ROUND 29 A#28 and B#0 = 1122.52
+ROUND 30 A#29 and B#0 = 1170.59
+ROUND 31 A#30 and B#0 = 953.978
+ROUND 32 A#31 and B#0 = 954.254
+ROUND 33 A#32 and B#0 = 1318.7
+ROUND 34 A#33 and B#0 = 1058.87
+ROUND 35 A#34 and B#0 = 1157.47
+ROUND 36 A#35 and B#0 = 1088.01
+ROUND 37 A#36 and B#0 = 1027.43
+ROUND 38 A#37 and B#0 = 1032.73
+ROUND 39 A#38 and B#0 = 1119.7
+ROUND 40 A#39 and B#0 = 1278.3
+ROUND 41 A#40 and B#0 = 1322.87
+ROUND 42 A#41 and B#0 = 1223.7
+ROUND 43 A#42 and B#0 = 1326.4
+ROUND 44 A#43 and B#0 = 1071.1
+ROUND 45 A#44 and B#0 = 1073.41
+ROUND 46 A#45 and B#0 = 1320
+ROUND 47 A#46 and B#0 = 1086.3
+ROUND 48 A#47 and B#0 = 1172.12
+ROUND 49 A#48 and B#0 = 955.94
+ROUND 50 A#49 and B#0 = 1083.03
+
+The best overlap is between conformer A#1 and B#0, which, after PCA followed by Steepest Descent, produces a volume overlap of 1342.17
+Tanimoto (Hodgkin) similarity index: 0.549003
+
+Saving those best conformers to file...
+WRITING MOLECULE TO FILE '../1EDN_SUPERIMPOSITIONS/XRAY_17-21__TAK044.mol2' (WILL OVERWRITE EXISTING FILE IF ANY)...
+WRITING MOLECULE TO FILE '../1EDN_SUPERIMPOSITIONS/XRAY_17-21__TAK044.mol2'...
