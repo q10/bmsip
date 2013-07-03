@@ -356,8 +356,8 @@ void runComparisons(int argc, char **argv) {
     cout << "Tanimoto (Hodgkin) similarity index: " << similarityIndex(molecules[0], molecules[1]) << endl;
 
     cout << "\nSaving those best conformers to file..." << endl;
-    writeMoleculeToFile(argv[3], molecules[0], true);
-    writeMoleculeToFile(argv[3], molecules[1]);
+    writeMoleculeToFile(argv[3], molecules[1], true);
+    writeMoleculeToFile(argv[3], molecules[0]);
 }
 
 void runRMSDTest(int argc, char **argv) {
@@ -484,7 +484,7 @@ void printScoreContributions(int argc, char **argv) {
     if(argc != 2) { cerr << "Usage: " << argv[0] << " MoleculeInputFile\n"; exit(-1); }
     vector<OBMol> molecules;
     importMoleculesFromFile(molecules, argv[1]);
-    volumeOverlap(molecules[1], molecules[0], true);
+    volumeOverlap(molecules[0], molecules[1], true);
 }
 
 
@@ -555,8 +555,16 @@ void PCAonMDPDB(int argc, char **argv) {
 
 
 int main (int argc, char **argv) {
-    printScoreContributions(argc, argv);
-    //runComparisons(argc, argv);
+    //printScoreContributions(argc, argv);
+    runComparisons(argc, argv);
+    vector<OBMol> molecules; importMoleculesFromFile(molecules, argv[4]);
+    writeMoleculeToFile(argv[3], molecules[0]);
+
+
+    
+
+
+
     //runRMSDTest3(argc, argv);
     //printRMSD(argc, argv);
     //makeConformers(argc, argv);
