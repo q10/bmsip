@@ -125,7 +125,6 @@ void runSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alphaTranslat
     getMoleculeCenterCoords(centerOfMassA, moleculeA);
     generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTable, moleculeA, moleculeB);
 
-
     double bestVolumeOverlap = steepestDescentEngine(finalCoordsA, coordsMoleculeA, coordsMoleculeB, VDWsA, VDWsB, centerOfMassA, atomMatchScoringTable, alphaTranslation, betaRadians, verbose);
 
     if (verbose) {

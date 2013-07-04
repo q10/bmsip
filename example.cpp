@@ -27,7 +27,13 @@ using namespace OpenBabel;
 #include "Utils.cpp"
 
 double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double> &coordsMoleculeB, const vector<double> &VDWsA, const vector<double> &VDWsB, const vector< vector<double> > &atomMatchScoringTable, bool byParts=false) {
-    if (coordsMoleculeA.size() != VDWsA.size() * 3 or coordsMoleculeB.size() != VDWsB.size() * 3) { cerr << "ERROR: INCORRECT MATCHING OF NUMBER OF COORDINATES AND ATOMIC NUMBERS; EXITING" << endl; abort(); }
+    if (coordsMoleculeA.size() != VDWsA.size() * 3 or coordsMoleculeB.size() != VDWsB.size() * 3) { 
+
+        cerr << endl << coordsMoleculeA.size() << endl << VDWsA.size() * 3 << endl << coordsMoleculeB.size() << endl << VDWsB.size() * 3 << endl << endl;
+
+
+
+        cerr << "ERROR: INCORRECT MATCHING OF NUMBER OF COORDINATES AND ATOMIC NUMBERS; EXITING" << endl; abort(); }
 
     double totalVolumeOverlap = 0;
     static const double constP = 2.0 * M_SQRT2;
@@ -166,7 +172,7 @@ void findBestPCAOrientation(OBMol &moleculeA, OBMol &moleculeB) {
     vector< vector<double> > atomMatchScoringTable;
     generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTable, moleculeA, moleculeB);
 
-    double bestVolumeOverlap=0; int bestRcode=0;
+    double bestVolumeOverlap=-numeric_limits<double>::max(); int bestRcode=0;
     for (int i=0; i<4; i++) {
         generatePCARotationMatrix(tempR, i, eVectA, eVectB);
         vector<double> currentPCACoordA = coordA;
@@ -216,7 +222,7 @@ double PCAPlusSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, 
     generateEigenMatrix(eVectA, eValA, covA);
     generateEigenMatrix(eVectB, eValB, covB);
 
-    double bestVolumeOverlap=0; int bestRcode=0;
+    double bestVolumeOverlap=-numeric_limits<double>::max(); int bestRcode=0;
     for (int i=0; i<4; i++) {
         generatePCARotationMatrix(tempR, i, eVectA, eVectB);
         vector<double> currentPCACoordA = coordA, currentSDCoordA;
@@ -248,7 +254,7 @@ double PCAPlusSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, 
 }
 
 void PCAEngine(vector<double> &finalCoordsA, vector<double> &coordsMoleculeA, vector<double> &coordsMoleculeB, vector<double> &eVectA, vector<double> &eVectB, vector<double> &comA, vector<double> &comB, vector<double> &VDWsA, vector<double> &VDWsB, const vector< vector<double> > &atomMatchScoringTable) {
-    vector<double> tempR; double bestVolumeOverlap = 0;
+    vector<double> tempR; double bestVolumeOverlap = -numeric_limits<double>::max();
 
     for (unsigned int k=0; k < 4; k++) {
         generatePCARotationMatrix(tempR, k, eVectA, eVectB);
@@ -301,16 +307,15 @@ void getPCAEigenMatrix(vector<double> &eVects, vector<double> &moleculeCoords, v
     generateEigenMatrix(eVects, eValA, covA);
 }
 
-void runComformerComparisons(OBMol &moleculeA, OBMol &moleculeB, bool verbose=false) { // A is the target and B is the reference
+void runConformerComparisons(OBMol &moleculeA, OBMol &moleculeB, bool verbose=false) { // A is the target and B is the reference
     vector< vector<double> > coordAs, coordBs, comAs, comBs, eVectAs, eVectBs;
     vector<double> VDWsA, VDWsB, massesA, massesB, currentPCACoordA, currentSDCoordA, bestCoordsA;
     vector< vector<double> > atomMatchScoringTable;
 
     double molecularWeightA = moleculeA.GetMolWt(), molecularWeightB = moleculeB.GetMolWt();
-    double bestVolumeOverlap = -1;
+    double bestVolumeOverlap = -numeric_limits<double>::max();
     int bestJ = -1, bestI = -1, stepCount = 0;
     
-    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTable, moleculeA, moleculeB);
     generateVDWRadiusListFromMolecule(VDWsA, moleculeA);
     generateVDWRadiusListFromMolecule(VDWsB, moleculeB);
     generateAtomicMassesListFromMolecule(massesA, moleculeA);
@@ -319,6 +324,7 @@ void runComformerComparisons(OBMol &moleculeA, OBMol &moleculeB, bool verbose=fa
     generateCoordsMatrixFromMoleculeConformers(coordBs, moleculeB);
     getMoleculeConformerCenterCoords(comAs, moleculeA);
     getMoleculeConformerCenterCoords(comBs, moleculeB);
+    generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTable, moleculeA, moleculeB);
     eVectAs.resize( moleculeA.NumConformers() ), eVectBs.resize( moleculeB.NumConformers() );
     for (unsigned int k=0; k < moleculeA.NumConformers(); k++) getPCAEigenMatrix(eVectAs[k], coordAs[k], massesA, molecularWeightA);
     for (unsigned int k=0; k < moleculeB.NumConformers(); k++) getPCAEigenMatrix(eVectBs[k], coordBs[k], massesB, molecularWeightB);
@@ -352,7 +358,9 @@ void runComparisons(int argc, char **argv) {
     importMoleculeConformersFromFile(molecules, argv[1]);
     cout << "Finished importing molecules\n";
 
-    runComformerComparisons(molecules[0], molecules[1]);
+    for (unsigned int i=0; i < molecules.size(); i++) molecules[i].DeleteHydrogens();
+
+    runConformerComparisons(molecules[0], molecules[1]);
     cout << "Tanimoto (Hodgkin) similarity index: " << similarityIndex(molecules[0], molecules[1]) << endl;
 
     cout << "\nSaving those best conformers to file..." << endl;
@@ -383,7 +391,7 @@ void runRMSDTest2(int argc, char **argv) {
 
     PCAPlusSteepestDescent(molecules[0], molecules[2], 1.0, 10.0 * M_PI / 180.0);
 
-    runComformerComparisons(molecules[1], molecules[2]);
+    runConformerComparisons(molecules[1], molecules[2]);
     double bestConformerRMSD = calculateRMSD(molecules[1], molecules[3]);
 
     //cout << "conformer rmsd's:\n";
@@ -413,7 +421,7 @@ void runRMSDTest3(int argc, char **argv) {
     importMoleculesFromFile(molecules, argv[4]); // chimera superimposed target end position
 
     PCAPlusSteepestDescent(molecules[0], molecules[2], 1.0, 10.0 * M_PI / 180.0); // run superimpose using original conformer
-    runComformerComparisons(molecules[1], molecules[2]); // search for best superimposed non-original conformer
+    runConformerComparisons(molecules[1], molecules[2]); // search for best superimposed non-original conformer
     double RMSD = calculateRMSD(molecules[0], molecules[3]); // get RMSD between the ROKS and chimera superimposition
     double bestConformerRMSD = calculateRMSD(molecules[1], molecules[3]);
 
@@ -510,7 +518,7 @@ void PCAonMDPDB(int argc, char **argv) {
         generateCovarMatrixFromTables(covA, (*coordSets)[modelnum], atomicMasses);
         generateEigenMatrix(eVectA, eValA, covA);
 
-        double bestVolumeOverlap=0; int bestRcode=0;
+        double bestVolumeOverlap=-numeric_limits<double>::max(); int bestRcode=0;
         for (int i=0; i<4; i++) {
             generatePCARotationMatrix(tempR, i, eVectA, eVectB);
             vector<double> currentPCACoordA = (*coordSets)[modelnum];

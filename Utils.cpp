@@ -150,7 +150,7 @@ void generateAtomicMassesListFromMolecule(vector<double> &massList, OBMol &molec
         massList.push_back( (*iter)->GetAtomicMass() );
 }
 
-void generateAtomMatchScoringTableFromTwoMolecules(vector< vector<double> > &atomMatchScoringTable, OBMol &moleculeA, OBMol &moleculeB, double alpha=1.0, double beta=0.0) {
+void generateAtomMatchScoringTableFromTwoMolecules(vector< vector<double> > &atomMatchScoringTable, OBMol &moleculeA, OBMol &moleculeB, double alpha=1.0, double beta=-1.0) {
     atomMatchScoringTable.resize(moleculeA.NumAtoms()); unsigned int i=0;
     for(unsigned int k=0; k < atomMatchScoringTable.size(); k++) atomMatchScoringTable[k].clear();
 
@@ -164,7 +164,7 @@ void generateAtomMatchScoringTableFromTwoMolecules(vector< vector<double> > &ato
         else if (not atomA->IsHydrogen()) a = 1; // class X
 
         for (OBAtomIterator iterB = moleculeB.BeginAtoms(); iterB != moleculeB.EndAtoms(); iterB++) {
-            OBAtom *atomB = *iterB; int b;
+            OBAtom *atomB = *iterB; int b = 0;
             if (atomB->IsHbondDonor() and atomB->IsHbondAcceptor()) b = 6; // class B
             else if (atomB->IsHbondDonor()) b = 5; // class D
             else if (atomB->IsHbondAcceptor()) b = 4; // class A
@@ -175,7 +175,7 @@ void generateAtomMatchScoringTableFromTwoMolecules(vector< vector<double> > &ato
             if (a == 0 or b == 0) atomMatchScoringTable[i].push_back(0); // ignore the hydrogens if they have not been removed yet
             else if (a == b) atomMatchScoringTable[i].push_back(alpha);
             else if ((a == 6 and (b == 5 or b == 4))  or  (b == 6 and (a == 5 or a == 4))) atomMatchScoringTable[i].push_back(alpha); // Scoring between HBond donors/acceptors 
-            else atomMatchScoringTable[i].push_back(beta);
+            else { atomMatchScoringTable[i].push_back(beta); }
         }
     }
 }
