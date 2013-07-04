@@ -50,9 +50,9 @@ end
 jjobs = ["XRAY_17-21", "3STEPMIN_17-21", "PCA1_17-21", "PCA2_17-21", "PCA3_17-21"].product( Dir.globfiles("../CONFORMERS/*") ).collect do |peptide, ligand|
 	original = "../1EDN/"+peptide+".pdb"
 	cut =      "../1EDN/"+peptide+"_NOBACKBONE.pdb"
-	filename = "../1EDN_SUPERIMPOSITIONS/ALPHA1_BETAN1_WITHBACKBONE/"+peptide+"__"+ligand.basename
+	filename = "../1EDN_SUPERIMPOSITIONS/ALPHA1_BETAN1_NOBACKBONE/"+peptide+"__"+ligand.basename
 	["../example", cut, ligand, filename+".mol2", original, "&>", filename+".log"].join " "
 
 end
-#runJobs(jjobs, 11, -20, 60)
-puts jjobs
+runJobs(jjobs, 11, -20, 60)
+#puts jjobs
