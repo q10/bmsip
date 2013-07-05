@@ -80,6 +80,7 @@ def self.runJobs(jobList, numThreads=11, priority=-20, sleepTime=60)
 		remaining.times do
 			text = jobList.pop
 			pids.push fork { exec text.to_s }
+			puts text
 			system "renice " + priority.to_s + " " + pids[-1].to_s
 		end
 		sleep sleepTime
