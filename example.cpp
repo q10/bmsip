@@ -173,7 +173,7 @@ void findBestPCAOrientation(OBMol &moleculeA, OBMol &moleculeB) {
     vector< vector<double> > atomMatchScoringTable;
     generateAtomMatchScoringTableFromTwoMolecules(atomMatchScoringTable, moleculeA, moleculeB);
 
-    double bestVolumeOverlap=-numeric_limits<double>::max(); int bestRcode=0;
+    double bestVolumeOverlap=-(numeric_limits<double>::max)(); int bestRcode=0;
     for (int i=0; i<4; i++) {
         generatePCARotationMatrix(tempR, i, eVectA, eVectB);
         vector<double> currentPCACoordA = coordA;
@@ -223,7 +223,7 @@ double PCAPlusSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, 
     generateEigenMatrix(eVectA, eValA, covA);
     generateEigenMatrix(eVectB, eValB, covB);
 
-    double bestVolumeOverlap=-numeric_limits<double>::max(); int bestRcode=0;
+    double bestVolumeOverlap=-(numeric_limits<double>::max)(); int bestRcode=0;
     for (int i=0; i<4; i++) {
         generatePCARotationMatrix(tempR, i, eVectA, eVectB);
         vector<double> currentPCACoordA = coordA, currentSDCoordA;
@@ -255,7 +255,7 @@ double PCAPlusSteepestDescent(OBMol &moleculeA, OBMol &moleculeB, double alpha, 
 }
 
 void PCAEngine(vector<double> &finalCoordsA, vector<double> &coordsMoleculeA, vector<double> &coordsMoleculeB, vector<double> &eVectA, vector<double> &eVectB, vector<double> &comA, vector<double> &comB, vector<double> &VDWsA, vector<double> &VDWsB, const vector< vector<double> > &atomMatchScoringTable) {
-    vector<double> tempR; double bestVolumeOverlap = -numeric_limits<double>::max();
+    vector<double> tempR; double bestVolumeOverlap = -(numeric_limits<double>::max)();
 
     for (unsigned int k=0; k < 4; k++) {
         generatePCARotationMatrix(tempR, k, eVectA, eVectB);
@@ -314,7 +314,7 @@ void runConformerComparisons(OBMol &moleculeA, OBMol &moleculeB, bool verbose=fa
     vector< vector<double> > atomMatchScoringTable;
 
     double molecularWeightA = moleculeA.GetMolWt(), molecularWeightB = moleculeB.GetMolWt();
-    double bestVolumeOverlap = -numeric_limits<double>::max();
+    double bestVolumeOverlap = -(numeric_limits<double>::max)();
     int bestJ = -1, bestI = -1, stepCount = 0;
     
     generateVDWRadiusListFromMolecule(VDWsA, moleculeA);
@@ -519,7 +519,7 @@ void PCAonMDPDB(int argc, char **argv) {
         generateCovarMatrixFromTables(covA, (*coordSets)[modelnum], atomicMasses);
         generateEigenMatrix(eVectA, eValA, covA);
 
-        double bestVolumeOverlap=-numeric_limits<double>::max(); int bestRcode=0;
+        double bestVolumeOverlap=-(numeric_limits<double>::max)(); int bestRcode=0;
         for (int i=0; i<4; i++) {
             generatePCARotationMatrix(tempR, i, eVectA, eVectB);
             vector<double> currentPCACoordA = (*coordSets)[modelnum];
