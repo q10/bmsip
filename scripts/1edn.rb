@@ -47,6 +47,7 @@ end
 
 =end
 
+system "cd .. && make install"
 jjobs = ["XRAY_17-21", "3STEPMIN_17-21", "PCA1_17-21", "PCA2_17-21", "PCA3_17-21"].product( Dir.globfiles("../CONFORMERS/*") ).collect do |peptide, ligand|
 	original = "../1EDN/"+peptide+".pdb"
 	cut =      "../1EDN/"+peptide+"_NOBACKBONE.pdb"

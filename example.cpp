@@ -352,7 +352,7 @@ void runConformerComparisons(OBMol &moleculeA, OBMol &moleculeB, bool verbose=fa
 
 
 void runComparisons(int argc, char **argv) {
-    if(argc < 4) { cout << "Usage: " << argv[0] << " ConformerSet1(Reference) ConformerSet2 OutputFileName\n"; exit(-1); }
+    if(argc < 4) { cout << "Usage: " << argv[0] << " ConformerSet1(Reference) ConformerSet2(QUERY) OutputFileName\n"; exit(-1); }
     vector<OBMol> molecules;
     importMoleculeConformersFromFile(molecules, argv[2]); // import query conformer set first before importing reference set
     importMoleculeConformersFromFile(molecules, argv[1]);
