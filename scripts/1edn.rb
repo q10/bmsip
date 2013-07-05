@@ -59,7 +59,7 @@ end
 
 system "cd .. && make clean all"
 jjobs = ["XRAY_17-21", "3STEPMIN_17-21", "PCA1_17-21", "PCA2_17-21", "PCA3_17-21"].collect do |peptide|
-	ligand = "../BosentanConformers.pdb"
+	ligand = "./random.pdb"
 	original = "../1EDN/"+peptide+".pdb"
 	cut =      "../1EDN/"+peptide+"_NOBACKBONE.pdb"
 	filename = "../1EDN_SUPERIMPOSITIONS/ALPHA1_BETAN1_NOBACKBONE_BOSENTAN/"+peptide+"__"+ligand.basename
