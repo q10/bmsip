@@ -31,6 +31,13 @@ module Enumerable
 		his = inject(Hash.new(0)) { |h, x| h[x] += 1; h }
 		return his.keys.zip( his.values )
   	end
+	def split_by
+		result = [a=[]]
+		each{ |o| yield(o) ? (result << a=[o]) : (a << o) }
+		result.pop if a.empty?
+		result.shift
+		result
+	end
 end
 
 class String
