@@ -233,59 +233,59 @@ WARNING: LAPACK DSYEV() RETURNED NON-ZERO ERROR CODE 2
 WARNING: LAPACK DSYEV() RETURNED NON-ZERO ERROR CODE 2
 WARNING: LAPACK DSYEV() RETURNED NON-ZERO ERROR CODE 2
 Finished setting up data; running search...
-ROUND 1 A#0 and B#0 = 831.525
-ROUND 2 A#1 and B#0 = 653.135
-ROUND 3 A#2 and B#0 = 667.142
-ROUND 4 A#3 and B#0 = 711.814
-ROUND 5 A#4 and B#0 = 757.76
-ROUND 6 A#5 and B#0 = 796.797
-ROUND 7 A#6 and B#0 = 684.771
-ROUND 8 A#7 and B#0 = 686.383
-ROUND 9 A#8 and B#0 = 846.593
-ROUND 10 A#9 and B#0 = 706.226
-ROUND 11 A#10 and B#0 = 643.44
-ROUND 12 A#11 and B#0 = 753.971
-ROUND 13 A#12 and B#0 = 758.516
-ROUND 14 A#13 and B#0 = 782.85
-ROUND 15 A#14 and B#0 = 839.274
-ROUND 16 A#15 and B#0 = 684.136
-ROUND 17 A#16 and B#0 = 750.126
-ROUND 18 A#17 and B#0 = 749.043
-ROUND 19 A#18 and B#0 = 643.591
-ROUND 20 A#19 and B#0 = 743.321
-ROUND 21 A#20 and B#0 = 728.111
-ROUND 22 A#21 and B#0 = 547.018
-ROUND 23 A#22 and B#0 = 601.641
-ROUND 24 A#23 and B#0 = 590.737
-ROUND 25 A#24 and B#0 = 601.45
-ROUND 26 A#25 and B#0 = 601.345
-ROUND 27 A#26 and B#0 = 654.439
-ROUND 28 A#27 and B#0 = 660.723
-ROUND 29 A#28 and B#0 = 759.592
-ROUND 30 A#29 and B#0 = 837.552
-ROUND 31 A#30 and B#0 = 601.411
-ROUND 32 A#31 and B#0 = 596.398
-ROUND 33 A#32 and B#0 = 727.799
-ROUND 34 A#33 and B#0 = 723.373
-ROUND 35 A#34 and B#0 = 758.053
-ROUND 36 A#35 and B#0 = 784.311
-ROUND 37 A#36 and B#0 = 613.828
-ROUND 38 A#37 and B#0 = 782.611
-ROUND 39 A#38 and B#0 = 783.44
-ROUND 40 A#39 and B#0 = 601.153
-ROUND 41 A#40 and B#0 = 729.156
-ROUND 42 A#41 and B#0 = 674.852
-ROUND 43 A#42 and B#0 = 864.857
-ROUND 44 A#43 and B#0 = 715.406
-ROUND 45 A#44 and B#0 = 807.868
-ROUND 46 A#45 and B#0 = 805.774
-ROUND 47 A#46 and B#0 = 671.339
-ROUND 48 A#47 and B#0 = 735.274
-ROUND 49 A#48 and B#0 = 698.461
-ROUND 50 A#49 and B#0 = 635.257
+ROUND 1 A#0 and B#0 = 618.248
+ROUND 2 A#1 and B#0 = 538.034
+ROUND 3 A#2 and B#0 = 493.867
+ROUND 4 A#3 and B#0 = 457.877
+ROUND 5 A#4 and B#0 = 555.511
+ROUND 6 A#5 and B#0 = 620.856
+ROUND 7 A#6 and B#0 = 525.308
+ROUND 8 A#7 and B#0 = 526.918
+ROUND 9 A#8 and B#0 = 458.014
+ROUND 10 A#9 and B#0 = 463.872
+ROUND 11 A#10 and B#0 = 458.324
+ROUND 12 A#11 and B#0 = 527.349
+ROUND 13 A#12 and B#0 = 514.54
+ROUND 14 A#13 and B#0 = 243.945
+ROUND 15 A#14 and B#0 = 530.029
+ROUND 16 A#15 and B#0 = 524.996
+ROUND 17 A#16 and B#0 = 518.656
+ROUND 18 A#17 and B#0 = 242.695
+ROUND 19 A#18 and B#0 = 474.717
+ROUND 20 A#19 and B#0 = 515.093
+ROUND 21 A#20 and B#0 = 588.555
+ROUND 22 A#21 and B#0 = 462.299
+ROUND 23 A#22 and B#0 = 459.886
+ROUND 24 A#23 and B#0 = 461.702
+ROUND 25 A#24 and B#0 = 462.745
+ROUND 26 A#25 and B#0 = 460.067
+ROUND 27 A#26 and B#0 = 510.466
+ROUND 28 A#27 and B#0 = 475.627
+ROUND 29 A#28 and B#0 = 368.89
+ROUND 30 A#29 and B#0 = 509.605
+ROUND 31 A#30 and B#0 = 458.998
+ROUND 32 A#31 and B#0 = 498.27
+ROUND 33 A#32 and B#0 = 457.211
+ROUND 34 A#33 and B#0 = 424.163
+ROUND 35 A#34 and B#0 = 350.962
+ROUND 36 A#35 and B#0 = 586.714
+ROUND 37 A#36 and B#0 = 453.751
+ROUND 38 A#37 and B#0 = 593.084
+ROUND 39 A#38 and B#0 = 586.586
+ROUND 40 A#39 and B#0 = 458.353
+ROUND 41 A#40 and B#0 = 596.89
+ROUND 42 A#41 and B#0 = 487.857
+ROUND 43 A#42 and B#0 = 590.85
+ROUND 44 A#43 and B#0 = 468.308
+ROUND 45 A#44 and B#0 = 584.174
+ROUND 46 A#45 and B#0 = 585.323
+ROUND 47 A#46 and B#0 = 534.182
+ROUND 48 A#47 and B#0 = 542.592
+ROUND 49 A#48 and B#0 = 584.334
+ROUND 50 A#49 and B#0 = 528.466
 
-The best overlap is between conformer A#42 and B#0, which, after PCA followed by Steepest Descent, produces a volume overlap of 864.857
-Tanimoto (Hodgkin) similarity index: 0.486471
+The best overlap is between conformer A#5 and B#0, which, after PCA followed by Steepest Descent, produces a volume overlap of 620.856
+Tanimoto (Hodgkin) similarity index: 0.497169
 
 Saving those best conformers to file...
 ==============================
