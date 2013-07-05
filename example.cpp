@@ -14,7 +14,6 @@
     #include <Accelerate/Accelerate.h>
     #define FORTRANINT int
 #else
-    #include <limits>
     #include <f2c.h>
     #include <blaswrap.h>
     #include <cblas.h>

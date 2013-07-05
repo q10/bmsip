@@ -45,7 +45,6 @@ ligands = []
 	puts "\n"
 end
 
-=end
 
 system "cd .. && make clean all"
 jjobs = ["XRAY_17-21", "3STEPMIN_17-21", "PCA1_17-21", "PCA2_17-21", "PCA3_17-21"].product( Dir.globfiles("../CONFORMERS/*") ).collect do |peptide, ligand|
@@ -55,5 +54,18 @@ jjobs = ["XRAY_17-21", "3STEPMIN_17-21", "PCA1_17-21", "PCA2_17-21", "PCA3_17-21
 	["../example", cut, ligand, filename+".mol2", original, "&>", filename+".log"].join " "
 
 end
+
+=end
+
+system "cd .. && make clean all"
+jjobs = ["XRAY_17-21", "3STEPMIN_17-21", "PCA1_17-21", "PCA2_17-21", "PCA3_17-21"].collect do |peptide|
+	ligand = "../BosentanConformers.pdb"
+	original = "../1EDN/"+peptide+".pdb"
+	cut =      "../1EDN/"+peptide+"_NOBACKBONE.pdb"
+	filename = "../1EDN_SUPERIMPOSITIONS/ALPHA1_BETAN1_NOBACKBONE_BOSENTAN/"+peptide+"__"+ligand.basename
+	["../example", cut, ligand, filename+".mol2", original, "&>", filename+".log"].join " "
+
+end
+
 runJobs(jjobs, 11, -20, 60)
 #puts jjobs
