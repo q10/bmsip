@@ -27,6 +27,8 @@ using namespace OpenBabel;
 
 #include "Utils.cpp"
 
+unsigned int MOLECULE_CONFORMER = 0;
+
 double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double> &coordsMoleculeB, const vector<double> &VDWsA, const vector<double> &VDWsB, const vector< vector<double> > &atomMatchScoringTable, bool byParts=false) {
     if (coordsMoleculeA.size() != VDWsA.size() * 3 or coordsMoleculeB.size() != VDWsB.size() * 3) { 
 
@@ -349,6 +351,7 @@ void runConformerComparisons(OBMol &moleculeA, OBMol &moleculeB, bool verbose=fa
 
     addConformerToMolecule(moleculeA, bestCoordsA); moleculeA.SetConformer(moleculeA.NumConformers() - 1);
     moleculeB.SetConformer(bestJ);
+    MOLECULE_CONFORMER = bestJ;
 }
 
 
@@ -565,9 +568,10 @@ void PCAonMDPDB(int argc, char **argv) {
 
 int main (int argc, char **argv) {
     //printScoreContributions(argc, argv);
-    runComparisons(argc, argv);
-    vector<OBMol> molecules; importMoleculesFromFile(molecules, argv[4]);
-    writeMoleculeToFile(argv[3], molecules[0]);
+    //runComparisons(argc, argv);
+
+    vector<OBMol> molecules; importMoleculeConformersFromFile(molecules, argv[4]);
+    molecules[0].SetConformer(10); writeMoleculeToFile(argv[3], molecules[0]);
 
 
     
