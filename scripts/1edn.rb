@@ -58,7 +58,8 @@ end
 =end
 
 system "cd .. && make clean all"
-jjobs = ["XRAY_17-21", "3STEPMIN_17-21", "PCA1_17-21", "PCA2_17-21", "PCA3_17-21"].collect do |peptide|
+=begin
+jjobs = ["XRAY_17-21", "3STEPMIN_17-21", "PCA1_17-21", "PCA2_17-21", "PCA3_17-21"].product("./random.pdb", "../CONFORMERS/BQ123.mol2", ).collect do |peptide|
 	ligand = "./random.pdb"
 	original = "../1EDN/"+peptide+".pdb"
 	cut =      "../1EDN/"+peptide+"_NOBACKBONE.pdb"
@@ -67,5 +68,19 @@ jjobs = ["XRAY_17-21", "3STEPMIN_17-21", "PCA1_17-21", "PCA2_17-21", "PCA3_17-21
 
 end
 
+jjobs = ["ET1_50CONFORMERS.pdb"].product(["./random.pdb", "../CONFORMERS/BQ123.mol2"]).collect do |peptide|
+	ligand = "./random.pdb"
+	original = "../1EDN/"+peptide+".pdb"
+	cut =      "../1EDN/"+peptide+"_NOBACKBONE.pdb"
+	filename = "../1EDN_SUPERIMPOSITIONS/ALPHA1_BETAN1_NOBACKBONE_BOSENTAN/"+peptide+"__"+ligand.basename
+	["../example", cut, ligand, filename+".mol2", original, "&>", filename+".log"].join " "
+
+end
+=end
+
+
+
+jjobs = ["../example ET1_17-21_50CONFORMERS.pdb ../CONFORMERS/BQ123.mol2 ../1EDN_SUPERIMPOSITIONS/A1BN1_50CONFORMERS_WITHBACKBONE/ET1_17-21_WITHBACKBONE__BQ123 &> ../1EDN_SUPERIMPOSITIONS/A1BN1_50CONFORMERS_WITHBACKBONE/log"]
 runJobs(jjobs, 11, -20, 60)
+system "cd .. && git add 1EDN_SUPERIMPOSITIONS/ && git commit -a -m \"with backbone\" && git push"
 #puts jjobs

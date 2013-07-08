@@ -2,6 +2,9 @@
 #include <iomanip>
 #include <cmath>
 #include <cstdlib>
+
+#include <stack>
+
 #include <openbabel/obconversion.h>
 #include <openbabel/conformersearch.h>
 #include <openbabel/forcefield.h>
@@ -28,6 +31,9 @@ using namespace OpenBabel;
 #include "Utils.cpp"
 
 unsigned int MOLECULE_CONFORMER = 0;
+
+stack<unsigned int> rank_I, rank_J;
+stack< vector<double> > coord_Is;
 
 double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double> &coordsMoleculeB, const vector<double> &VDWsA, const vector<double> &VDWsB, const vector< vector<double> > &atomMatchScoringTable, bool byParts=false) {
     if (coordsMoleculeA.size() != VDWsA.size() * 3 or coordsMoleculeB.size() != VDWsB.size() * 3) { 
@@ -341,6 +347,7 @@ void runConformerComparisons(OBMol &moleculeA, OBMol &moleculeB, bool verbose=fa
                 bestVolumeOverlap = currentVolumeOverlap;
                 bestCoordsA = currentSDCoordA;
                 bestI = i; bestJ = j;
+                rank_I.push(i); rank_J.push(j); coord_Is.push(currentSDCoordA);
             }
             cout << "ROUND " << ++stepCount << " A#" << i << " and B#" << j << " = " << currentVolumeOverlap << endl;
         }
@@ -353,7 +360,6 @@ void runConformerComparisons(OBMol &moleculeA, OBMol &moleculeB, bool verbose=fa
     moleculeB.SetConformer(bestJ);
     MOLECULE_CONFORMER = bestJ;
 }
-
 
 void runComparisons(int argc, char **argv) {
     if(argc < 4) { cout << "Usage: " << argv[0] << " ConformerSet1(Reference) ConformerSet2(QUERY) OutputFileName\n"; exit(-1); }
@@ -371,6 +377,62 @@ void runComparisons(int argc, char **argv) {
     writeMoleculeToFile(argv[3], molecules[1], true);
     writeMoleculeToFile(argv[3], molecules[0]);
 }
+
+void runComparisons2(int argc, char **argv) {
+    if(argc < 4) { cout << "Usage: " << argv[0] << " ConformerSet1(Reference) ConformerSet2(QUERY) OutputFileName WithBackbone\n"; exit(-1); }
+    vector<OBMol> molecules;
+    importMoleculeConformersFromFile(molecules, argv[2]); // import query conformer set first before importing reference set
+    importMoleculeConformersFromFile(molecules, argv[1]);
+    importMoleculeConformersFromFile(molecules, argv[4]); // import backbone reference
+    cout << "Finished importing molecules\n";
+
+    for (unsigned int i=0; i < molecules.size(); i++) molecules[i].DeleteHydrogens();
+
+    runConformerComparisons(molecules[0], molecules[1]);
+    cout << "Tanimoto (Hodgkin) similarity index: " << similarityIndex(molecules[0], molecules[1]) << endl;
+
+    cout << "\nSaving those best conformers to file..." << endl;
+    for (int i=0; i < 50; i++) {
+        unsigned int curI = rank_I.top(), curJ = rank_J.top(); vector<double> tempI = coord_Is.top();
+        rank_I.pop(); rank_J.pop(); coord_Is.pop();
+
+        addConformerToMolecule(molecules[0], tempI); molecules[0].SetConformer(molecules[0].NumConformers() - 1);
+        molecules[1].SetConformer(curJ);
+        molecules[2].SetConformer(curJ);
+
+        stringstream fs; fs << argv[3] <<  "_" << i << "_A" << curI << "B" << curJ << ".mol2"; string filename = fs.str();
+        writeMoleculeToFile(filename, molecules[1], true);
+        writeMoleculeToFile(filename, molecules[0]);
+        writeMoleculeToFile(filename, molecules[2]);
+    }
+}
+
+void runComparisons3(int argc, char **argv) {
+    if(argc < 4) { cout << "Usage: " << argv[0] << " ConformerSet1(Reference) ConformerSet2(QUERY) OutputFileName\n"; exit(-1); }
+    vector<OBMol> molecules;
+    importMoleculeConformersFromFile(molecules, argv[2]); // import query conformer set first before importing reference set
+    importMoleculeConformersFromFile(molecules, argv[1]);
+    cout << "Finished importing molecules\n";
+
+    for (unsigned int i=0; i < molecules.size(); i++) molecules[i].DeleteHydrogens();
+
+    runConformerComparisons(molecules[0], molecules[1]);
+    cout << "Tanimoto (Hodgkin) similarity index: " << similarityIndex(molecules[0], molecules[1]) << endl;
+
+    cout << "\nSaving those best conformers to file..." << endl;
+    for (int i=0; i < 50; i++) {
+        unsigned int curI = rank_I.top(), curJ = rank_J.top(); vector<double> tempI = coord_Is.top();
+        rank_I.pop(); rank_J.pop(); coord_Is.pop();
+
+        addConformerToMolecule(molecules[0], tempI); molecules[0].SetConformer(molecules[0].NumConformers() - 1);
+        molecules[1].SetConformer(curJ);
+
+        stringstream fs; fs << argv[3] <<  "_" << i << "_A" << curI << "B" << curJ << ".mol2"; string filename = fs.str();
+        writeMoleculeToFile(filename, molecules[1], true);
+        writeMoleculeToFile(filename, molecules[0]);
+    }
+}
+
 
 void runRMSDTest(int argc, char **argv) {
     if(argc != 4) { cout << "Usage: " << argv[0] << " BeginningPosition Reference XRayDeterminedFinalPosition outputPDBFile\n"; exit(-1); }
@@ -568,15 +630,7 @@ void PCAonMDPDB(int argc, char **argv) {
 
 int main (int argc, char **argv) {
     //printScoreContributions(argc, argv);
-    //runComparisons(argc, argv);
-
-    vector<OBMol> molecules; importMoleculeConformersFromFile(molecules, argv[4]);
-    molecules[0].SetConformer(10); writeMoleculeToFile(argv[3], molecules[0]);
-
-
-    
-
-
+    runComparisons3(argc, argv);
 
     //runRMSDTest3(argc, argv);
     //printRMSD(argc, argv);

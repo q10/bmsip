@@ -53,12 +53,14 @@ void writeMoleculeToFile(const string &fileName, OBMol &molecule, bool rewriteFi
 }
 
 // currently takes the first molecule in file, and if sequential molecules have different formulas, simply disposes of it
+// ASSUMES ALL MOLECULES IN FILE ARE A CONFORMER
 void importMoleculeConformersFromFile(vector<OBMol> &moleculesList, const string &fileName) {
     vector<OBMol> tempList;
     importMoleculesFromFile(tempList, fileName);
     OBMol *tempMoleculeBuild = new OBMol(tempList[0]);
     for (unsigned int i=1; i < tempList.size(); i++) {
-        if (tempMoleculeBuild->GetFormula().compare( tempList[i].GetFormula() ) == 0) tempMoleculeBuild->AddConformer(tempList[i].GetCoordinates());
+        // if (tempMoleculeBuild->GetFormula().compare( tempList[i].GetFormula() ) == 0)
+        tempMoleculeBuild->AddConformer(tempList[i].GetCoordinates());
     }
     moleculesList.push_back(*tempMoleculeBuild);
 }
