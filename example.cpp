@@ -439,7 +439,7 @@ void runComparisons3(int argc, char **argv) {
     std::sort(RANKS_AND_COORDS.begin(), RANKS_AND_COORDS.end(), compareRanksAndCoords);
 
 
-    for (int i=0; i < 50; i++) {
+    for (int i=0; i < 10; i++) {
         addConformerToMolecule(molecules[0], RANKS_AND_COORDS[i].coords); molecules[0].SetConformer(molecules[0].NumConformers() - 1);
         molecules[1].SetConformer(RANKS_AND_COORDS[i].j);
         stringstream fs; fs << argv[3] <<  "_" << i << "_A" << RANKS_AND_COORDS[i].i << "B" << RANKS_AND_COORDS[i].j << ".mol2"; string filename = fs.str();
