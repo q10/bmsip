@@ -4,6 +4,7 @@
 #include <cstdlib>
 
 #include <stack>
+#include <algorithm>
 
 #include <openbabel/obconversion.h>
 #include <openbabel/conformersearch.h>
@@ -34,6 +35,21 @@ unsigned int MOLECULE_CONFORMER = 0;
 
 stack<unsigned int> rank_I, rank_J;
 stack< vector<double> > coord_Is;
+
+
+struct RanksAndCoords {
+    double score;
+    int i, j;
+    vector<double> coords;
+    RanksAndCoords(double& tscore, unsigned int& ti, unsigned int &tj, std::vector<double> &tcoords) { score = tscore; i = ti; j = tj; coords = tcoords; }
+};
+
+bool compareRanksAndCoords(const RanksAndCoords &i, const RanksAndCoords &j) { return i.score > j.score; }
+
+vector<RanksAndCoords> RANKS_AND_COORDS;
+
+
+
 
 double volumeOverlap(const vector<double> &coordsMoleculeA, const vector<double> &coordsMoleculeB, const vector<double> &VDWsA, const vector<double> &VDWsB, const vector< vector<double> > &atomMatchScoringTable, bool byParts=false) {
     if (coordsMoleculeA.size() != VDWsA.size() * 3 or coordsMoleculeB.size() != VDWsB.size() * 3) { 
@@ -347,8 +363,8 @@ void runConformerComparisons(OBMol &moleculeA, OBMol &moleculeB, bool verbose=fa
                 bestVolumeOverlap = currentVolumeOverlap;
                 bestCoordsA = currentSDCoordA;
                 bestI = i; bestJ = j;
-                rank_I.push(i); rank_J.push(j); coord_Is.push(currentSDCoordA);
             }
+            RANKS_AND_COORDS.push_back(RanksAndCoords(currentVolumeOverlap, i, j, currentSDCoordA));
             cout << "ROUND " << ++stepCount << " A#" << i << " and B#" << j << " = " << currentVolumeOverlap << endl;
         }
     }    
@@ -420,7 +436,19 @@ void runComparisons3(int argc, char **argv) {
     cout << "Tanimoto (Hodgkin) similarity index: " << similarityIndex(molecules[0], molecules[1]) << endl;
 
     cout << "\nSaving those best conformers to file..." << endl;
+    std::sort(RANKS_AND_COORDS.begin(), RANKS_AND_COORDS.end(), compareRanksAndCoords);
+
+
     for (int i=0; i < 50; i++) {
+        addConformerToMolecule(molecules[0], RANKS_AND_COORDS[i].coords); molecules[0].SetConformer(molecules[0].NumConformers() - 1);
+        molecules[1].SetConformer(RANKS_AND_COORDS[i].j);
+        stringstream fs; fs << argv[3] <<  "_" << i << "_A" << RANKS_AND_COORDS[i].i << "B" << RANKS_AND_COORDS[i].j << ".mol2"; string filename = fs.str();
+        writeMoleculeToFile(filename, molecules[1], true);
+        writeMoleculeToFile(filename, molecules[0]);
+    }
+
+
+/*    for (int i=0; i < 50; i++) {
         unsigned int curI = rank_I.top(), curJ = rank_J.top(); vector<double> tempI = coord_Is.top();
         rank_I.pop(); rank_J.pop(); coord_Is.pop();
 
@@ -430,7 +458,7 @@ void runComparisons3(int argc, char **argv) {
         stringstream fs; fs << argv[3] <<  "_" << i << "_A" << curI << "B" << curJ << ".mol2"; string filename = fs.str();
         writeMoleculeToFile(filename, molecules[1], true);
         writeMoleculeToFile(filename, molecules[0]);
-    }
+    }*/
 }
 
 
