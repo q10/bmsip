@@ -658,7 +658,7 @@ void PCAonMDPDB(int argc, char **argv) {
 
 int main (int argc, char **argv) {
     //printScoreContributions(argc, argv);
-    runComparisons3(argc, argv);
+    //runComparisons3(argc, argv);
 
     //runRMSDTest3(argc, argv);
     //printRMSD(argc, argv);
@@ -668,7 +668,7 @@ int main (int argc, char **argv) {
     //cleanUpAndGenerateConformers(argc, argv);
 
 
-    //runComparisons(argc, argv);
+    runComparisons(argc, argv);
     //if(argc < 3) { cout << "Usage: ProgrameName InputFileName OutputFileName\n"; return 1; }
 
 
