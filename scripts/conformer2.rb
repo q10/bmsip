@@ -10,10 +10,10 @@ jjobs = Dir.glob("../CONFORMERS/*").delete_if { |x| not File.file?(x) or x =~ /B
 	["../example", reference, fl, final_struct, "&>", logfile].join " "
 end
 
-puts jjobs
-#runJobs(jjobs)
+#puts jjobs
+runJobs(jjobs)
 
-puts "cd .. && git add ALL_PAIRS_BQ123_AS_REFERENCE/ROKS3 && git commit -a -m \"alpha 1 beta negative 1 BQ123 superimposition\" && git push"
+system "cd .. && git add ALL_PAIRS_BQ123_AS_REFERENCE/ROKS3 && git commit -a -m \"alpha 1 beta negative 1 BQ123 superimposition\" && git push"
 
 =begin
 
