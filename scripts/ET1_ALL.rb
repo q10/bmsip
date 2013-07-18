@@ -10,6 +10,6 @@ jjobs = Dir.globfiles("../CONFORMERS/*.mol2").delete_if {|x| x =~ /234551/ }.col
 	["../src/example", peptide, ligand, filenamePrefix, backbone, "&>", filenamePrefix+".log"].join " "
 end
 
-puts jjobs
-#runJobs(jjobs, 11, -20, 60)
-#system "cd .. && git add ET1_SUPERIMPOSITIONS/ && git commit -a -m \"no backbone, all comparison\" && git push"
+#puts jjobs
+runJobs(jjobs, 11, -20, 60)
+system "cd .. && git add ET1_SUPERIMPOSITIONS/ && git commit -a -m \"no backbone, all comparison\" && git push"
