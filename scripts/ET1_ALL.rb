@@ -12,4 +12,4 @@ end
 
 puts jjobs
 #runJobs(jjobs.first(1), 11, -20, 60)
-#system "cd .. && git add 1EDN_SUPERIMPOSITIONS/ && git commit -a -m \"no backbone, all comparison\" && git push"
+#system "cd .. && git add ET1_SUPERIMPOSITIONS/ && git commit -a -m \"no backbone, all comparison\" && git push"
