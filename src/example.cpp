@@ -450,7 +450,7 @@ void runComparisons3(int argc, char **argv) {
 
 
 void runComparisons4(int argc, char **argv) {
-    if(argc < 5) { cout << "Usage: " << argv[0] << " ConformerSet1(Reference) ConformerSet2(QUERY) OutputFileName WithBackbone\n"; exit(-1); }
+    if(argc < 5) { cout << "Usage: " << argv[0] << " ConformerSet1(Reference) ConformerSet2(QUERY) OutputFileNamePrefix WithBackbone\n"; exit(-1); }
     vector<OBMol> molecules;
     importMoleculeConformersFromFile(molecules, argv[2]); // import query conformer set first before importing reference set
     importMoleculeConformersFromFile(molecules, argv[1]);
@@ -468,7 +468,7 @@ void runComparisons4(int argc, char **argv) {
 
     for (int i=0; i < 10; i++) {
         addConformerToMolecule(molecules[0], RANKS_AND_COORDS[i].coords); molecules[0].SetConformer(molecules[0].NumConformers() - 1);
-        molecules[1].SetConformer(RANKS_AND_COORDS[i].j);
+        molecules[1].SetConformer(RANKS_AND_COORDS[i].j); molecules[2].SetConformer(RANKS_AND_COORDS[i].j);
         stringstream fs; fs << argv[3] <<  "_" << i << "_A" << RANKS_AND_COORDS[i].i << "B" << RANKS_AND_COORDS[i].j << ".mol2"; string filename = fs.str();
         writeMoleculeToFile(filename, molecules[1], true);
         writeMoleculeToFile(filename, molecules[0]);
@@ -675,7 +675,7 @@ void PCAonMDPDB(int argc, char **argv) {
 
 int main (int argc, char **argv) {
     //printScoreContributions(argc, argv);
-    runComparisons3(argc, argv);
+    runComparisons4(argc, argv);
 
     //runRMSDTest3(argc, argv);
     //printRMSD(argc, argv);
