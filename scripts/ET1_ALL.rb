@@ -11,5 +11,5 @@ jjobs = Dir.globfiles("../CONFORMERS/*.mol2").delete_if {|x| x =~ /234551/ }.col
 end
 
 puts jjobs
-#runJobs(jjobs.first(1), 11, -20, 60)
+#runJobs(jjobs, 11, -20, 60)
 #system "cd .. && git add ET1_SUPERIMPOSITIONS/ && git commit -a -m \"no backbone, all comparison\" && git push"
