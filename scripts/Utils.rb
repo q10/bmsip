@@ -1,6 +1,12 @@
 #require "RbConfig"
 
 module Enumerable
+	def to_f
+		self.collect { |x| x.to_f }
+	end
+#	def to_s
+#		self.collect { |x| x.to_s }
+#	end
 	def sum
 		self.inject(:+)
 	end
@@ -33,7 +39,7 @@ module Enumerable
   	end
 	def split_by
 		result = [a=[]]
-		each{ |o| yield(o) ? (result << a=[o]) : (a << o) }
+		each { |o| yield(o) ? (result << a=[o]) : (a << o) }
 		result.pop if a.empty?
 		result.shift
 		result
